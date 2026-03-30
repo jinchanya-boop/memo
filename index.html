@@ -848,7 +848,7 @@
     <!-- Period Type -->
     <div style="margin-bottom:18px;">
       <div class="form-label" style="margin-bottom:8px;">ประเภทรายงาน</div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
         <label class="period-btn" id="pBtn-daily">
           <input type="radio" name="period" value="daily" checked onchange="onPeriodChange()">
           <span class="period-icon">📅</span>
@@ -858,6 +858,11 @@
           <input type="radio" name="period" value="weekly" onchange="onPeriodChange()">
           <span class="period-icon">🗓️</span>
           <span class="period-label">รายสัปดาห์</span>
+        </label>
+        <label class="period-btn" id="pBtn-monthly">
+          <input type="radio" name="period" value="monthly" onchange="onPeriodChange()">
+          <span class="period-icon">📋</span>
+          <span class="period-label">รายเดือน</span>
         </label>
         <label class="period-btn" id="pBtn-yearly">
           <input type="radio" name="period" value="yearly" onchange="onPeriodChange()">
@@ -1466,6 +1471,33 @@ function onPeriodChange() {
         <button class="btn btn-secondary btn-sm" onclick="setWeek(-1)">สัปดาห์ที่แล้ว</button>
         <button class="btn btn-secondary btn-sm" onclick="setWeek(-2)">2 สัปดาห์ก่อน</button>
       </div>`;
+  } else if (period === 'monthly') {
+    const thisYear = new Date().getFullYear();
+    const thisMonth = new Date().getMonth() + 1;
+    let yearOpts = '';
+    for (let y = thisYear; y >= thisYear - 3; y--) {
+      yearOpts += `<option value="${y}">${y + 543}</option>`;
+    }
+    const thMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    let monthOpts = thMonths.map((m,i) =>
+      `<option value="${i+1}" ${i+1===thisMonth?'selected':''}>${m}</option>`).join('');
+    box.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group">
+          <label class="form-label">เดือน</label>
+          <select class="form-select" id="rp-month" onchange="updateReportPreview()">${monthOpts}</select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ปี พ.ศ.</label>
+          <select class="form-select" id="rp-myear" onchange="updateReportPreview()">${yearOpts}</select>
+        </div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" onclick="setMonth(0)">เดือนนี้</button>
+        <button class="btn btn-secondary btn-sm" onclick="setMonth(-1)">เดือนที่แล้ว</button>
+        <button class="btn btn-secondary btn-sm" onclick="setMonth(-2)">2 เดือนก่อน</button>
+      </div>`;
   } else {
     // yearly
     const thisYear = new Date().getFullYear();
@@ -1490,6 +1522,16 @@ function setWeek(offset) {
   const fmt = d => d.toISOString().split('T')[0];
   document.getElementById('rp-from').value = fmt(mon);
   document.getElementById('rp-to').value = fmt(sun);
+  updateReportPreview();
+}
+
+function setMonth(offset) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + offset);
+  const mEl = document.getElementById('rp-month');
+  const yEl = document.getElementById('rp-myear');
+  if (mEl) mEl.value = d.getMonth() + 1;
+  if (yEl) yEl.value = d.getFullYear();
   updateReportPreview();
 }
 
@@ -1523,6 +1565,20 @@ function getReportData() {
     if (!from || !to) return { period, label: '', data: [], from, to };
     data = data.filter(r => (r.date||'').trim() >= from && (r.date||'').trim() <= to);
     return { period, label: `ประจำสัปดาห์ ${formatThaiDate(from)} – ${formatThaiDate(to)}`, data, from, to };
+  } else if (period === 'monthly') {
+    const monthEl = document.getElementById('rp-month');
+    const myearEl = document.getElementById('rp-myear');
+    const month = monthEl ? parseInt(monthEl.value) : new Date().getMonth() + 1;
+    const year = myearEl ? parseInt(myearEl.value) : new Date().getFullYear();
+    data = data.filter(r => {
+      const rd = (r.date||'').trim();
+      if (!rd) return false;
+      const d2 = new Date(rd);
+      return d2.getFullYear() === year && d2.getMonth() + 1 === month;
+    });
+    const thMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    return { period, label: `ประจำเดือน${thMonths[month-1]} พ.ศ. ${year + 543}`, data, month, year };
   } else {
     const yearEl = document.getElementById('rp-year');
     const year = yearEl ? parseInt(yearEl.value) : new Date().getFullYear();
@@ -1546,7 +1602,7 @@ function updateReportPreview() {
       return `${d}: <b>${cnt} ฉบับ</b>`;
     }).join(' &nbsp;|&nbsp; ');
     // Debug: แสดง date range ที่ใช้ filter
-    const rangeInfo = period === 'daily' ? `วันที่: ${from}` : period === 'weekly' ? `${from} ถึง ${to}` : '';
+    const rangeInfo = period === 'daily' ? `วันที่: ${from}` : period === 'weekly' ? `${from} ถึง ${to}` : period === 'monthly' ? `เดือน ${report.month}/${report.year}` : '';
     box.innerHTML = `
       <div style="font-weight:600;color:var(--pink-700);margin-bottom:4px;">📋 ${label || '—'}</div>
       <div style="margin-bottom:4px;">${deptSummary || '—'}</div>
@@ -1615,6 +1671,24 @@ async function buildSummaryPDF(report) {
       return Object.keys(byHour).sort((a,b)=>+a-+b).map(h => [
         `${h}:00 น.`, byHour[h].total, byHour[h].วช||0, byHour[h].บค||0, byHour[h].งบ||0, byHour[h].บท||0
       ]);
+    } else if (report.period === 'monthly') {
+      // breakdown รายวันในเดือน
+      const year = report.year;
+      const month = report.month;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const rows = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        const ds = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const dayData = report.data.filter(r => (r.date||'').trim() === ds);
+        if (dayData.length > 0) {
+          rows.push([`วันที่ ${day}`, dayData.length,
+            dayData.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
+            dayData.filter(r=>r.dept==='ฝ่ายบุคคล').length,
+            dayData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
+            dayData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length]);
+        }
+      }
+      return rows;
     } else if (report.period === 'weekly') {
       const days=[]; const d0=new Date(report.from); const dE=new Date(report.to);
       const thD=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
@@ -1643,8 +1717,8 @@ async function buildSummaryPDF(report) {
     }
   }
   const timelineRows = getTimelineRows();
-  const tlLabel = report.period==='daily'?'ตามชั่วโมง':report.period==='weekly'?'ตามวัน':'ตามเดือน';
-  const tlColHead = report.period==='daily'?'ชั่วโมง':report.period==='weekly'?'วัน':'เดือน';
+  const tlLabel = report.period==='daily'?'ตามชั่วโมง':report.period==='weekly'?'ตามวัน':report.period==='monthly'?'ตามวันในเดือน':'ตามเดือน';
+  const tlColHead = report.period==='daily'?'ชั่วโมง':report.period==='weekly'?'วัน':report.period==='monthly'?'วันที่':'เดือน';
 
   // ── Bar chart SVG ──
   const barW=80; const barGap=16; const chartH=120; const barChartW=deptStats.length*(barW+barGap);
@@ -1674,7 +1748,7 @@ async function buildSummaryPDF(report) {
         <div style="font-size:18px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
         <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
         <div style="display:inline-block;margin-top:6px;background:#fdf2f8;border:1.5px solid #ec4899;border-radius:999px;padding:3px 16px;font-size:11px;font-weight:700;color:#db2777;">
-          ${report.period==='daily'?'รายงานประจำวัน':report.period==='weekly'?'รายงานประจำสัปดาห์':'รายงานประจำปี'}
+          ${report.period==='daily'?'รายงานประจำวัน':report.period==='weekly'?'รายงานประจำสัปดาห์':report.period==='monthly'?'รายงานประจำเดือน':'รายงานประจำปี'}
         </div>
         <div style="font-size:14px;font-weight:700;color:#1e1e3c;margin-top:6px;">${report.label}</div>
         ${pageLabel?`<div style="font-size:11px;color:#9ca3af;">${pageLabel}</div>`:''}
@@ -1868,7 +1942,7 @@ async function buildSummaryPDF(report) {
     }
   }
 
-  const fn = `รายงานสรุป_${report.period==='daily'?'รายวัน':report.period==='weekly'?'รายสัปดาห์':'รายปี'}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`;
+  const fn = `รายงานสรุป_${report.period==='daily'?'รายวัน':report.period==='weekly'?'รายสัปดาห์':report.period==='monthly'?'รายเดือน':'รายปี'}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`;
   doc.save(fn);
 }
 
