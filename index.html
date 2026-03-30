@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบขอเลขหนังสือราชการ</title>
+<title>ระบบขอเลขที่บันทึกข้อความ</title>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -402,7 +402,7 @@
   <div class="popup">
     <span class="popup-icon">🎉</span>
     <div class="popup-title">ส่งคำขอสำเร็จ!</div>
-    <div style="color:var(--gray-500);font-size:13px;margin-bottom:8px;">เลขหนังสือราชการของคุณ</div>
+    <div style="color:var(--gray-500);font-size:13px;margin-bottom:8px;">เลขที่บันทึกข้อความของคุณ</div>
     <div class="popup-memo" id="popupMemoNum">วช001/2569</div>
     <div class="popup-sub" id="popupSubject">กรุณาบันทึกเลขนี้ไว้เพื่อการอ้างอิง</div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
@@ -421,12 +421,12 @@
     <div class="nav-brand">
       <div class="nav-icon">📋</div>
       <div>
-        <div class="nav-title">ระบบขอเลขหนังสือราชการ</div>
+        <div class="nav-title">ระบบขอเลขที่บันทึกข้อความ</div>
         <div class="nav-sub">โรงเรียนสา จ.น่าน</div>
       </div>
     </div>
     <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showPage('form')">📝 ขอเลขหนังสือ</button>
+      <button class="nav-tab active" onclick="showPage('form')">📝 ขอเลขที่บันทึก</button>
       <button class="nav-tab" onclick="showPage('result')" id="resultTab">📄 ผลลัพธ์</button>
       <button class="nav-tab" onclick="showPage('admin')">📊 ผู้ดูแลระบบ</button>
     </div>
@@ -437,14 +437,14 @@
 <div class="page active" id="page-form">
   <div class="container">
     <div class="hero">
-      <div class="hero-badge">📋 ระบบออกเลขหนังสือราชการ</div>
-      <h1 class="hero-title">ขอเลขหนังสือราชการ</h1>
-      <p class="hero-sub">กรอกข้อมูลด้านล่างเพื่อรับเลขหนังสือราชการโดยอัตโนมัติ</p>
+      <div class="hero-badge">📋 ระบบออกเลขที่บันทึกข้อความ</div>
+      <h1 class="hero-title">ขอเลขที่บันทึกข้อความ</h1>
+      <p class="hero-sub">กรอกข้อมูลด้านล่างเพื่อรับเลขที่บันทึกข้อความโดยอัตโนมัติ</p>
     </div>
 
     <div style="max-width:760px;margin:0 auto;">
       <div class="card">
-        <div class="card-title"><span>📝</span> แบบฟอร์มขอเลขหนังสือราชการ</div>
+        <div class="card-title"><span>📝</span> แบบฟอร์มขอเลขที่บันทึกข้อความ</div>
         <div class="form-grid">
           <div class="form-group">
             <label class="form-label">ชื่อ-สกุล <span class="req">*</span></label>
@@ -470,7 +470,7 @@
           </div>
           <div class="form-group form-full">
             <label class="form-label">เรื่อง <span class="req">*</span></label>
-            <input class="form-input" id="f-subject" type="text" placeholder="เรื่องของหนังสือราชการ">
+            <input class="form-input" id="f-subject" type="text" placeholder="เรื่องของบันทึกข้อความ">
           </div>
           <div class="form-group form-full">
             <label class="form-label">รายละเอียดเพิ่มเติม</label>
@@ -480,13 +480,13 @@
 
         <!-- Dept Preview -->
         <div id="deptPreview" style="display:none;margin-top:16px;padding:14px 16px;border-radius:10px;background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px dashed var(--pink-300);">
-          <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ตัวอย่างรูปแบบเลขหนังสือของฝ่ายที่เลือก</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ตัวอย่างรูปแบบเลขที่บันทึกของฝ่ายที่เลือก</div>
           <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;" id="deptPreviewNum">—</div>
         </div>
 
         <div class="btn-row">
           <button class="btn btn-primary btn-lg" onclick="submitForm()">
-            ✨ ขอเลขหนังสือราชการ
+            ✨ ขอเลขที่บันทึกข้อความ
           </button>
           <button class="btn btn-secondary" onclick="resetForm()">🔄 ล้างข้อมูล</button>
         </div>
@@ -494,7 +494,7 @@
 
       <!-- Info Card -->
       <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(236,72,153,0.04),rgba(59,130,246,0.04));">
-        <div class="card-title"><span>ℹ️</span> ข้อมูลรูปแบบเลขหนังสือราชการ</div>
+        <div class="card-title"><span>ℹ️</span> ข้อมูลรูปแบบเลขที่บันทึกข้อความ</div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
           <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--blue-100);">
             <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายวิชาการ</div>
@@ -525,7 +525,7 @@
       <div class="card" id="resultCard">
         <div class="result-hero">
           <div style="font-size:48px;margin-bottom:8px;">📋</div>
-          <div class="result-label">เลขหนังสือราชการ</div>
+          <div class="result-label">เลขที่บันทึกข้อความ</div>
           <div class="result-num" id="r-memoNum">—</div>
           <div class="result-badge" id="r-dept">—</div>
           <div style="margin-top:10px;color:var(--gray-400);font-size:13px;">ออกเลขเมื่อ: <span id="r-timestamp">—</span></div>
@@ -641,7 +641,7 @@
     <!-- Filter -->
     <div class="card">
       <div class="filter-row">
-        <input class="form-input" id="searchInput" placeholder="🔍 ค้นหาชื่อ หรือ เลขหนังสือ..." oninput="filterTable()">
+        <input class="form-input" id="searchInput" placeholder="🔍 ค้นหาชื่อ หรือ เลขที่บันทึก..." oninput="filterTable()">
         <select class="form-select" id="filterDept" onchange="filterTable()">
           <option value="">ทุกฝ่าย</option>
           <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
@@ -658,7 +658,7 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>เลขหนังสือ</th>
+              <th>เลขที่บันทึก</th>
               <th>ชื่อ-สกุล</th>
               <th>ตำแหน่ง</th>
               <th>ฝ่าย</th>
@@ -899,7 +899,7 @@ function submitForm() {
     return;
   }
 
-  showLoading('กำลังออกเลขหนังสือราชการ...');
+  showLoading('กำลังออกเลขที่บันทึกข้อความ...');
 
   setTimeout(() => {
     const memoNum = generateMemoNum(dept, dateVal);
@@ -1006,14 +1006,14 @@ async function generateMemosPDF(records) {
       <div style="text-align:center;padding:20px 0 12px;">
         <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
         <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
-        <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ / หนังสือราชการ</div>
+        <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ / บันทึกข้อความ</div>
       </div>
       <div style="margin:0 36px;border-top:2px solid #fce7f3;"></div>
 
       <div style="padding:24px 48px 80px;">
         <!-- Memo number hero -->
         <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
-          <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขหนังสือราชการ</div>
+          <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขที่บันทึกข้อความ</div>
           <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.memoNum}</div>
           <div style="display:inline-block;background:${deptColor};color:white;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:700;margin-top:8px;">${r.dept}</div>
         </div>
@@ -1061,7 +1061,7 @@ async function generateMemosPDF(records) {
       <!-- Footer -->
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
         <div style="color:white;font-size:10px;">เลขที่ ${r.memoNum}</div>
-        <div style="color:white;font-size:10px;">ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}</div>
+        <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME}</div>
       </div>
     </div>`;
 
@@ -1077,7 +1077,7 @@ async function generateMemosPDF(records) {
     doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
   }
 
-  doc.save(`หนังสือราชการ_${records[0].memoNum.replace('/','-')}.pdf`);
+  doc.save(`บันทึกข้อความ_${records[0].memoNum.replace('/','-')}.pdf`);
   showToast('ดาวน์โหลด PDF สำเร็จ', 'success');
 }
 
@@ -1195,12 +1195,12 @@ function clearAllData() {
 function exportExcel() {
   const data = filteredRows.length ? filteredRows : loadData();
   if (!data.length) { showToast('ไม่มีข้อมูลสำหรับส่งออก', 'error'); return; }
-  const rows = [['เลขหนังสือ','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
+  const rows = [['เลขที่บันทึก','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
   data.forEach(r => rows.push([r.memoNum, r.name, r.position, r.dept, r.subject, formatThaiDate(r.date), r.desc || '', r.timestamp]));
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'หนังสือราชการ');
-  XLSX.writeFile(wb, `รายงานหนังสือราชการ_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.xlsx`);
+  XLSX.utils.book_append_sheet(wb, ws, 'บันทึกข้อความ');
+  XLSX.writeFile(wb, `รายงานบันทึกข้อความ_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.xlsx`);
   showToast('ส่งออก Excel สำเร็จ', 'success');
 }
 
@@ -1459,7 +1459,7 @@ async function buildSummaryPDF(report) {
       <div style="padding:16px 28px 60px;">${content}</div>
       <!-- Footer -->
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:6px 20px;display:flex;justify-content:space-between;align-items:center;">
-        <div style="color:white;font-size:10px;">ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME} • พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
+        <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME} • พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
       </div>
     </div>`;
   }
@@ -1582,7 +1582,7 @@ async function buildSummaryPDF(report) {
           <thead>
             <tr style="background:${cfg.color};">
               <th style="padding:9px 8px;text-align:left;color:white;">#</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">เลขหนังสือ</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">เลขที่บันทึก</th>
               <th style="padding:9px 8px;text-align:left;color:white;">ชื่อ-สกุล</th>
               <th style="padding:9px 8px;text-align:left;color:white;">ตำแหน่ง</th>
               <th style="padding:9px 8px;text-align:left;color:white;">เรื่อง</th>
@@ -1700,7 +1700,7 @@ function doPost(e){<br>
 &nbsp;var d=JSON.parse(e.postData.contents);<br>
 &nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
 &nbsp;var sh=ss.getSheetByName('Memos')||ss.insertSheet('Memos');<br>
-&nbsp;if(sh.getLastRow()===0)sh.appendRow(['ID','เลขหนังสือ','ชื่อ','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลา']);<br>
+&nbsp;if(sh.getLastRow()===0)sh.appendRow(['ID','เลขที่บันทึก','ชื่อ','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลา']);<br>
 &nbsp;sh.appendRow([d.id,d.memoNum,d.name,d.position,d.dept,d.subject,d.date,d.desc,d.timestamp]);<br>
 &nbsp;return ContentService.createTextOutput('OK');<br>
 }
