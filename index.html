@@ -338,19 +338,177 @@
   .toast-msg { font-size: 13px; font-weight: 500; color: var(--gray-700); }
 
   /* ─── RESPONSIVE ─── */
-  @media (max-width: 768px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .info-grid { grid-template-columns: 1fr; }
-    .nav-tabs { gap: 2px; }
-    .nav-tab { padding: 7px 10px; font-size: 13px; }
-    .hero-title { font-size: 24px; }
-    .result-num { font-size: 38px; }
+  /* ══════════════════════════════════════
+     RESPONSIVE — ทุกขนาดอุปกรณ์
+     ══════════════════════════════════════
+
+     Breakpoints:
+       xl  : > 1280px  (จอใหญ่ / iMac)
+       lg  : 1024–1280px (โน้ตบุ๊ก 13–15")
+       md  : 768–1023px  (iPad landscape / tablet)
+       sm  : 600–767px   (iPad portrait / tablet เล็ก)
+       xs  : < 600px     (มือถือ)
+       xxs : < 400px     (มือถือเล็ก)
+  ═══════════════════════════════════════ */
+
+  /* ── โน้ตบุ๊ก / iPad landscape (lg) ── */
+  @media (max-width: 1280px) {
+    .container { padding: 24px 20px; }
   }
-  @media (max-width: 480px) {
-    .stats-row { grid-template-columns: 1fr; }
-    .filter-row { flex-direction: column; }
-    .filter-row .form-input, .filter-row .form-select { max-width: 100%; }
+
+  /* ── iPad landscape / tablet (md) ── */
+  @media (max-width: 1023px) {
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dept-counter { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 20px 16px; }
+    .nav-title { font-size: 14px; }
+    .nav-sub { display: none; }
+  }
+
+  /* ── iPad portrait / tablet เล็ก (sm) ── */
+  @media (max-width: 767px) {
+    /* Navbar */
+    .nav-inner { height: auto; padding: 10px 0; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .nav-tabs { width: 100%; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 2px; }
+    .nav-tab { flex-shrink: 0; padding: 8px 14px; font-size: 13px; }
+    .nav-brand { width: 100%; }
+
+    /* Hero */
+    .hero { padding: 24px 16px 16px; }
+    .hero-title { font-size: 22px; }
+    .hero-sub { font-size: 13px; }
+    .hero-badge { font-size: 12px; }
+
+    /* Form */
+    .form-grid { grid-template-columns: 1fr; }
+    .card { padding: 20px 16px; }
+    .card-title { font-size: 15px; }
+
+    /* Result */
+    .result-num { font-size: 36px; }
+    .info-grid { grid-template-columns: 1fr; }
+
+    /* Dashboard */
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { padding: 14px 12px; gap: 10px; }
+    .stat-num { font-size: 22px; }
+    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .dept-card { padding: 12px; }
+    .dept-card-prefix { font-size: 18px; }
+    .dept-card-num { font-size: 24px; }
+    .section-head { flex-direction: column; align-items: flex-start; }
+    .section-title { font-size: 17px; }
+
+    /* Filter row */
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .filter-row .form-input,
+    .filter-row .form-select { max-width: 100%; }
+
+    /* Table: horizontal scroll */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 600px; }
+    thead th, tbody td { padding: 10px 10px; font-size: 12px; }
+
+    /* Buttons */
+    .btn-row { flex-direction: column; }
+    .btn-row .btn { width: 100%; justify-content: center; }
+    .btn-lg { padding: 13px 20px; font-size: 15px; }
+
+    /* Popup */
+    .popup { padding: 28px 20px; }
+    .popup-memo { font-size: 28px; }
+
+    /* Report modal */
+    .popup[style*="max-width:520px"] { max-width: 96vw !important; padding: 24px 16px; }
+
+    /* GAS details panel */
+    details[style*="bottom:16px"] { 
+      bottom: 8px !important; right: 8px !important; 
+      max-width: calc(100vw - 16px) !important; 
+    }
+  }
+
+  /* ── มือถือ (xs) ── */
+  @media (max-width: 599px) {
+    body { font-size: 14px; }
+    .navbar { padding: 0 12px; }
+    .nav-inner { padding: 8px 0; gap: 8px; }
+    .nav-icon { width: 34px; height: 34px; font-size: 16px; }
+    .nav-title { font-size: 13px; }
+    .nav-tab { padding: 7px 10px; font-size: 12px; border-radius: 7px; }
+
+    .hero { padding: 20px 12px 12px; }
+    .hero-title { font-size: 19px; }
+    .container { padding: 16px 12px; }
+    .card { padding: 16px 14px; border-radius: 14px; }
+
+    /* Stats: 2 columns on phone */
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-card { padding: 12px 10px; gap: 8px; }
+    .stat-icon { width: 38px; height: 38px; font-size: 18px; }
+    .stat-num { font-size: 20px; }
+    .stat-label { font-size: 11px; }
+
+    /* Dept cards: 2 columns */
+    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .dept-card { padding: 10px 8px; border-radius: 10px; }
+    .dept-card-prefix { font-size: 16px; }
+    .dept-card-num { font-size: 22px; }
+    .dept-card-name { font-size: 10px; }
+
+    /* Info cards in result */
+    .info-row { padding: 10px 12px; border-radius: 8px; }
+    .info-row-label { font-size: 11px; }
+    .info-row-val { font-size: 13px; }
+
+    .result-num { font-size: 30px; letter-spacing: 1px; }
+    .result-hero { padding: 24px 16px; }
+
+    /* Form inputs */
+    .form-input, .form-select, .form-textarea { padding: 10px 12px; font-size: 14px; }
+    .form-label { font-size: 12px; }
+
+    /* Table */
+    table { min-width: 520px; font-size: 11px; }
+    thead th { padding: 9px 8px; font-size: 11px; }
+    tbody td { padding: 9px 8px; }
+
+    /* Popup */
+    .popup-memo { font-size: 26px; }
+    .popup-title { font-size: 18px; }
+    .popup-icon { font-size: 42px; }
+
+    /* Period buttons in report modal */
+    .period-btn { padding: 10px 6px; }
+    .period-icon { font-size: 18px; }
+    .period-label { font-size: 12px; }
+
+    /* Dept check buttons */
+    .dept-check-btn { padding: 6px 10px; font-size: 12px; }
+
+    /* Toast */
+    .toast-area { right: 8px; top: 70px; }
+    .toast { min-width: 200px; padding: 12px 14px; }
+  }
+
+  /* ── มือถือเล็กมาก (xxs) ── */
+  @media (max-width: 399px) {
+    .nav-tabs { gap: 2px; }
+    .nav-tab { padding: 6px 8px; font-size: 11px; }
+    .hero-title { font-size: 17px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .dept-counter { grid-template-columns: 1fr 1fr; }
+    .result-num { font-size: 26px; }
+    .btn { font-size: 13px; padding: 10px 16px; }
+  }
+
+  /* ── Touch device: ปรับ hover ── */
+  @media (hover: none) {
+    .card:hover { transform: none; box-shadow: var(--shadow-lg); }
+    .btn-primary:hover { transform: none; }
+    .btn-success:hover { transform: none; }
+    .btn-info:hover { transform: none; }
+    .dept-card:hover { transform: none; }
   }
 
   /* ─── DECORATIVE BG ─── */
