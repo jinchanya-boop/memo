@@ -784,7 +784,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzECYNnkjMo7UWQNSw3p4XzAAI7YlbgdmOVoFy1beTewSXMfmNP4AwtGwXas4CZ9XeL/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxNS5BIutg_gLwl6nKJbF2O0s6USoAgfyALNlT6x9kJQzZ8EQ6mfUrG6WKS6YuxNptG/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -798,24 +798,59 @@ const DEPT_CONFIG = {
 // ══════════════════════════════════════════
 // STATE (localStorage as local DB)
 // ══════════════════════════════════════════
+// ── Local cache (fallback เมื่อ offline หรือยังไม่ได้ตั้ง GAS_URL) ──
 function loadData() {
   try { return JSON.parse(localStorage.getItem('memoData') || '[]'); } catch { return []; }
 }
 function saveData(data) {
   localStorage.setItem('memoData', JSON.stringify(data));
 }
+
+// ── Sync จาก Google Sheets ──
+async function syncFromSheets() {
+  if (!GAS_URL) return;
+  try {
+    const res = await fetch(GAS_URL + '?action=getAll', { method: 'GET' });
+    const json = await res.json();
+    if (json.status === 'ok' && Array.isArray(json.data)) {
+      saveData(json.data);
+      return json.data;
+    }
+  } catch(e) { console.warn('Sync failed:', e); }
+  return null;
+}
+
+// ── Push record ไป Google Sheets ──
+async function pushToSheets(record) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'add', record }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  } catch(e) { console.warn('Push failed:', e); }
+}
 let currentResult = null;
 
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // Set default date = today
   const today = new Date();
   document.getElementById('f-date').value = today.toISOString().split('T')[0];
 
   // Dept preview on change
   document.getElementById('f-dept').addEventListener('change', updateDeptPreview);
+
+  // ── Sync จาก Google Sheets เมื่อเปิดระบบ ──
+  if (GAS_URL) {
+    showLoading('กำลังโหลดข้อมูลจาก Google Sheets...');
+    const synced = await syncFromSheets();
+    hideLoading();
+    if (synced) showToast(`โหลดข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
+  }
 
   // Update admin stats
   updateAdminStats();
@@ -906,19 +941,13 @@ function submitForm() {
     const timestamp = new Date().toLocaleString('th-TH');
     const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateVal, timestamp };
 
-    // Save to local storage
+    // Save locally first (เพื่อให้ใช้งานได้ทันที)
     const data = loadData();
     data.unshift(record);
     saveData(data);
 
-    // If GAS URL is set, also send to Google Sheets
-    if (GAS_URL) {
-      fetch(GAS_URL, {
-        method: 'POST',
-        body: JSON.stringify(record),
-        headers: { 'Content-Type': 'text/plain' }
-      }).catch(() => {});
-    }
+    // Push ไป Google Sheets (async ไม่รอผล)
+    pushToSheets(record);
 
     currentResult = record;
     hideLoading();
@@ -1660,7 +1689,10 @@ function showPage(name) {
   const tabs = document.querySelectorAll('.nav-tab');
   const tabMap = { form: 0, result: 1, admin: 2 };
   if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
-  if (name === 'admin') updateAdminStats();
+  if (name === 'admin') {
+    if (GAS_URL) syncFromSheets().then(d => { if(d) updateAdminStats(); });
+    else updateAdminStats();
+  }
 }
 
 // ══════════════════════════════════════════
