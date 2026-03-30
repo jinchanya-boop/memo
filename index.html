@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบขอเลขหนังสือราชการ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --pink-50: #fdf2f8;
+    --pink-100: #fce7f3;
+    --pink-200: #fbcfe8;
+    --pink-300: #f9a8d4;
+    --pink-400: #f472b6;
+    --pink-500: #ec4899;
+    --pink-600: #db2777;
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-300: #93c5fd;
+    --blue-400: #60a5fa;
+    --blue-500: #3b82f6;
+    --blue-600: #2563eb;
+    --purple-100: #ede9fe;
+    --purple-400: #a78bfa;
+    --purple-600: #7c3aed;
+    --rose-100: #ffe4e6;
+    --emerald-100: #d1fae5;
+    --emerald-600: #059669;
+    --amber-100: #fef3c7;
+    --amber-600: #d97706;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: linear-gradient(135deg, #fdf2f8 0%, #eff6ff 50%, #fce7f3 100%);
+    min-height: 100vh;
+    color: var(--gray-800);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ─── NAV ─── */
+  .navbar {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(236,72,153,0.12);
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 24px;
+  }
+  .nav-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--pink-400), var(--blue-400));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 4px 12px rgba(236,72,153,0.3);
+  }
+  .nav-title { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 16px; color: var(--gray-800); }
+  .nav-sub { font-size: 12px; color: var(--gray-500); }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 500;
+    transition: all 0.2s; background: transparent; color: var(--gray-600);
+  }
+  .nav-tab:hover { background: var(--pink-50); color: var(--pink-600); }
+  .nav-tab.active { background: linear-gradient(135deg, var(--pink-500), var(--blue-500)); color: white; box-shadow: 0 2px 8px rgba(236,72,153,0.3); }
+
+  /* ─── LAYOUT ─── */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:none; } }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* ─── HERO ─── */
+  .hero {
+    text-align: center; padding: 48px 24px 32px;
+    position: relative;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--pink-100); color: var(--pink-600);
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 32px;
+    background: linear-gradient(135deg, var(--pink-600), var(--blue-600));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .hero-sub { color: var(--gray-500); font-size: 15px; }
+
+  /* ─── CARD ─── */
+  .card {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: var(--shadow-lg);
+    padding: 28px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-xl); }
+  .card-title {
+    font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 17px;
+    color: var(--gray-800); margin-bottom: 20px;
+    display: flex; align-items: center; gap-8px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--pink-100);
+  }
+  .card-title span { margin-right: 8px; }
+
+  /* ─── FORM ─── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .form-full { grid-column: 1 / -1; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .form-label .req { color: var(--pink-500); margin-left: 2px; }
+  .form-input, .form-select, .form-textarea {
+    padding: 11px 14px; border-radius: 10px;
+    border: 1.5px solid var(--gray-200); background: white;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; color: var(--gray-800);
+    transition: all 0.2s; outline: none;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    border-color: var(--pink-400);
+    box-shadow: 0 0 0 3px rgba(236,72,153,0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-select { cursor: pointer; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 22px; border-radius: 10px; border: none; cursor: pointer;
+    font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 600;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--pink-500), var(--blue-500));
+    color: white;
+    box-shadow: 0 4px 14px rgba(236,72,153,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(236,72,153,0.45); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: white; color: var(--gray-700);
+    border: 1.5px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:hover { border-color: var(--pink-300); color: var(--pink-600); }
+  .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16,185,129,0.3); }
+  .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
+  .btn-info { background: linear-gradient(135deg, var(--blue-400), var(--blue-600)); color: white; box-shadow: 0 4px 14px rgba(59,130,246,0.3); }
+  .btn-info:hover { transform: translateY(-1px); }
+  .btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+  .btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 12px; }
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+  /* ─── STATS ROW ─── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg); padding: 20px;
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: var(--shadow-md);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .stat-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .stat-icon.pink { background: var(--pink-100); }
+  .stat-icon.blue { background: var(--blue-100); }
+  .stat-icon.purple { background: var(--purple-100); }
+  .stat-icon.emerald { background: var(--emerald-100); }
+  .stat-num { font-family: 'Kanit', sans-serif; font-size: 26px; font-weight: 700; color: var(--gray-800); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+  /* ─── DEPT BADGES ─── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .badge-วช { background: var(--blue-100); color: var(--blue-600); }
+  .badge-บค { background: var(--pink-100); color: var(--pink-600); }
+  .badge-งบ { background: var(--amber-100); color: var(--amber-600); }
+  .badge-บท { background: var(--emerald-100); color: var(--emerald-600); }
+
+  /* ─── TABLE ─── */
+  .table-wrap { overflow-x: auto; border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead tr { background: linear-gradient(135deg, var(--pink-50), var(--blue-50)); }
+  thead th {
+    padding: 12px 14px; text-align: left;
+    font-weight: 600; color: var(--gray-700); font-size: 13px;
+    border-bottom: 2px solid var(--gray-200);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--gray-100);
+    transition: background 0.15s;
+  }
+  tbody tr:hover { background: var(--pink-50); }
+  tbody td { padding: 12px 14px; color: var(--gray-700); }
+  .memo-num { font-family: 'Kanit', sans-serif; font-weight: 700; color: var(--pink-600); font-size: 15px; }
+  .empty-state { text-align: center; padding: 48px; color: var(--gray-400); }
+  .empty-state .empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .empty-state p { font-size: 14px; }
+
+  /* ─── FILTER ROW ─── */
+  .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+  .filter-row .form-input, .filter-row .form-select { max-width: 200px; }
+  .filter-row .form-input { max-width: 260px; }
+
+  /* ─── RESULT PAGE ─── */
+  .result-hero {
+    text-align: center; padding: 40px 24px;
+    background: linear-gradient(135deg, rgba(236,72,153,0.06), rgba(59,130,246,0.06));
+    border-radius: var(--radius-xl); margin-bottom: 24px;
+  }
+  .result-num {
+    font-family: 'Kanit', sans-serif; font-size: 52px; font-weight: 800;
+    background: linear-gradient(135deg, var(--pink-500), var(--blue-600));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 2px; line-height: 1;
+    margin: 16px 0 8px;
+    animation: scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes scaleIn { from { opacity:0; transform: scale(0.7); } to { opacity:1; transform:none; } }
+  .result-label { font-size: 14px; color: var(--gray-500); margin-bottom: 6px; }
+  .result-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--pink-100), var(--blue-100));
+    color: var(--pink-700); font-weight: 700; font-size: 13px;
+    padding: 4px 14px; border-radius: 999px;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 20px 0;
+  }
+  .info-row { background: var(--gray-50); border-radius: 10px; padding: 12px 16px; }
+  .info-row-label { font-size: 12px; color: var(--gray-500); font-weight: 600; margin-bottom: 2px; }
+  .info-row-val { font-size: 14px; color: var(--gray-800); font-weight: 500; }
+
+  /* ─── OVERLAY / POPUP ─── */
+  .overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(15,15,35,0.5); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  .overlay.show { opacity: 1; pointer-events: all; }
+  .popup {
+    background: white; border-radius: var(--radius-xl);
+    padding: 40px 36px; max-width: 440px; width: 90%;
+    text-align: center; box-shadow: var(--shadow-xl);
+    transform: scale(0.85) translateY(20px); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .overlay.show .popup { transform: none; }
+  .popup-icon { font-size: 54px; margin-bottom: 16px; display: block; animation: bounce 0.6s 0.2s both; }
+  @keyframes bounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+  .popup-title { font-family: 'Kanit', sans-serif; font-size: 22px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+  .popup-memo { font-family: 'Kanit', sans-serif; font-size: 36px; font-weight: 800;
+    background: linear-gradient(135deg, var(--pink-500), var(--blue-600));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin: 14px 0; animation: scaleIn 0.5s 0.3s both;
+  }
+  .popup-sub { color: var(--gray-500); font-size: 14px; margin-bottom: 24px; }
+
+  /* ─── LOADING ─── */
+  .loading-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .loading-overlay.show { opacity: 1; pointer-events: all; }
+  .spinner {
+    width: 52px; height: 52px; border-radius: 50%;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--pink-500);
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Kanit', sans-serif; font-size: 16px; color: var(--gray-600); }
+
+  /* ─── TOAST ─── */
+  .toast-area { position: fixed; top: 80px; right: 24px; z-index: 400; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    background: white; border-radius: 12px; padding: 14px 18px;
+    box-shadow: var(--shadow-xl); min-width: 260px;
+    display: flex; align-items: center; gap: 12px;
+    transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    border-left: 4px solid var(--pink-500);
+  }
+  .toast.show { transform: none; }
+  .toast.success { border-left-color: var(--emerald-600); }
+  .toast.error { border-left-color: #ef4444; }
+  .toast-icon { font-size: 20px; }
+  .toast-msg { font-size: 13px; font-weight: 500; color: var(--gray-700); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .info-grid { grid-template-columns: 1fr; }
+    .nav-tabs { gap: 2px; }
+    .nav-tab { padding: 7px 10px; font-size: 13px; }
+    .hero-title { font-size: 24px; }
+    .result-num { font-size: 38px; }
+  }
+  @media (max-width: 480px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .filter-row { flex-direction: column; }
+    .filter-row .form-input, .filter-row .form-select { max-width: 100%; }
+  }
+
+  /* ─── DECORATIVE BG ─── */
+  .bg-orb {
+    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1;
+  }
+  .bg-orb-1 { width: 400px; height: 400px; background: rgba(236,72,153,0.08); top: -100px; right: -100px; }
+  .bg-orb-2 { width: 350px; height: 350px; background: rgba(59,130,246,0.08); bottom: -80px; left: -80px; }
+
+  .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+  .section-title { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
+  .dept-counter { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+  .dept-card {
+    background: white; border-radius: 14px; padding: 16px;
+    border: 1.5px solid var(--gray-100); box-shadow: var(--shadow-sm);
+    text-align: center; transition: all 0.2s;
+  }
+  .dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .dept-card-prefix { font-family: 'Kanit', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 2px; }
+  .dept-card-name { font-size: 11px; color: var(--gray-500); margin-bottom: 6px; }
+  .dept-card-num { font-family: 'Kanit', sans-serif; font-size: 28px; font-weight: 700; }
+  .dept-card.วช .dept-card-prefix { color: var(--blue-500); }
+  .dept-card.บค .dept-card-prefix { color: var(--pink-500); }
+  .dept-card.งบ .dept-card-prefix { color: var(--amber-600); }
+  .dept-card.บท .dept-card-prefix { color: var(--emerald-600); }
+  .dept-card.วช .dept-card-num { color: var(--blue-600); }
+  .dept-card.บค .dept-card-num { color: var(--pink-600); }
+  .dept-card.งบ .dept-card-num { color: var(--amber-600); }
+  .dept-card.บท .dept-card-num { color: var(--emerald-600); }
+
+  /* PDF Preview area (hidden) */
+  #pdf-preview { display: none; }
+</style>
+</head>
+<body>
+
+<!-- Background orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">กำลังประมวลผล...</div>
+</div>
+
+<!-- Success Popup -->
+<div class="overlay" id="successOverlay">
+  <div class="popup">
+    <span class="popup-icon">🎉</span>
+    <div class="popup-title">ส่งคำขอสำเร็จ!</div>
+    <div style="color:var(--gray-500);font-size:13px;margin-bottom:8px;">เลขหนังสือราชการของคุณ</div>
+    <div class="popup-memo" id="popupMemoNum">วช001/2569</div>
+    <div class="popup-sub" id="popupSubject">กรุณาบันทึกเลขนี้ไว้เพื่อการอ้างอิง</div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="goToResult()">📄 ดูผลลัพธ์</button>
+      <button class="btn btn-secondary" onclick="closePopup()">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-area" id="toastArea"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <div class="nav-icon">📋</div>
+      <div>
+        <div class="nav-title">ระบบขอเลขหนังสือราชการ</div>
+        <div class="nav-sub">โรงเรียนสา จ.น่าน</div>
+      </div>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('form')">📝 ขอเลขหนังสือ</button>
+      <button class="nav-tab" onclick="showPage('result')" id="resultTab">📄 ผลลัพธ์</button>
+      <button class="nav-tab" onclick="showPage('admin')">📊 ผู้ดูแลระบบ</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ PAGE: FORM ══════════════ -->
+<div class="page active" id="page-form">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">📋 ระบบออกเลขหนังสือราชการ</div>
+      <h1 class="hero-title">ขอเลขหนังสือราชการ</h1>
+      <p class="hero-sub">กรอกข้อมูลด้านล่างเพื่อรับเลขหนังสือราชการโดยอัตโนมัติ</p>
+    </div>
+
+    <div style="max-width:760px;margin:0 auto;">
+      <div class="card">
+        <div class="card-title"><span>📝</span> แบบฟอร์มขอเลขหนังสือราชการ</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">ชื่อ-สกุล <span class="req">*</span></label>
+            <input class="form-input" id="f-name" type="text" placeholder="นาย/นาง/นางสาว ชื่อ นามสกุล">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ตำแหน่ง <span class="req">*</span></label>
+            <input class="form-input" id="f-position" type="text" placeholder="เช่น ครู, ผู้ช่วยผู้อำนวยการ">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ฝ่าย <span class="req">*</span></label>
+            <select class="form-select" id="f-dept">
+              <option value="">-- เลือกฝ่าย --</option>
+              <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
+              <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
+              <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
+              <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">วันที่ <span class="req">*</span></label>
+            <input class="form-input" id="f-date" type="date">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">เรื่อง <span class="req">*</span></label>
+            <input class="form-input" id="f-subject" type="text" placeholder="เรื่องของหนังสือราชการ">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">รายละเอียดเพิ่มเติม</label>
+            <textarea class="form-textarea" id="f-desc" placeholder="รายละเอียดหรือหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
+          </div>
+        </div>
+
+        <!-- Dept Preview -->
+        <div id="deptPreview" style="display:none;margin-top:16px;padding:14px 16px;border-radius:10px;background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px dashed var(--pink-300);">
+          <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ตัวอย่างรูปแบบเลขหนังสือของฝ่ายที่เลือก</div>
+          <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;" id="deptPreviewNum">—</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary btn-lg" onclick="submitForm()">
+            ✨ ขอเลขหนังสือราชการ
+          </button>
+          <button class="btn btn-secondary" onclick="resetForm()">🔄 ล้างข้อมูล</button>
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(236,72,153,0.04),rgba(59,130,246,0.04));">
+        <div class="card-title"><span>ℹ️</span> ข้อมูลรูปแบบเลขหนังสือราชการ</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+          <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--blue-100);">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายวิชาการ</div>
+            <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--blue-600);">วช001/2569</div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--pink-100);">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายบุคคล</div>
+            <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--pink-600);">บค001/2569</div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--amber-100);">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายงบประมาณ</div>
+            <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--amber-600);">งบ001/2569</div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--emerald-100);">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายบริหารทั่วไป</div>
+            <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--emerald-600);">บท001/2569</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: RESULT ══════════════ -->
+<div class="page" id="page-result">
+  <div class="container">
+    <div style="max-width:720px;margin:0 auto;">
+      <div class="card" id="resultCard">
+        <div class="result-hero">
+          <div style="font-size:48px;margin-bottom:8px;">📋</div>
+          <div class="result-label">เลขหนังสือราชการ</div>
+          <div class="result-num" id="r-memoNum">—</div>
+          <div class="result-badge" id="r-dept">—</div>
+          <div style="margin-top:10px;color:var(--gray-400);font-size:13px;">ออกเลขเมื่อ: <span id="r-timestamp">—</span></div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-row">
+            <div class="info-row-label">👤 ชื่อ-สกุล</div>
+            <div class="info-row-val" id="r-name">—</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">🏷️ ตำแหน่ง</div>
+            <div class="info-row-val" id="r-position">—</div>
+          </div>
+          <div class="info-row" style="grid-column:1/-1">
+            <div class="info-row-label">📌 เรื่อง</div>
+            <div class="info-row-val" id="r-subject">—</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">📅 วันที่</div>
+            <div class="info-row-val" id="r-date">—</div>
+          </div>
+          <div class="info-row">
+            <div class="info-row-label">🏢 ฝ่าย</div>
+            <div class="info-row-val" id="r-deptFull">—</div>
+          </div>
+          <div class="info-row" style="grid-column:1/-1" id="r-desc-row">
+            <div class="info-row-label">📝 รายละเอียด</div>
+            <div class="info-row-val" id="r-desc">—</div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="justify-content:center;">
+          <button class="btn btn-primary btn-lg" onclick="downloadPDF()">⬇️ ดาวน์โหลด PDF</button>
+          <button class="btn btn-secondary" onclick="showPage('form')">📝 ขอเลขใหม่</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: ADMIN ══════════════ -->
+<div class="page" id="page-admin">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-title">📊 แดชบอร์ดผู้ดูแลระบบ</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-success btn-sm" onclick="exportExcel()">📊 Excel</button>
+        <button class="btn btn-info btn-sm" onclick="exportAllPDF()">📄 PDF รายงาน</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon pink">📋</div>
+        <div>
+          <div class="stat-num" id="stat-total">0</div>
+          <div class="stat-label">หนังสือทั้งหมด</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📅</div>
+        <div>
+          <div class="stat-num" id="stat-today">0</div>
+          <div class="stat-label">วันนี้</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">🏢</div>
+        <div>
+          <div class="stat-num">4</div>
+          <div class="stat-label">ฝ่ายทั้งหมด</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon emerald">🗓️</div>
+        <div>
+          <div class="stat-num" id="stat-year">2569</div>
+          <div class="stat-label">ปีงบประมาณ</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dept Counters -->
+    <div class="dept-counter">
+      <div class="dept-card วช">
+        <div class="dept-card-prefix">วช</div>
+        <div class="dept-card-name">ฝ่ายวิชาการ</div>
+        <div class="dept-card-num" id="cnt-วช">0</div>
+        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
+      </div>
+      <div class="dept-card บค">
+        <div class="dept-card-prefix">บค</div>
+        <div class="dept-card-name">ฝ่ายบุคคล</div>
+        <div class="dept-card-num" id="cnt-บค">0</div>
+        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
+      </div>
+      <div class="dept-card งบ">
+        <div class="dept-card-prefix">งบ</div>
+        <div class="dept-card-name">ฝ่ายงบประมาณ</div>
+        <div class="dept-card-num" id="cnt-งบ">0</div>
+        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
+      </div>
+      <div class="dept-card บท">
+        <div class="dept-card-prefix">บท</div>
+        <div class="dept-card-name">ฝ่ายบริหารทั่วไป</div>
+        <div class="dept-card-num" id="cnt-บท">0</div>
+        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="card">
+      <div class="filter-row">
+        <input class="form-input" id="searchInput" placeholder="🔍 ค้นหาชื่อ หรือ เลขหนังสือ..." oninput="filterTable()">
+        <select class="form-select" id="filterDept" onchange="filterTable()">
+          <option value="">ทุกฝ่าย</option>
+          <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
+          <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
+          <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
+          <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+        </select>
+        <input class="form-input" id="filterDate" type="date" onchange="filterTable()" style="max-width:170px;">
+        <button class="btn btn-secondary btn-sm" onclick="clearFilter()">✕ ล้างตัวกรอง</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearAllData()" style="color:#ef4444;border-color:#fca5a5;">🗑️ ล้างข้อมูลทั้งหมด</button>
+      </div>
+      <div class="table-wrap">
+        <table id="memoTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>เลขหนังสือ</th>
+              <th>ชื่อ-สกุล</th>
+              <th>ตำแหน่ง</th>
+              <th>ฝ่าย</th>
+              <th>เรื่อง</th>
+              <th>วันที่</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📭</div>
+          <p>ยังไม่มีข้อมูล กรุณาส่งคำขอครั้งแรก</p>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:13px;color:var(--gray-400);" id="tableInfo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Hidden PDF content -->
+<div id="pdf-preview"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzECYNnkjMo7UWQNSw3p4XzAAI7YlbgdmOVoFy1beTewSXMfmNP4AwtGwXas4CZ9XeL/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
+const SCHOOL_NAME = 'โรงเรียนสา';
+const SCHOOL_PROVINCE = 'จังหวัดน่าน';
+
+const DEPT_CONFIG = {
+  'ฝ่ายวิชาการ':    { prefix: 'วช', color: '#2563eb' },
+  'ฝ่ายบุคคล':      { prefix: 'บค', color: '#db2777' },
+  'ฝ่ายงบประมาณ':   { prefix: 'งบ', color: '#d97706' },
+  'ฝ่ายบริหารทั่วไป': { prefix: 'บท', color: '#059669' }
+};
+
+// ══════════════════════════════════════════
+// STATE (localStorage as local DB)
+// ══════════════════════════════════════════
+function loadData() {
+  try { return JSON.parse(localStorage.getItem('memoData') || '[]'); } catch { return []; }
+}
+function saveData(data) {
+  localStorage.setItem('memoData', JSON.stringify(data));
+}
+let currentResult = null;
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Set default date = today
+  const today = new Date();
+  document.getElementById('f-date').value = today.toISOString().split('T')[0];
+
+  // Dept preview on change
+  document.getElementById('f-dept').addEventListener('change', updateDeptPreview);
+
+  // Update admin stats
+  updateAdminStats();
+
+  // Set year stat
+  document.getElementById('stat-year').textContent = getThaiBE();
+});
+
+function getThaiBE(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  return d.getFullYear() + 543;
+}
+
+function formatThaiDate(dateStr) {
+  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const d = new Date(dateStr);
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
+}
+
+// ══════════════════════════════════════════
+// DEPT PREVIEW
+// ══════════════════════════════════════════
+function updateDeptPreview() {
+  const dept = document.getElementById('f-dept').value;
+  const preview = document.getElementById('deptPreview');
+  if (!dept) { preview.style.display = 'none'; return; }
+  const cfg = DEPT_CONFIG[dept];
+  const year = getThaiBE();
+  const next = getNextNumber(dept, year);
+  const num = String(next).padStart(3, '0');
+  preview.style.display = 'block';
+  document.getElementById('deptPreviewNum').style.color = cfg.color;
+  document.getElementById('deptPreviewNum').textContent = `${cfg.prefix}${num}/${year}`;
+}
+
+// ══════════════════════════════════════════
+// MEMO NUMBER LOGIC
+// ══════════════════════════════════════════
+function getNextNumber(dept, year) {
+  const data = loadData();
+  const cfg = DEPT_CONFIG[dept];
+  const prefix = cfg.prefix;
+  // Filter same dept + year
+  const existing = data.filter(r => {
+    const parts = r.memoNum.split('/');
+    return r.dept === dept && parts[1] == year;
+  });
+  if (existing.length === 0) return 1;
+  // Get max running number
+  let maxNum = 0;
+  existing.forEach(r => {
+    const numPart = r.memoNum.replace(prefix, '').split('/')[0];
+    const n = parseInt(numPart, 10);
+    if (!isNaN(n) && n > maxNum) maxNum = n;
+  });
+  return maxNum + 1;
+}
+
+function generateMemoNum(dept, dateStr) {
+  const cfg = DEPT_CONFIG[dept];
+  const year = getThaiBE(dateStr);
+  const seq = getNextNumber(dept, year);
+  const num = String(seq).padStart(3, '0');
+  return `${cfg.prefix}${num}/${year}`;
+}
+
+// ══════════════════════════════════════════
+// FORM SUBMIT
+// ══════════════════════════════════════════
+function submitForm() {
+  const name = document.getElementById('f-name').value.trim();
+  const position = document.getElementById('f-position').value.trim();
+  const dept = document.getElementById('f-dept').value;
+  const dateVal = document.getElementById('f-date').value;
+  const subject = document.getElementById('f-subject').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+
+  if (!name || !position || !dept || !dateVal || !subject) {
+    showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
+    return;
+  }
+
+  showLoading('กำลังออกเลขหนังสือราชการ...');
+
+  setTimeout(() => {
+    const memoNum = generateMemoNum(dept, dateVal);
+    const timestamp = new Date().toLocaleString('th-TH');
+    const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateVal, timestamp };
+
+    // Save to local storage
+    const data = loadData();
+    data.unshift(record);
+    saveData(data);
+
+    // If GAS URL is set, also send to Google Sheets
+    if (GAS_URL) {
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(record),
+        headers: { 'Content-Type': 'text/plain' }
+      }).catch(() => {});
+    }
+
+    currentResult = record;
+    hideLoading();
+    updateAdminStats();
+
+    // Show popup
+    document.getElementById('popupMemoNum').textContent = memoNum;
+    document.getElementById('popupSubject').textContent = `เรื่อง: ${subject}`;
+    document.getElementById('successOverlay').classList.add('show');
+  }, 1200);
+}
+
+function goToResult() {
+  closePopup();
+  populateResult(currentResult);
+  showPage('result');
+}
+
+function closePopup() {
+  document.getElementById('successOverlay').classList.remove('show');
+}
+
+function resetForm() {
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-position').value = '';
+  document.getElementById('f-dept').value = '';
+  document.getElementById('f-subject').value = '';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('deptPreview').style.display = 'none';
+  const today = new Date();
+  document.getElementById('f-date').value = today.toISOString().split('T')[0];
+  showToast('ล้างข้อมูลแล้ว', 'success');
+}
+
+// ══════════════════════════════════════════
+// RESULT PAGE
+// ══════════════════════════════════════════
+function populateResult(r) {
+  if (!r) return;
+  document.getElementById('r-memoNum').textContent = r.memoNum;
+  document.getElementById('r-dept').textContent = r.dept;
+  document.getElementById('r-deptFull').textContent = r.dept;
+  document.getElementById('r-name').textContent = r.name;
+  document.getElementById('r-position').textContent = r.position;
+  document.getElementById('r-subject').textContent = r.subject;
+  document.getElementById('r-date').textContent = formatThaiDate(r.date);
+  document.getElementById('r-timestamp').textContent = r.timestamp;
+  if (r.desc) {
+    document.getElementById('r-desc').textContent = r.desc;
+    document.getElementById('r-desc-row').style.display = '';
+  } else {
+    document.getElementById('r-desc-row').style.display = 'none';
+  }
+  // Color based on dept
+  const cfg = DEPT_CONFIG[r.dept];
+  if (cfg) document.getElementById('r-memoNum').style.background = `linear-gradient(135deg, ${cfg.color}, #3b82f6)`;
+}
+
+// ══════════════════════════════════════════
+// PDF EXPORT
+// ══════════════════════════════════════════
+function downloadPDF() {
+  if (!currentResult) { showToast('ไม่มีข้อมูลสำหรับสร้าง PDF', 'error'); return; }
+  showLoading('กำลังสร้างเอกสาร PDF...');
+  setTimeout(() => {
+    generateMemosPDF([currentResult]);
+    hideLoading();
+  }, 800);
+}
+
+function generateMemosPDF(records) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  records.forEach((r, i) => {
+    if (i > 0) doc.addPage();
+
+    const pw = 210; // page width
+    const ml = 25; // margin left
+    const mr = 185; // margin right
+    let y = 20;
+
+    // Header bar
+    doc.setFillColor(236, 72, 153);
+    doc.rect(0, 0, pw, 8, 'F');
+    doc.setFillColor(59, 130, 246);
+    doc.rect(0, 8, pw, 3, 'F');
+
+    // School name (use Latin fallback since jsPDF doesn't support Thai fonts by default)
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(30, 30, 60);
+    // We'll use English approximations since custom Thai font embedding requires ttf files
+    doc.text(SCHOOL_NAME, pw/2, y + 10, { align: 'center' });
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 120);
+    doc.text(SCHOOL_PROVINCE, pw/2, y + 17, { align: 'center' });
+
+    y += 28;
+
+    // Divider
+    doc.setDrawColor(220, 220, 235);
+    doc.setLineWidth(0.5);
+    doc.line(ml, y, mr, y);
+    y += 8;
+
+    // Memo number box
+    doc.setFillColor(253, 242, 248);
+    doc.setDrawColor(236, 72, 153);
+    doc.setLineWidth(0.8);
+    doc.roundedRect(ml, y, mr - ml, 22, 3, 3, 'FD');
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(180, 40, 100);
+    doc.text('Memo No. / เลขหนังสือราชการ', pw/2, y + 7, { align: 'center' });
+    doc.setFontSize(22);
+    doc.setTextColor(30, 30, 180);
+    doc.text(r.memoNum, pw/2, y + 18, { align: 'center' });
+
+    y += 32;
+
+    // Info table
+    const fields = [
+      ['ชื่อ-สกุล / Name', r.name],
+      ['ตำแหน่ง / Position', r.position],
+      ['ฝ่าย / Department', r.dept],
+      ['เรื่อง / Subject', r.subject],
+      ['วันที่ / Date', formatThaiDate(r.date)],
+    ];
+    if (r.desc) fields.push(['รายละเอียด / Details', r.desc]);
+
+    doc.setFontSize(10);
+    fields.forEach(([label, val], idx) => {
+      const rowH = 14;
+      const rowY = y + idx * rowH;
+      // Alt row bg
+      if (idx % 2 === 0) {
+        doc.setFillColor(249, 250, 255);
+        doc.rect(ml, rowY - 3, mr - ml, rowH, 'F');
+      }
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(100, 100, 130);
+      doc.text(label + ':', ml + 2, rowY + 6);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(30, 30, 60);
+      const valX = ml + 65;
+      const valLines = doc.splitTextToSize(val, mr - valX - 2);
+      doc.text(valLines, valX, rowY + 6);
+    });
+
+    y += fields.length * 14 + 12;
+
+    // Signature area
+    doc.setDrawColor(200, 200, 220);
+    doc.setLineWidth(0.3);
+    doc.line(ml, y, mr, y);
+    y += 10;
+
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 170);
+    doc.text(`ออกโดยระบบขอเลขหนังสือราชการ | ${r.timestamp}`, pw/2, y, { align: 'center' });
+
+    y += 15;
+    // Signature boxes
+    const sigBoxW = 55; const sigBoxH = 20;
+    const sigBoxes = [
+      { label: 'ผู้ขอ', x: ml + 5 },
+      { label: 'ผู้ตรวจสอบ', x: pw/2 - sigBoxW/2 },
+      { label: 'ผู้อนุมัติ', x: mr - sigBoxW - 5 }
+    ];
+    sigBoxes.forEach(b => {
+      doc.setDrawColor(200, 200, 220);
+      doc.setFillColor(250, 250, 255);
+      doc.roundedRect(b.x, y, sigBoxW, sigBoxH, 2, 2, 'FD');
+      doc.setFontSize(8);
+      doc.setTextColor(150, 150, 170);
+      doc.text(b.label, b.x + sigBoxW/2, y + 13, { align: 'center' });
+    });
+
+    // Footer
+    doc.setFillColor(236, 72, 153);
+    doc.rect(0, 287, pw, 3, 'F');
+    doc.setFillColor(59, 130, 246);
+    doc.rect(0, 290, pw, 7, 'F');
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(255, 255, 255);
+    doc.text(`หนังสือเลขที่ ${r.memoNum}  •  ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}`, pw/2, 295, { align: 'center' });
+  });
+
+  doc.save(`หนังสือราชการ_${records[0].memoNum.replace('/','-')}.pdf`);
+  showToast('ดาวน์โหลด PDF สำเร็จ', 'success');
+}
+
+// ══════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════
+let filteredRows = [];
+
+function updateAdminStats() {
+  const data = loadData();
+  document.getElementById('stat-total').textContent = data.length;
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todayCount = data.filter(r => r.date === todayStr || (r.timestamp && r.timestamp.includes(new Date().toLocaleDateString('th-TH')))).length;
+  document.getElementById('stat-today').textContent = todayCount;
+
+  const year = getThaiBE();
+  document.getElementById('stat-year').textContent = year;
+
+  // Dept counters
+  Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
+    const cnt = data.filter(r => r.dept === dept).length;
+    const el = document.getElementById(`cnt-${cfg.prefix}`);
+    if (el) el.textContent = cnt;
+  });
+
+  renderTable(data);
+}
+
+function renderTable(data) {
+  filteredRows = data;
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const info = document.getElementById('tableInfo');
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    info.textContent = '';
+    return;
+  }
+  empty.style.display = 'none';
+  info.textContent = `แสดง ${data.length} รายการ`;
+
+  tbody.innerHTML = data.map((r, i) => {
+    const cfg = DEPT_CONFIG[r.dept] || {};
+    const prefix = cfg.prefix || '';
+    return `<tr>
+      <td style="color:var(--gray-400);font-size:12px;">${i+1}</td>
+      <td><span class="memo-num">${r.memoNum}</span></td>
+      <td>${r.name}</td>
+      <td style="color:var(--gray-500);font-size:13px;">${r.position}</td>
+      <td><span class="badge badge-${prefix}">${r.dept}</span></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.subject}">${r.subject}</td>
+      <td style="font-size:13px;color:var(--gray-500);">${formatThaiDate(r.date)}</td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="viewRecord(${r.id})" title="ดูรายละเอียด">👁️</button>
+        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadRecordPDF(${r.id})" title="ดาวน์โหลด PDF">📄</button>
+        <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="deleteRecord(${r.id})" title="ลบ">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const dept = document.getElementById('filterDept').value;
+  const date = document.getElementById('filterDate').value;
+  let data = loadData();
+  if (q) data = data.filter(r => r.name.toLowerCase().includes(q) || r.memoNum.toLowerCase().includes(q) || r.subject.toLowerCase().includes(q));
+  if (dept) data = data.filter(r => r.dept === dept);
+  if (date) data = data.filter(r => r.date === date);
+  renderTable(data);
+}
+
+function clearFilter() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterDept').value = '';
+  document.getElementById('filterDate').value = '';
+  renderTable(loadData());
+}
+
+function viewRecord(id) {
+  const r = loadData().find(x => x.id === id);
+  if (!r) return;
+  currentResult = r;
+  populateResult(r);
+  showPage('result');
+}
+
+function downloadRecordPDF(id) {
+  const r = loadData().find(x => x.id === id);
+  if (!r) return;
+  showLoading('กำลังสร้าง PDF...');
+  setTimeout(() => { generateMemosPDF([r]); hideLoading(); }, 600);
+}
+
+function deleteRecord(id) {
+  if (!confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) return;
+  let data = loadData().filter(x => x.id !== id);
+  saveData(data);
+  updateAdminStats();
+  showToast('ลบรายการแล้ว', 'success');
+}
+
+function clearAllData() {
+  if (!confirm('ต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้')) return;
+  saveData([]);
+  updateAdminStats();
+  showToast('ล้างข้อมูลทั้งหมดแล้ว', 'success');
+}
+
+function exportExcel() {
+  const data = filteredRows.length ? filteredRows : loadData();
+  if (!data.length) { showToast('ไม่มีข้อมูลสำหรับส่งออก', 'error'); return; }
+  const rows = [['เลขหนังสือ','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
+  data.forEach(r => rows.push([r.memoNum, r.name, r.position, r.dept, r.subject, formatThaiDate(r.date), r.desc || '', r.timestamp]));
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'หนังสือราชการ');
+  XLSX.writeFile(wb, `รายงานหนังสือราชการ_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.xlsx`);
+  showToast('ส่งออก Excel สำเร็จ', 'success');
+}
+
+function exportAllPDF() {
+  const data = filteredRows.length ? filteredRows : loadData();
+  if (!data.length) { showToast('ไม่มีข้อมูลสำหรับส่งออก', 'error'); return; }
+
+  showLoading(`กำลังสร้างรายงาน PDF (${data.length} รายการ)...`);
+  setTimeout(() => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    const pw = 297; const ph = 210;
+    const ml = 15; const mr = 282;
+
+    // Title
+    doc.setFillColor(236, 72, 153);
+    doc.rect(0, 0, pw, 10, 'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.setTextColor(255,255,255);
+    doc.text('Memo Number Report', pw/2, 7, { align: 'center' });
+
+    let y = 20;
+    doc.setFontSize(12);
+    doc.setTextColor(30,30,60);
+    doc.text(`${SCHOOL_NAME} - รายงานหนังสือราชการ`, ml, y);
+    doc.setFontSize(9);
+    doc.setTextColor(120,120,140);
+    doc.text(`พิมพ์เมื่อ: ${new Date().toLocaleString('th-TH')} | จำนวน: ${data.length} รายการ`, ml, y+7);
+
+    y += 18;
+    // Table header
+    const cols = ['#', 'เลขหนังสือ', 'ชื่อ-สกุล', 'ตำแหน่ง', 'ฝ่าย', 'เรื่อง', 'วันที่'];
+    const colW = [10, 32, 50, 40, 35, 80, 30];
+    doc.setFillColor(236, 72, 153);
+    doc.rect(ml, y, mr - ml, 10, 'F');
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(9);
+    doc.setTextColor(255,255,255);
+    let cx = ml + 2;
+    cols.forEach((c, i) => { doc.text(c, cx, y+7); cx += colW[i]; });
+
+    y += 10;
+    data.forEach((r, idx) => {
+      if (y > ph - 20) { doc.addPage(); y = 20; }
+      if (idx % 2 === 0) { doc.setFillColor(249, 250, 255); doc.rect(ml, y, mr - ml, 9, 'F'); }
+      doc.setFont('helvetica', idx % 2 === 0 ? 'normal' : 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(40, 40, 70);
+      cx = ml + 2;
+      const vals = [String(idx+1), r.memoNum, r.name, r.position, r.dept, r.subject.substring(0,40), formatThaiDate(r.date)];
+      vals.forEach((v, i) => { doc.text(String(v), cx, y+6); cx += colW[i]; });
+      y += 9;
+    });
+
+    doc.setFillColor(59,130,246);
+    doc.rect(0, ph - 8, pw, 8, 'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(8);
+    doc.text(`รายงานจากระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}`, pw/2, ph - 3, { align: 'center' });
+
+    doc.save(`รายงานหนังสือราชการ_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`);
+    hideLoading();
+    showToast('ส่งออกรายงาน PDF สำเร็จ', 'success');
+  }, 800);
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  // Match tab
+  const tabs = document.querySelectorAll('.nav-tab');
+  const tabMap = { form: 0, result: 1, admin: 2 };
+  if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
+  if (name === 'admin') updateAdminStats();
+}
+
+// ══════════════════════════════════════════
+// LOADING / TOAST
+// ══════════════════════════════════════════
+function showLoading(msg = 'กำลังประมวลผล...') {
+  document.getElementById('loadingText').textContent = msg;
+  document.getElementById('loadingOverlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+}
+function showToast(msg, type = 'info') {
+  const area = document.getElementById('toastArea');
+  const t = document.createElement('div');
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
+  area.appendChild(t);
+  requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+}
+</script>
+
+<!-- Google Apps Script Integration Guide (collapsed) -->
+<details style="position:fixed;bottom:16px;right:16px;z-index:50;max-width:320px;">
+  <summary style="background:white;border:1.5px solid var(--pink-200);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--pink-600);box-shadow:var(--shadow-md);">
+    ⚙️ เชื่อมต่อ Google Sheets
+  </summary>
+  <div style="background:white;border:1.5px solid var(--gray-200);border-radius:10px;padding:16px;margin-top:6px;font-size:12px;color:var(--gray-700);box-shadow:var(--shadow-lg);">
+    <b>วิธีเชื่อมต่อ Google Sheets:</b><br><br>
+    1. สร้าง Google Sheet ใหม่<br>
+    2. ไปที่ Extensions → Apps Script<br>
+    3. วางโค้ด GAS ด้านล่าง:<br><br>
+    <code style="background:var(--gray-100);padding:8px;border-radius:6px;display:block;font-size:11px;overflow-x:auto;">
+function doPost(e){<br>
+&nbsp;var d=JSON.parse(e.postData.contents);<br>
+&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
+&nbsp;var sh=ss.getSheetByName('Memos')||ss.insertSheet('Memos');<br>
+&nbsp;if(sh.getLastRow()===0)sh.appendRow(['ID','เลขหนังสือ','ชื่อ','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลา']);<br>
+&nbsp;sh.appendRow([d.id,d.memoNum,d.name,d.position,d.dept,d.subject,d.date,d.desc,d.timestamp]);<br>
+&nbsp;return ContentService.createTextOutput('OK');<br>
+}
+    </code><br>
+    4. Deploy → Web App → Anyone can access<br>
+    5. คัดลอก URL ใส่ใน <code>GAS_URL</code> ในโค้ด
+  </div>
+</details>
+
+</body>
+</html>
