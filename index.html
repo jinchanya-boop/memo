@@ -939,7 +939,8 @@ function submitForm() {
   setTimeout(() => {
     const memoNum = generateMemoNum(dept, dateVal);
     const timestamp = new Date().toLocaleString('th-TH');
-    const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateVal, timestamp };
+    const dateNorm = dateVal.trim(); // ensure YYYY-MM-DD
+    const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateNorm, timestamp };
 
     // Save locally first (เพื่อให้ใช้งานได้ทันที)
     const data = loadData();
@@ -1119,7 +1120,7 @@ function updateAdminStats() {
   const data = loadData();
   document.getElementById('stat-total').textContent = data.length;
   const todayStr = new Date().toISOString().split('T')[0];
-  const todayCount = data.filter(r => r.date === todayStr || (r.timestamp && r.timestamp.includes(new Date().toLocaleDateString('th-TH')))).length;
+  const todayCount = data.filter(r => r.date === todayStr).length;
   document.getElementById('stat-today').textContent = todayCount;
 
   const year = getThaiBE();
@@ -1177,7 +1178,7 @@ function filterTable() {
   let data = loadData();
   if (q) data = data.filter(r => r.name.toLowerCase().includes(q) || r.memoNum.toLowerCase().includes(q) || r.subject.toLowerCase().includes(q));
   if (dept) data = data.filter(r => r.dept === dept);
-  if (date) data = data.filter(r => r.date === date);
+  if (date) data = data.filter(r => (r.date||'').trim() === date.trim());
   renderTable(data);
 }
 
@@ -1326,19 +1327,22 @@ function getReportData() {
   if (depts.length < 4) data = data.filter(r => depts.includes(r.dept));
 
   if (period === 'daily') {
-    const d = document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0];
-    data = data.filter(r => r.date === d);
+    const d = (document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0]).trim();
+    data = data.filter(r => (r.date||'').trim() === d);
     return { period, label: `ประจำวันที่ ${formatThaiDate(d)}`, data, from: d, to: d };
   } else if (period === 'weekly') {
     const from = document.getElementById('rp-from')?.value;
     const to = document.getElementById('rp-to')?.value;
     if (!from || !to) return { period, label: '', data: [], from, to };
-    data = data.filter(r => r.date >= from && r.date <= to);
+    data = data.filter(r => (r.date||'').trim() >= from && (r.date||'').trim() <= to);
     return { period, label: `ประจำสัปดาห์ ${formatThaiDate(from)} – ${formatThaiDate(to)}`, data, from, to };
   } else {
     const yearEl = document.getElementById('rp-year');
     const year = yearEl ? parseInt(yearEl.value) : new Date().getFullYear();
-    data = data.filter(r => new Date(r.date).getFullYear() === year);
+    data = data.filter(r => {
+      const rd = (r.date||'').trim();
+      return rd && new Date(rd).getFullYear() === year;
+    });
     return { period, label: `ประจำปี พ.ศ. ${year + 543}`, data, year };
   }
 }
@@ -1347,16 +1351,20 @@ function updateReportPreview() {
   const box = document.getElementById('reportPreviewBox');
   if (!box) return;
   try {
-    const { label, data, period } = getReportData();
+    const { label, data, period, from, to } = getReportData();
     const depts = getSelectedDepts();
+    const allData = loadData();
     const deptSummary = depts.map(d => {
       const cnt = data.filter(r => r.dept === d).length;
       return `${d}: <b>${cnt} ฉบับ</b>`;
     }).join(' &nbsp;|&nbsp; ');
+    // Debug: แสดง date range ที่ใช้ filter
+    const rangeInfo = period === 'daily' ? `วันที่: ${from}` : period === 'weekly' ? `${from} ถึง ${to}` : '';
     box.innerHTML = `
       <div style="font-weight:600;color:var(--pink-700);margin-bottom:4px;">📋 ${label || '—'}</div>
       <div style="margin-bottom:4px;">${deptSummary || '—'}</div>
-      <div style="color:var(--gray-500);">รวมทั้งหมด <b style="color:var(--gray-800)">${data.length} ฉบับ</b> &nbsp;|&nbsp; ${depts.length} ฝ่าย</div>`;
+      <div style="color:var(--gray-500);">รวมทั้งหมด <b style="color:var(--gray-800)">${data.length} ฉบับ</b> &nbsp;|&nbsp; ${depts.length} ฝ่าย</div>
+      ${rangeInfo ? `<div style="color:#9ca3af;font-size:11px;margin-top:3px;">🔍 กรอง: ${rangeInfo} &nbsp;|&nbsp; ข้อมูลทั้งหมดในระบบ: ${allData.length} รายการ</div>` : ''}`;
   } catch(e) {
     box.innerHTML = 'กรุณาเลือกช่วงเวลา';
   }
