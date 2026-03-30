@@ -784,7 +784,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxNS5BIutg_gLwl6nKJbF2O0s6USoAgfyALNlT6x9kJQzZ8EQ6mfUrG6WKS6YuxNptG/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbz-vU-KHUYF9P9QBywdRKokH_1kxVNrUaqAAHTm-8t3zJ3WoQf-yIKf5-f7I4GGhz5l/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -798,23 +798,52 @@ const DEPT_CONFIG = {
 // ══════════════════════════════════════════
 // STATE (localStorage as local DB)
 // ══════════════════════════════════════════
+function normalizeDateField(val) {
+  // Google Sheets อาจส่ง date เป็น "Sun Mar 30 2026 00:00:00 GMT+0700" หรือ "30/3/2569" หรือ "2026-03-30"
+  // → normalize ให้เป็น YYYY-MM-DD เสมอ
+  if (!val) return '';
+  const s = String(val).trim();
+  // Already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  // Try parse as date object string
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  return s;
+}
+
 // ── Local cache (fallback เมื่อ offline หรือยังไม่ได้ตั้ง GAS_URL) ──
 function loadData() {
-  try { return JSON.parse(localStorage.getItem('memoData') || '[]'); } catch { return []; }
+  try {
+    const raw = JSON.parse(localStorage.getItem('memoData') || '[]');
+    // normalize date field ทุก record เผื่อข้อมูลเก่าผิด format
+    return raw.map(r => ({ ...r, date: normalizeDateField(r.date || '') }));
+  } catch { return []; }
 }
 function saveData(data) {
   localStorage.setItem('memoData', JSON.stringify(data));
 }
 
 // ── Sync จาก Google Sheets ──
+
 async function syncFromSheets() {
   if (!GAS_URL) return;
   try {
     const res = await fetch(GAS_URL + '?action=getAll', { method: 'GET' });
     const json = await res.json();
     if (json.status === 'ok' && Array.isArray(json.data)) {
-      saveData(json.data);
-      return json.data;
+      // Normalize date field ทุก record
+      const normalized = json.data.map(r => ({
+        ...r,
+        date: normalizeDateField(r.date),
+        id: Number(r.id) || r.id
+      }));
+      saveData(normalized);
+      return normalized;
     }
   } catch(e) { console.warn('Sync failed:', e); }
   return null;
@@ -1726,27 +1755,83 @@ function showToast(msg, type = 'info') {
 </script>
 
 <!-- Google Apps Script Integration Guide (collapsed) -->
-<details style="position:fixed;bottom:16px;right:16px;z-index:50;max-width:320px;">
+<details style="position:fixed;bottom:16px;right:16px;z-index:50;max-width:360px;">
   <summary style="background:white;border:1.5px solid var(--pink-200);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--pink-600);box-shadow:var(--shadow-md);">
     ⚙️ เชื่อมต่อ Google Sheets
   </summary>
-  <div style="background:white;border:1.5px solid var(--gray-200);border-radius:10px;padding:16px;margin-top:6px;font-size:12px;color:var(--gray-700);box-shadow:var(--shadow-lg);">
+  <div style="background:white;border:1.5px solid var(--gray-200);border-radius:10px;padding:16px;margin-top:6px;font-size:11px;color:var(--gray-700);box-shadow:var(--shadow-lg);max-height:400px;overflow-y:auto;">
     <b>วิธีเชื่อมต่อ Google Sheets:</b><br><br>
-    1. สร้าง Google Sheet ใหม่<br>
-    2. ไปที่ Extensions → Apps Script<br>
-    3. วางโค้ด GAS ด้านล่าง:<br><br>
-    <code style="background:var(--gray-100);padding:8px;border-radius:6px;display:block;font-size:11px;overflow-x:auto;">
-function doPost(e){<br>
-&nbsp;var d=JSON.parse(e.postData.contents);<br>
-&nbsp;var ss=SpreadsheetApp.getActiveSpreadsheet();<br>
-&nbsp;var sh=ss.getSheetByName('Memos')||ss.insertSheet('Memos');<br>
-&nbsp;if(sh.getLastRow()===0)sh.appendRow(['ID','เลขที่บันทึก','ชื่อ','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลา']);<br>
-&nbsp;sh.appendRow([d.id,d.memoNum,d.name,d.position,d.dept,d.subject,d.date,d.desc,d.timestamp]);<br>
-&nbsp;return ContentService.createTextOutput('OK');<br>
+    1. สร้าง Google Sheet ใหม่ ตั้งชื่อ sheet แรกว่า <b>Memos</b><br>
+    2. Extensions → Apps Script → วางโค้ดนี้:<br><br>
+    <code style="background:var(--gray-100);padding:8px;border-radius:6px;display:block;font-size:10px;overflow-x:auto;white-space:pre;line-height:1.6;">
+const SHEET_NAME = 'Memos';
+
+function doGet(e) {
+  if (e.parameter.action === 'getAll') {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() <= 1)
+      return output({ status:'ok', data:[] });
+    const rows = sheet.getDataRange().getValues();
+    const headers = rows[0];
+    const data = rows.slice(1).map(r => {
+      const obj = {};
+      headers.forEach((h, i) => {
+        let val = r[i];
+        if (h === 'date') {
+          // force YYYY-MM-DD string
+          if (val instanceof Date) {
+            const y = val.getFullYear();
+            const m = String(val.getMonth()+1).padStart(2,'0');
+            const d = String(val.getDate()).padStart(2,'0');
+            val = y+'-'+m+'-'+d;
+          } else {
+            val = String(val).replace(/^'+/, '').trim();
+          }
+        }
+        if (h === 'id') val = String(val);
+        obj[h] = val;
+      });
+      return obj;
+    }).reverse();
+    return output({ status:'ok', data });
+  }
+  return output({ status:'error' });
+}
+
+function doPost(e) {
+  const body = JSON.parse(e.postData.contents);
+  if (body.action === 'add') {
+    const r = body.record;
+    const sheet = getOrCreateSheet();
+    if (sheet.getLastRow() === 0)
+      sheet.appendRow(['id','memoNum','name','position',
+                       'dept','subject','date','desc','timestamp']);
+    // prefix ' เพื่อกัน Sheets แปลง date เป็น Date object
+    sheet.appendRow([String(r.id), r.memoNum, r.name,
+      r.position, r.dept, r.subject,
+      "'" + r.date, r.desc||'', r.timestamp]);
+    return output({ status:'ok' });
+  }
+  return output({ status:'error' });
+}
+
+function getOrCreateSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  return ss.getSheetByName(SHEET_NAME)
+    || ss.insertSheet(SHEET_NAME);
+}
+
+function output(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
 }
     </code><br>
-    4. Deploy → Web App → Anyone can access<br>
-    5. คัดลอก URL ใส่ใน <code>GAS_URL</code> ในโค้ด
+    3. Deploy → New deployment → Web app<br>
+    &nbsp;&nbsp;&nbsp;Execute as: <b>Me</b> | Access: <b>Anyone</b><br>
+    4. คัดลอก URL → วางใน <code>GAS_URL</code> ในโค้ด<br><br>
+    <b style="color:#ef4444;">⚠️ หมายเหตุ:</b> ถ้าแก้โค้ด GAS ต้อง <b>Deploy ใหม่</b> (New deployment) ทุกครั้ง ไม่ใช่แค่ Save
   </div>
 </details>
 
