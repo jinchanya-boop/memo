@@ -587,6 +587,7 @@
       <button class="nav-tab active" onclick="showPage('form')">📝 ขอเลขที่บันทึก</button>
       <button class="nav-tab" onclick="showPage('result')" id="resultTab">📄 ผลลัพธ์</button>
       <button class="nav-tab" onclick="showPage('admin')">📊 แดชบอร์ด</button>
+      <button class="nav-tab" onclick="showPage('settings')">⚙️ ตั้งค่า</button>
     </div>
   </div>
 </nav>
@@ -837,6 +838,59 @@
   </div>
 </div>
 
+<!-- ══════════════ PAGE: SETTINGS ══════════════ -->
+<div class="page" id="page-settings">
+  <div class="container">
+    <div style="max-width:700px;margin:0 auto;">
+
+      <div class="hero" style="padding:32px 0 20px;">
+        <div class="hero-badge">⚙️ ตั้งค่าระบบ</div>
+        <h1 class="hero-title">กำหนดเลขเริ่มต้น</h1>
+        <p class="hero-sub">ตั้งค่าเลขที่บันทึกข้อความเริ่มต้นของแต่ละฝ่าย สำหรับปีที่ต้องการ</p>
+      </div>
+
+      <!-- Starting number card -->
+      <div class="card">
+        <div class="card-title"><span>🔢</span> กำหนดเลขเริ่มต้นแต่ละฝ่าย</div>
+
+        <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#374151;">
+          <b>💡 วิธีใช้:</b> ใส่เลขที่ต้องการเริ่มต้น เช่น ถ้าต้องการให้เลขถัดไปเป็น <b>วช126/2569</b> ให้ใส่ <b>125</b>
+          (ระบบจะออกเลข 126 เป็นเลขถัดไป) หรือถ้าต้องการเริ่มที่ 1 ให้ใส่ 0
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label class="form-label" style="margin-bottom:8px;">ปี พ.ศ. ที่ต้องการตั้งค่า</label>
+          <select class="form-select" id="cfg-year" style="max-width:200px;" onchange="loadStartConfig()">
+          </select>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="startNumGrid">
+          <!-- filled by JS -->
+        </div>
+
+        <div style="margin-top:20px;padding:14px 16px;background:#f9f9ff;border-radius:10px;border:1.5px dashed #e0e7ff;">
+          <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;">👁️ ตัวอย่างเลขที่จะออกถัดไป</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;" id="previewNextNums">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px;">
+          <button class="btn btn-primary" onclick="saveStartConfig()">💾 บันทึกการตั้งค่า</button>
+          <button class="btn btn-secondary" onclick="resetStartConfig()">↩️ รีเซ็ตเป็นค่าเริ่มต้น</button>
+        </div>
+      </div>
+
+      <!-- Current config display -->
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span>📋</span> การตั้งค่าปัจจุบันทั้งหมด</div>
+        <div id="allConfigTable"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ══════════════ REPORT MODAL ══════════════ -->
 <div class="overlay" id="reportOverlay">
   <div class="popup" style="max-width:520px;width:94%;text-align:left;padding:32px 30px;">
@@ -1082,18 +1136,41 @@ function updateDeptPreview() {
 // ══════════════════════════════════════════
 // MEMO NUMBER LOGIC
 // ══════════════════════════════════════════
+function loadStartConfig() {
+  const year = parseInt(document.getElementById('cfg-year')?.value || getThaiBE());
+  renderStartNumGrid(year);
+  renderPreviewNextNums(year);
+  renderAllConfigTable();
+}
+
+function getStartConfig(dept, year) {
+  try {
+    const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    const key = dept + '_' + year;
+    return all[key] !== undefined ? parseInt(all[key]) : 0;
+  } catch { return 0; }
+}
+
+function setStartConfig(dept, year, val) {
+  try {
+    const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    all[dept + '_' + year] = val;
+    localStorage.setItem('startConfig', JSON.stringify(all));
+  } catch {}
+}
+
 function getNextNumber(dept, year) {
   const data = loadData();
   const cfg = DEPT_CONFIG[dept];
   const prefix = cfg.prefix;
+  // ดึง startConfig เป็น floor ขั้นต่ำ
+  const startFloor = getStartConfig(dept, year);
   // Filter same dept + year
   const existing = data.filter(r => {
     const parts = r.memoNum.split('/');
     return r.dept === dept && parts[1] == year;
   });
-  if (existing.length === 0) return 1;
-  // Get max running number
-  let maxNum = 0;
+  let maxNum = startFloor; // เริ่มจาก startConfig ถ้าไม่มีข้อมูล
   existing.forEach(r => {
     const numPart = r.memoNum.replace(prefix, '').split('/')[0];
     const n = parseInt(numPart, 10);
@@ -1948,6 +2025,141 @@ async function buildSummaryPDF(report) {
 
 
 // ══════════════════════════════════════════
+// SETTINGS PAGE
+// ══════════════════════════════════════════
+function initSettingsPage() {
+  const yearSel = document.getElementById('cfg-year');
+  if (!yearSel) return;
+  const thisYear = getThaiBE();
+  yearSel.innerHTML = '';
+  for (let y = thisYear; y >= thisYear - 3; y--) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = `พ.ศ. ${y}`;
+    if (y === thisYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  }
+  renderStartNumGrid(thisYear);
+  renderPreviewNextNums(thisYear);
+  renderAllConfigTable();
+}
+
+function renderStartNumGrid(year) {
+  const grid = document.getElementById('startNumGrid');
+  if (!grid) return;
+  const depts = Object.entries(DEPT_CONFIG);
+  grid.innerHTML = depts.map(([dept, cfg]) => {
+    const cur = getStartConfig(dept, year);
+    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+    const col = colors[cfg.prefix] || '#6b7280';
+    return `<div style="background:white;border:1.5px solid ${col}30;border-radius:12px;padding:16px;border-top:3px solid ${col};">
+      <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${dept}</div>
+      <div style="font-size:18px;font-weight:800;color:${col};font-family:'Kanit',sans-serif;margin-bottom:10px;">${cfg.prefix}___/${year}</div>
+      <label class="form-label">เลขเริ่มต้น (ก่อนเลขถัดไป)</label>
+      <input class="form-input" id="start-${cfg.prefix}" type="number" min="0" max="9999"
+        value="${cur}" placeholder="0"
+        oninput="renderPreviewNextNums(${year})"
+        style="margin-top:4px;">
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${String(cur+1).padStart(3,'0')}/${year}</b></div>
+    </div>`;
+  }).join('');
+}
+
+function renderPreviewNextNums(year) {
+  const preview = document.getElementById('previewNextNums');
+  if (!preview) return;
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  preview.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
+    const inputEl = document.getElementById('start-' + cfg.prefix);
+    const val = inputEl ? (parseInt(inputEl.value) || 0) : getStartConfig(dept, year);
+    const nextNum = String(val + 1).padStart(3, '0');
+    const col = colors[cfg.prefix] || '#6b7280';
+    // Update inline preview too
+    const inlineEl = document.getElementById('next-preview-' + cfg.prefix);
+    if (inlineEl) inlineEl.textContent = `${cfg.prefix}${nextNum}/${year}`;
+    return `<div style="background:white;border:1.5px solid ${col}40;border-radius:10px;padding:10px 16px;text-align:center;">
+      <div style="font-size:10px;color:#9ca3af;">${dept.replace('ฝ่าย','')}</div>
+      <div style="font-size:20px;font-weight:900;color:${col};font-family:'Kanit',sans-serif;">${cfg.prefix}${nextNum}/${year}</div>
+    </div>`;
+  }).join('');
+}
+
+function saveStartConfig() {
+  const year = parseInt(document.getElementById('cfg-year').value);
+  Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
+    const el = document.getElementById('start-' + cfg.prefix);
+    if (el) {
+      const val = Math.max(0, parseInt(el.value) || 0);
+      setStartConfig(dept, year, val);
+    }
+  });
+  renderAllConfigTable();
+  renderPreviewNextNums(year);
+  showToast('บันทึกการตั้งค่าเรียบร้อย ✓', 'success');
+}
+
+function resetStartConfig() {
+  if (!confirm('รีเซ็ตเลขเริ่มต้นทุกฝ่ายเป็น 0 ใช่หรือไม่?')) return;
+  const year = parseInt(document.getElementById('cfg-year').value);
+  Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
+    setStartConfig(dept, year, 0);
+    const el = document.getElementById('start-' + cfg.prefix);
+    if (el) el.value = 0;
+  });
+  renderPreviewNextNums(year);
+  renderAllConfigTable();
+  showToast('รีเซ็ตเลขเริ่มต้นแล้ว', 'success');
+}
+
+function renderAllConfigTable() {
+  const el = document.getElementById('allConfigTable');
+  if (!el) return;
+  try {
+    const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    const keys = Object.keys(all).filter(k => all[k] > 0);
+    if (!keys.length) {
+      el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:20px;font-size:13px;">ยังไม่มีการตั้งค่าเลขเริ่มต้น (ค่าเริ่มต้นคือ 0 ทุกฝ่าย)</div>';
+      return;
+    }
+    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+    el.innerHTML = `<div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
+          <th style="padding:10px 14px;text-align:left;color:white;">ฝ่าย</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">ปี พ.ศ.</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">เลขเริ่มต้น</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">เลขถัดไป</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">จัดการ</th>
+        </tr></thead>
+        <tbody>${keys.map((k,i) => {
+          const [dept, year] = k.split('_');
+          const cfg = DEPT_CONFIG[dept] || {};
+          const val = all[k];
+          const col = colors[cfg.prefix] || '#6b7280';
+          const next = `${cfg.prefix}${String(val+1).padStart(3,'0')}/${year}`;
+          return `<tr style="background:${i%2===0?'#f9f9ff':'white'};">
+            <td style="padding:10px 14px;font-weight:600;">${dept}</td>
+            <td style="padding:10px 14px;text-align:center;color:#6b7280;">พ.ศ. ${year}</td>
+            <td style="padding:10px 14px;text-align:center;">${val}</td>
+            <td style="padding:10px 14px;text-align:center;font-weight:800;color:${col};font-family:'Kanit',sans-serif;">${next}</td>
+            <td style="padding:10px 14px;text-align:center;">
+              <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;"
+                onclick="clearOneDeptConfig('${dept}','${year}')">ลบ</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>`;
+  } catch {}
+}
+
+function clearOneDeptConfig(dept, year) {
+  const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+  delete all[dept + '_' + year];
+  localStorage.setItem('startConfig', JSON.stringify(all));
+  renderAllConfigTable();
+  showToast(`ลบการตั้งค่า ${dept} ปี ${year} แล้ว`, 'success');
+}
+
+// ══════════════════════════════════════════
 // NAVIGATION
 // ══════════════════════════════════════════
 function showPage(name) {
@@ -1956,12 +2168,13 @@ function showPage(name) {
   document.getElementById('page-' + name).classList.add('active');
   // Match tab
   const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap = { form: 0, result: 1, admin: 2 };
+  const tabMap = { form: 0, result: 1, admin: 2, settings: 3 };
   if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
   if (name === 'admin') {
     if (GAS_URL) syncFromSheets().then(d => { if(d) updateAdminStats(); });
     else updateAdminStats();
   }
+  if (name === 'settings') initSettingsPage();
 }
 
 // ══════════════════════════════════════════
