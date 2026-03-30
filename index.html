@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --pink-50: #fdf2f8;
@@ -979,136 +980,102 @@ function populateResult(r) {
 // ══════════════════════════════════════════
 // PDF EXPORT
 // ══════════════════════════════════════════
-function downloadPDF() {
+async function downloadPDF() {
   if (!currentResult) { showToast('ไม่มีข้อมูลสำหรับสร้าง PDF', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
-  setTimeout(() => {
-    generateMemosPDF([currentResult]);
+  try {
+    await generateMemosPDF([currentResult]);
     hideLoading();
-  }, 800);
+  } catch(e) {
+    hideLoading();
+    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
+  }
 }
 
-function generateMemosPDF(records) {
+async function generateMemosPDF(records) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  records.forEach((r, i) => {
+  for (let i = 0; i < records.length; i++) {
+    const r = records[i];
+    const cfg = Object.values(DEPT_CONFIG).find(c => c.prefix === (DEPT_CONFIG[r.dept]||{}).prefix) || {};
+    const deptColor = DEPT_CONFIG[r.dept]?.color || '#ec4899';
+
+    const memoHTML = `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;box-sizing:border-box;padding:0;position:relative;">
+      <div style="height:8px;background:linear-gradient(90deg,#ec4899,#3b82f6);"></div>
+      <div style="text-align:center;padding:20px 0 12px;">
+        <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
+        <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
+        <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ / หนังสือราชการ</div>
+      </div>
+      <div style="margin:0 36px;border-top:2px solid #fce7f3;"></div>
+
+      <div style="padding:24px 48px 80px;">
+        <!-- Memo number hero -->
+        <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
+          <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขหนังสือราชการ</div>
+          <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.memoNum}</div>
+          <div style="display:inline-block;background:${deptColor};color:white;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:700;margin-top:8px;">${r.dept}</div>
+        </div>
+
+        <!-- Info table -->
+        <table style="width:100%;border-collapse:collapse;font-size:14px;">
+          <tr style="background:#f9f9ff;">
+            <td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ชื่อ-สกุล</td>
+            <td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td>
+          </tr>
+          <tr>
+            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏷️ ตำแหน่ง</td>
+            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.position}</td>
+          </tr>
+          <tr style="background:#f9f9ff;">
+            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏢 ฝ่าย</td>
+            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.dept}</td>
+          </tr>
+          <tr>
+            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td>
+            <td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td>
+          </tr>
+          <tr style="background:#f9f9ff;">
+            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td>
+            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td>
+          </tr>
+          ${r.desc ? `<tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
+        </table>
+
+        <!-- Timestamp -->
+        <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">
+          ออกเลขเมื่อ: ${r.timestamp}
+        </div>
+
+        <!-- Signature area -->
+        <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+          ${['ผู้ขอ','ผู้ตรวจสอบ','ผู้อนุมัติ'].map(lbl=>`
+            <div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;">
+              <div style="height:50px;"></div>
+              <div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:white;font-size:10px;">เลขที่ ${r.memoNum}</div>
+        <div style="color:white;font-size:10px;">ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}</div>
+      </div>
+    </div>`;
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:9999;';
+    wrapper.innerHTML = memoHTML;
+    document.body.appendChild(wrapper);
+    await new Promise(res => setTimeout(res, 200));
+    const canvas = await html2canvas(wrapper, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    document.body.removeChild(wrapper);
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
     if (i > 0) doc.addPage();
-
-    const pw = 210; // page width
-    const ml = 25; // margin left
-    const mr = 185; // margin right
-    let y = 20;
-
-    // Header bar
-    doc.setFillColor(236, 72, 153);
-    doc.rect(0, 0, pw, 8, 'F');
-    doc.setFillColor(59, 130, 246);
-    doc.rect(0, 8, pw, 3, 'F');
-
-    // School name (use Latin fallback since jsPDF doesn't support Thai fonts by default)
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(30, 30, 60);
-    // We'll use English approximations since custom Thai font embedding requires ttf files
-    doc.text(SCHOOL_NAME, pw/2, y + 10, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 120);
-    doc.text(SCHOOL_PROVINCE, pw/2, y + 17, { align: 'center' });
-
-    y += 28;
-
-    // Divider
-    doc.setDrawColor(220, 220, 235);
-    doc.setLineWidth(0.5);
-    doc.line(ml, y, mr, y);
-    y += 8;
-
-    // Memo number box
-    doc.setFillColor(253, 242, 248);
-    doc.setDrawColor(236, 72, 153);
-    doc.setLineWidth(0.8);
-    doc.roundedRect(ml, y, mr - ml, 22, 3, 3, 'FD');
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.setTextColor(180, 40, 100);
-    doc.text('Memo No. / เลขหนังสือราชการ', pw/2, y + 7, { align: 'center' });
-    doc.setFontSize(22);
-    doc.setTextColor(30, 30, 180);
-    doc.text(r.memoNum, pw/2, y + 18, { align: 'center' });
-
-    y += 32;
-
-    // Info table
-    const fields = [
-      ['ชื่อ-สกุล / Name', r.name],
-      ['ตำแหน่ง / Position', r.position],
-      ['ฝ่าย / Department', r.dept],
-      ['เรื่อง / Subject', r.subject],
-      ['วันที่ / Date', formatThaiDate(r.date)],
-    ];
-    if (r.desc) fields.push(['รายละเอียด / Details', r.desc]);
-
-    doc.setFontSize(10);
-    fields.forEach(([label, val], idx) => {
-      const rowH = 14;
-      const rowY = y + idx * rowH;
-      // Alt row bg
-      if (idx % 2 === 0) {
-        doc.setFillColor(249, 250, 255);
-        doc.rect(ml, rowY - 3, mr - ml, rowH, 'F');
-      }
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(100, 100, 130);
-      doc.text(label + ':', ml + 2, rowY + 6);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(30, 30, 60);
-      const valX = ml + 65;
-      const valLines = doc.splitTextToSize(val, mr - valX - 2);
-      doc.text(valLines, valX, rowY + 6);
-    });
-
-    y += fields.length * 14 + 12;
-
-    // Signature area
-    doc.setDrawColor(200, 200, 220);
-    doc.setLineWidth(0.3);
-    doc.line(ml, y, mr, y);
-    y += 10;
-
-    doc.setFontSize(9);
-    doc.setTextColor(150, 150, 170);
-    doc.text(`ออกโดยระบบขอเลขหนังสือราชการ | ${r.timestamp}`, pw/2, y, { align: 'center' });
-
-    y += 15;
-    // Signature boxes
-    const sigBoxW = 55; const sigBoxH = 20;
-    const sigBoxes = [
-      { label: 'ผู้ขอ', x: ml + 5 },
-      { label: 'ผู้ตรวจสอบ', x: pw/2 - sigBoxW/2 },
-      { label: 'ผู้อนุมัติ', x: mr - sigBoxW - 5 }
-    ];
-    sigBoxes.forEach(b => {
-      doc.setDrawColor(200, 200, 220);
-      doc.setFillColor(250, 250, 255);
-      doc.roundedRect(b.x, y, sigBoxW, sigBoxH, 2, 2, 'FD');
-      doc.setFontSize(8);
-      doc.setTextColor(150, 150, 170);
-      doc.text(b.label, b.x + sigBoxW/2, y + 13, { align: 'center' });
-    });
-
-    // Footer
-    doc.setFillColor(236, 72, 153);
-    doc.rect(0, 287, pw, 3, 'F');
-    doc.setFillColor(59, 130, 246);
-    doc.rect(0, 290, pw, 7, 'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(255, 255, 255);
-    doc.text(`หนังสือเลขที่ ${r.memoNum}  •  ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}`, pw/2, 295, { align: 'center' });
-  });
+    doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+  }
 
   doc.save(`หนังสือราชการ_${records[0].memoNum.replace('/','-')}.pdf`);
   showToast('ดาวน์โหลด PDF สำเร็จ', 'success');
@@ -1200,11 +1167,14 @@ function viewRecord(id) {
   showPage('result');
 }
 
-function downloadRecordPDF(id) {
+async function downloadRecordPDF(id) {
   const r = loadData().find(x => x.id === id);
   if (!r) return;
   showLoading('กำลังสร้าง PDF...');
-  setTimeout(() => { generateMemosPDF([r]); hideLoading(); }, 600);
+  try {
+    await generateMemosPDF([r]);
+    hideLoading();
+  } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด', 'error'); }
 }
 
 function deleteRecord(id) {
@@ -1366,359 +1336,318 @@ function updateReportPreview() {
 // ══════════════════════════════════════════
 // SUMMARY REPORT PDF ENGINE
 // ══════════════════════════════════════════
-function generateReportPDF() {
+async function generateReportPDF() {
   const report = getReportData();
   if (!report.data.length) { showToast('ไม่มีข้อมูลในช่วงเวลาที่เลือก', 'error'); return; }
 
   closeReportModal();
-  showLoading('กำลังสร้างรายงานสรุป PDF...');
+  showLoading('กำลังสร้างรายงานสรุป PDF... (อาจใช้เวลา 5-15 วินาที)');
 
-  setTimeout(() => {
-    try {
-      buildSummaryPDF(report);
-      hideLoading();
-      showToast('สร้างรายงาน PDF สำเร็จ', 'success');
-    } catch(e) {
-      hideLoading();
-      showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
-    }
-  }, 900);
+  try {
+    await buildSummaryPDF(report);
+    hideLoading();
+    showToast('สร้างรายงาน PDF สำเร็จ', 'success');
+  } catch(e) {
+    hideLoading();
+    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
+    console.error(e);
+  }
 }
 
-function buildSummaryPDF(report) {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const pw = 210; const ph = 297;
-  const ml = 18; const mr = 192; const cw = mr - ml;
-
-  const DEPT_COLORS = {
-    'ฝ่ายวิชาการ':    [37, 99, 235],
-    'ฝ่ายบุคคล':      [219, 39, 119],
-    'ฝ่ายงบประมาณ':   [217, 119, 6],
-    'ฝ่ายบริหารทั่วไป':[5, 150, 105]
+async function buildSummaryPDF(report) {
+  // ── Build HTML pages, render with html2canvas, export as PDF ──
+  const DEPT_CFG = {
+    'ฝ่ายวิชาการ':     { prefix:'วช', color:'#2563eb', bg:'#eff6ff', border:'#93c5fd' },
+    'ฝ่ายบุคคล':       { prefix:'บค', color:'#db2777', bg:'#fdf2f8', border:'#f9a8d4' },
+    'ฝ่ายงบประมาณ':    { prefix:'งบ', color:'#d97706', bg:'#fffbeb', border:'#fcd34d' },
+    'ฝ่ายบริหารทั่วไป':{ prefix:'บท', color:'#059669', bg:'#ecfdf5', border:'#6ee7b7' }
   };
-  const DEPT_PREFIXES = { 'ฝ่ายวิชาการ':'วช','ฝ่ายบุคคล':'บค','ฝ่ายงบประมาณ':'งบ','ฝ่ายบริหารทั่วไป':'บท' };
-
-  function pageHeader(pageNum) {
-    // Top gradient bar
-    doc.setFillColor(236, 72, 153);
-    doc.rect(0, 0, pw, 6, 'F');
-    doc.setFillColor(59, 130, 246);
-    doc.rect(0, 6, pw, 2.5, 'F');
-    // School
-    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(30,30,60);
-    doc.text(SCHOOL_NAME, pw/2, 18, {align:'center'});
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,140);
-    doc.text(SCHOOL_PROVINCE, pw/2, 24, {align:'center'});
-    // Report type badge
-    const badge = report.period === 'daily' ? 'รายงานประจำวัน' : report.period === 'weekly' ? 'รายงานประจำสัปดาห์' : 'รายงานประจำปี';
-    doc.setFillColor(253,242,248); doc.setDrawColor(236,72,153); doc.setLineWidth(0.5);
-    doc.roundedRect(pw/2 - 30, 27, 60, 8, 2, 2, 'FD');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(219,39,119);
-    doc.text(badge, pw/2, 32.5, {align:'center'});
-    // Period label
-    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(30,30,60);
-    doc.text(report.label, pw/2, 42, {align:'center'});
-    // Divider
-    doc.setDrawColor(230,210,235); doc.setLineWidth(0.5);
-    doc.line(ml, 46, mr, 46);
-    if (pageNum > 1) {
-      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(160,160,180);
-      doc.text(`(ต่อ)`, mr, 42, {align:'right'});
-    }
-  }
-
-  function pageFooter(pageNum, totalPages) {
-    doc.setFillColor(59,130,246);
-    doc.rect(0, ph - 10, pw, 10, 'F');
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-    doc.text(`ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME}  •  พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}`, ml, ph-4);
-    doc.text(`หน้า ${pageNum}/${totalPages}`, mr, ph-4, {align:'right'});
-  }
-
-  // ── PAGE 1: Summary Overview ──
-  let pageNum = 1;
-  pageHeader(1);
-  let y = 52;
-
-  // ─ Total KPI boxes ─
-  const allDepts = Object.keys(DEPT_COLORS);
-  const deptStats = allDepts.map(d => ({
-    dept: d, prefix: DEPT_PREFIXES[d],
-    count: report.data.filter(r => r.dept === d).length,
-    color: DEPT_COLORS[d]
-  }));
-  const total = report.data.length;
-  const maxDept = deptStats.reduce((a,b) => b.count > a.count ? b : a, deptStats[0]);
-
-  // Summary info row
-  doc.setFillColor(249,250,255); doc.setDrawColor(220,220,235); doc.setLineWidth(0.3);
-  doc.roundedRect(ml, y, cw, 16, 3, 3, 'FD');
-  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(100,100,140);
-  doc.text('รวมหนังสือทั้งหมด', ml+6, y+7);
-  doc.setFontSize(16); doc.setTextColor(30,30,180);
-  doc.text(String(total), ml+48, y+11);
-  doc.setFontSize(9); doc.setTextColor(100,100,140);
-  doc.text('ฉบับ', ml+60, y+7);
-  doc.text(`ฝ่ายที่มีมากที่สุด: ${maxDept.dept} (${maxDept.count} ฉบับ)`, ml+85, y+7);
-  doc.text(`ช่วงเวลา: ${report.label}`, ml+85, y+12);
-  y += 22;
-
-  // ─ Department Summary Cards (2x2 grid) ─
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(50,50,80);
-  doc.text('สรุปยอดตามฝ่าย', ml, y+5);
-  y += 9;
-
-  const cardW = (cw - 8) / 2; const cardH = 30;
-  deptStats.forEach((ds, i) => {
-    const col = i % 2; const row = Math.floor(i / 2);
-    const cx = ml + col * (cardW + 8);
-    const cy = y + row * (cardH + 6);
-    const [r2,g,b] = ds.color;
-    // Card bg
-    doc.setFillColor(r2, g, b); doc.setDrawColor(r2,g,b); doc.setLineWidth(0);
-    doc.roundedRect(cx, cy, cardW, cardH, 3, 3, 'F');
-    // Lighter inner
-    doc.setFillColor(255,255,255); doc.setGState(new doc.GState({opacity:0.12}));
-    doc.roundedRect(cx+2, cy+2, cardW-4, cardH-4, 2, 2, 'F');
-    doc.setGState(new doc.GState({opacity:1}));
-    // Prefix big
-    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.setTextColor(255,255,255);
-    doc.text(ds.prefix, cx+6, cy+19);
-    // Dept name
-    doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text(ds.dept, cx + cardW/2, cy+10, {align:'center'});
-    // Count
-    doc.setFont('helvetica','bold'); doc.setFontSize(22);
-    doc.text(String(ds.count), cx + cardW - 8, cy+22, {align:'right'});
-    doc.setFontSize(8); doc.setFont('helvetica','normal');
-    doc.text('ฉบับ', cx + cardW - 6, cy+27, {align:'right'});
-    // Percentage bar
-    const pct = total > 0 ? ds.count / total : 0;
-    doc.setFillColor(255,255,255); doc.setGState(new doc.GState({opacity:0.3}));
-    doc.roundedRect(cx+4, cy+cardH-6, cardW-8, 3, 1, 1, 'F');
-    doc.setGState(new doc.GState({opacity:0.9}));
-    if (pct > 0) doc.roundedRect(cx+4, cy+cardH-6, (cardW-8)*pct, 3, 1, 1, 'F');
-    doc.setGState(new doc.GState({opacity:1}));
-    // Pct text
-    doc.setFontSize(7); doc.setTextColor(255,255,255);
-    doc.text(`${Math.round(pct*100)}%`, cx+4, cy+cardH-9);
-  });
-
-  y += 2 * (cardH + 6) + 6;
-
-  // ─ Bar chart (manual) ─
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(50,50,80);
-  doc.text('แผนภูมิแท่งเปรียบเทียบ', ml, y+5); y += 10;
-
-  const barArea = { x: ml+28, y, w: cw-38, h: 44 };
-  const barPad = 6;
-  const barW = (barArea.w - (deptStats.length-1)*barPad) / deptStats.length;
-  const maxCount = Math.max(...deptStats.map(d=>d.count), 1);
-
-  // Grid lines
-  doc.setDrawColor(220,220,235); doc.setLineWidth(0.3);
-  [0,0.25,0.5,0.75,1].forEach(pct => {
-    const gy = barArea.y + barArea.h * (1-pct);
-    doc.line(barArea.x, gy, barArea.x+barArea.w, gy);
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(160,160,180);
-    doc.text(String(Math.round(maxCount*pct)), barArea.x-2, gy+1, {align:'right'});
-  });
-
-  deptStats.forEach((ds, i) => {
-    const [r2,g,b] = ds.color;
-    const bx = barArea.x + i*(barW+barPad);
-    const bh = maxCount > 0 ? (ds.count/maxCount)*barArea.h : 0;
-    const by = barArea.y + barArea.h - bh;
-    doc.setFillColor(r2,g,b);
-    doc.roundedRect(bx, by, barW, bh + 0.1, 2, 2, 'F');
-    // Value on top
-    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(r2,g,b);
-    if (bh > 0) doc.text(String(ds.count), bx+barW/2, by-1.5, {align:'center'});
-    // Label below
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(80,80,100);
-    doc.text(ds.prefix, bx+barW/2, barArea.y+barArea.h+6, {align:'center'});
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(140,140,160);
-    doc.text(ds.dept.replace('ฝ่าย',''), bx+barW/2, barArea.y+barArea.h+11, {align:'center'});
-  });
-  y += barArea.h + 18;
-
-  // ─ Timeline breakdown ─
-  // For daily: show hour breakdown; weekly: by day; yearly: by month
-  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(50,50,80);
-
-  if (report.period === 'daily') {
-    doc.text('รายละเอียดตามช่วงเวลา (รายชั่วโมง)', ml, y+5); y += 10;
-    // Group by hour
-    const byHour = {};
-    report.data.forEach(r => {
-      const h = new Date(r.timestamp || r.date).getHours ? new Date(r.timestamp).getHours() : 0;
-      byHour[h] = (byHour[h]||0)+1;
-    });
-    // Table of hours
-    const hours = Object.keys(byHour).sort((a,b)=>a-b);
-    drawMiniTable(doc, ml, y, cw, hours.map((h,i) => [String(i+1), `${h}:00 น.`, String(byHour[h]), `${report.data.filter(r=>r.dept==='ฝ่ายวิชาการ' && (new Date(r.timestamp||r.date).getHours()||0)==h).length}`, `${report.data.filter(r=>r.dept==='ฝ่ายบุคคล' && (new Date(r.timestamp||r.date).getHours()||0)==h).length}`, `${report.data.filter(r=>r.dept==='ฝ่ายงบประมาณ' && (new Date(r.timestamp||r.date).getHours()||0)==h).length}`, `${report.data.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป' && (new Date(r.timestamp||r.date).getHours()||0)==h).length}`]),
-      ['#','ช่วงเวลา','รวม','วช','บค','งบ','บท'], [8,24,16,16,16,16,16]);
-    y += hours.length * 9 + 16;
-
-  } else if (report.period === 'weekly') {
-    doc.text('รายละเอียดตามวัน', ml, y+5); y += 10;
-    const days = [];
-    const fromD = new Date(report.from); const toD = new Date(report.to);
-    for (let d2 = new Date(fromD); d2 <= toD; d2.setDate(d2.getDate()+1)) {
-      days.push(d2.toISOString().split('T')[0]);
-    }
-    const thDays = ['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
-    const rows = days.map((ds2, i) => {
-      const dd = new Date(ds2);
-      const dayData = report.data.filter(r => r.date === ds2);
-      return [String(i+1), `${thDays[dd.getDay()]} ${dd.getDate()}/${dd.getMonth()+1}/${dd.getFullYear()+543}`,
-        String(dayData.length),
-        String(dayData.filter(r=>r.dept==='ฝ่ายวิชาการ').length),
-        String(dayData.filter(r=>r.dept==='ฝ่ายบุคคล').length),
-        String(dayData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length),
-        String(dayData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length)];
-    });
-    drawMiniTable(doc, ml, y, cw, rows, ['#','วัน','รวม','วช','บค','งบ','บท'], [8,40,16,16,16,16,16]);
-    y += rows.length * 9 + 16;
-
-  } else {
-    doc.text('รายละเอียดตามเดือน', ml, y+5); y += 10;
-    const thMonths = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-    const rows = thMonths.map((m, mi) => {
-      const mData = report.data.filter(r => new Date(r.date).getMonth() === mi);
-      return [String(mi+1), m,
-        String(mData.length),
-        String(mData.filter(r=>r.dept==='ฝ่ายวิชาการ').length),
-        String(mData.filter(r=>r.dept==='ฝ่ายบุคคล').length),
-        String(mData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length),
-        String(mData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length)];
-    }).filter(r => parseInt(r[2]) > 0);
-    drawMiniTable(doc, ml, y, cw, rows, ['#','เดือน','รวม','วช','บค','งบ','บท'], [8,28,18,18,18,18,18]);
-    y += rows.length * 9 + 16;
-  }
-
-  // First page footer placeholder (will redo at end)
-  pageFooter(1, '?');
-
-  // ── PAGE 2+: Per-dept detail tables ──
   const selectedDepts = getSelectedDepts();
-  let totalPages = 1;
-  const deptPages = [];
+  const total = report.data.length;
 
-  selectedDepts.forEach(dept => {
-    const deptData = report.data.filter(r => r.dept === dept);
-    if (!deptData.length) return;
+  // ── Compute stats ──
+  const deptStats = Object.keys(DEPT_CFG).map(d => ({
+    dept: d,
+    prefix: DEPT_CFG[d].prefix,
+    color: DEPT_CFG[d].color,
+    bg: DEPT_CFG[d].bg,
+    border: DEPT_CFG[d].border,
+    count: report.data.filter(r => r.dept === d).length
+  }));
+  const maxCount = Math.max(...deptStats.map(d => d.count), 1);
 
-    doc.addPage(); totalPages++; pageNum = totalPages;
-    pageHeader(pageNum);
-    let dy = 52;
-
-    const [dr,dg,db] = DEPT_COLORS[dept] || [100,100,200];
-    const prefix = DEPT_PREFIXES[dept] || '';
-
-    // Dept header
-    doc.setFillColor(dr,dg,db);
-    doc.roundedRect(ml, dy, cw, 14, 3, 3, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(13); doc.setTextColor(255,255,255);
-    doc.text(`${dept}  (${prefix})`, ml+6, dy+9.5);
-    doc.setFontSize(9);
-    doc.text(`${deptData.length} ฉบับ`, mr-4, dy+9.5, {align:'right'});
-    dy += 18;
-
-    // Sub-stats row
-    const latestNum = deptData.map(r=>r.memoNum).sort().pop() || '-';
-    const firstNum  = deptData.map(r=>r.memoNum).sort()[0] || '-';
-    doc.setFillColor(249,250,255); doc.setDrawColor(dr,dg,db); doc.setLineWidth(0.4);
-    doc.roundedRect(ml, dy, cw, 12, 2, 2, 'FD');
-    doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(80,80,120);
-    doc.text(`เลขแรก: ${firstNum}`, ml+4, dy+8);
-    doc.text(`เลขล่าสุด: ${latestNum}`, ml+50, dy+8);
-    doc.text(`รวม: ${deptData.length} ฉบับ  |  ${report.label}`, ml+110, dy+8);
-    dy += 16;
-
-    // Detail table
-    const headers = ['#','เลขหนังสือ','ชื่อ-สกุล','ตำแหน่ง','เรื่อง','วันที่'];
-    const colWidths = [8,28,40,32,60,28];
-    const rowH = 8.5;
-
-    // Draw table header
-    doc.setFillColor(dr,dg,db);
-    doc.rect(ml, dy, cw, 9, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-    let tx = ml+2;
-    headers.forEach((h,i) => { doc.text(h, tx, dy+6); tx += colWidths[i]; });
-    dy += 9;
-
-    deptData.forEach((r, idx) => {
-      if (dy > ph - 22) {
-        pageFooter(pageNum, '?');
-        doc.addPage(); totalPages++; pageNum = totalPages;
-        pageHeader(pageNum);
-        dy = 52;
-        // Re-draw header
-        doc.setFillColor(dr,dg,db); doc.rect(ml, dy, cw, 9, 'F');
-        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-        tx = ml+2; headers.forEach((h,i) => { doc.text(h, tx, dy+6); tx += colWidths[i]; }); dy += 9;
+  // ── Timeline rows ──
+  function getTimelineRows() {
+    if (report.period === 'daily') {
+      const byHour = {};
+      report.data.forEach(r => {
+        const ts = r.timestamp || '';
+        const m = ts.match(/(\d+):(\d+)/);
+        const h = m ? parseInt(m[1]) : 0;
+        if (!byHour[h]) byHour[h] = { วช:0,บค:0,งบ:0,บท:0,total:0 };
+        byHour[h][DEPT_CFG[r.dept]?.prefix||'']++;
+        byHour[h].total++;
+      });
+      return Object.keys(byHour).sort((a,b)=>+a-+b).map(h => [
+        `${h}:00 น.`, byHour[h].total, byHour[h].วช||0, byHour[h].บค||0, byHour[h].งบ||0, byHour[h].บท||0
+      ]);
+    } else if (report.period === 'weekly') {
+      const days=[]; const d0=new Date(report.from); const dE=new Date(report.to);
+      const thD=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
+      for(let d=new Date(d0);d<=dE;d.setDate(d.getDate()+1)){
+        const ds=d.toISOString().split('T')[0];
+        const dd=new Date(ds);
+        const dayData=report.data.filter(r=>r.date===ds);
+        days.push([`${thD[dd.getDay()]} ${dd.getDate()}/${dd.getMonth()+1}/${dd.getFullYear()+543}`,
+          dayData.length,
+          dayData.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
+          dayData.filter(r=>r.dept==='ฝ่ายบุคคล').length,
+          dayData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
+          dayData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length]);
       }
-      if (idx%2===0) { doc.setFillColor(249,250,255); doc.rect(ml, dy, cw, rowH, 'F'); }
-      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(40,40,70);
-      tx = ml+2;
-      const vals = [String(idx+1), r.memoNum, r.name.substring(0,18), r.position.substring(0,16), r.subject.substring(0,32), formatThaiDate(r.date)];
-      vals.forEach((v,i) => { doc.text(String(v), tx, dy+5.5); tx += colWidths[i]; });
-      dy += rowH;
+      return days;
+    } else {
+      const thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+      return thM.map((m,mi)=>{
+        const md=report.data.filter(r=>new Date(r.date).getMonth()===mi);
+        return [m,md.length,
+          md.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
+          md.filter(r=>r.dept==='ฝ่ายบุคคล').length,
+          md.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
+          md.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length];
+      }).filter(r=>r[1]>0);
+    }
+  }
+  const timelineRows = getTimelineRows();
+  const tlLabel = report.period==='daily'?'ตามชั่วโมง':report.period==='weekly'?'ตามวัน':'ตามเดือน';
+  const tlColHead = report.period==='daily'?'ชั่วโมง':report.period==='weekly'?'วัน':'เดือน';
+
+  // ── Bar chart SVG ──
+  const barW=80; const barGap=16; const chartH=120; const barChartW=deptStats.length*(barW+barGap);
+  const barsHTML = deptStats.map((ds,i)=>{
+    const bh = Math.max(4, (ds.count/maxCount)*chartH);
+    const by = chartH - bh;
+    return `<g>
+      <rect x="${i*(barW+barGap)}" y="${by}" width="${barW}" height="${bh}" rx="6" fill="${ds.color}" opacity="0.9"/>
+      <text x="${i*(barW+barGap)+barW/2}" y="${by-6}" text-anchor="middle" font-size="13" font-weight="700" fill="${ds.color}" font-family="Sarabun,sans-serif">${ds.count}</text>
+      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+18}" text-anchor="middle" font-size="11" font-weight="700" fill="#374151" font-family="Sarabun,sans-serif">${ds.prefix}</text>
+      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+32}" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Sarabun,sans-serif">${ds.dept.replace('ฝ่าย','')}</text>
+    </g>`;
+  }).join('');
+  const gridLines = [0,0.25,0.5,0.75,1].map(p=>{
+    const gy=chartH*(1-p);
+    return `<line x1="0" y1="${gy}" x2="${barChartW}" y2="${gy}" stroke="#e5e7eb" stroke-width="0.8"/>
+            <text x="-6" y="${gy+4}" text-anchor="end" font-size="10" fill="#9ca3af" font-family="Sarabun,sans-serif">${Math.round(maxCount*p)}</text>`;
+  }).join('');
+
+  // ── Page HTML builder ──
+  function pageShell(content, pageLabel='') {
+    return `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;position:relative;box-sizing:border-box;padding:0;">
+      <!-- Header bar -->
+      <div style="height:8px;background:linear-gradient(90deg,#ec4899,#3b82f6);"></div>
+      <!-- School header -->
+      <div style="text-align:center;padding:16px 0 6px;">
+        <div style="font-size:18px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
+        <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
+        <div style="display:inline-block;margin-top:6px;background:#fdf2f8;border:1.5px solid #ec4899;border-radius:999px;padding:3px 16px;font-size:11px;font-weight:700;color:#db2777;">
+          ${report.period==='daily'?'รายงานประจำวัน':report.period==='weekly'?'รายงานประจำสัปดาห์':'รายงานประจำปี'}
+        </div>
+        <div style="font-size:14px;font-weight:700;color:#1e1e3c;margin-top:6px;">${report.label}</div>
+        ${pageLabel?`<div style="font-size:11px;color:#9ca3af;">${pageLabel}</div>`:''}
+      </div>
+      <div style="margin:0 28px;border-top:1.5px solid #fce7f3;"></div>
+      <div style="padding:16px 28px 60px;">${content}</div>
+      <!-- Footer -->
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:6px 20px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:white;font-size:10px;">ระบบขอเลขหนังสือราชการ ${SCHOOL_NAME} • พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
+      </div>
+    </div>`;
+  }
+
+  // ── PAGE 1: Overview ──
+  const maxDept = deptStats.reduce((a,b)=>b.count>a.count?b:a,deptStats[0]);
+  const deptCardsHTML = deptStats.map(ds=>`
+    <div style="background:${ds.color};border-radius:12px;padding:16px 18px;color:white;position:relative;overflow:hidden;">
+      <div style="font-size:11px;opacity:0.85;margin-bottom:2px;">${ds.dept}</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+        <div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.prefix}</div>
+        <div style="font-size:40px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.count}</div>
+      </div>
+      <div style="font-size:10px;opacity:0.75;margin-top:2px;">ฉบับ</div>
+      <div style="margin-top:8px;background:rgba(255,255,255,0.25);border-radius:4px;height:5px;">
+        <div style="background:rgba(255,255,255,0.85);border-radius:4px;height:5px;width:${total>0?Math.round(ds.count/total*100):0}%;"></div>
+      </div>
+      <div style="font-size:10px;opacity:0.8;margin-top:2px;">${total>0?Math.round(ds.count/total*100):0}%</div>
+    </div>`).join('');
+
+  const timelineTableRows = timelineRows.map((r,i)=>`
+    <tr style="background:${i%2===0?'#f9f9ff':'white'};">
+      <td style="padding:7px 10px;font-weight:500;">${r[0]}</td>
+      <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1e1e3c;">${r[1]}</td>
+      <td style="padding:7px 10px;text-align:center;color:#2563eb;">${r[2]}</td>
+      <td style="padding:7px 10px;text-align:center;color:#db2777;">${r[3]}</td>
+      <td style="padding:7px 10px;text-align:center;color:#d97706;">${r[4]}</td>
+      <td style="padding:7px 10px;text-align:center;color:#059669;">${r[5]}</td>
+    </tr>`).join('');
+
+  const page1Content = `
+    <!-- KPI summary strip -->
+    <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div><div style="font-size:10px;color:#6b7280;">รวมหนังสือทั้งหมด</div><div style="font-size:28px;font-weight:900;color:#1e1e3c;font-family:'Kanit',sans-serif;line-height:1;">${total} <span style="font-size:12px;font-weight:400;color:#6b7280;">ฉบับ</span></div></div>
+      <div style="width:1px;height:40px;background:#fce7f3;"></div>
+      <div><div style="font-size:10px;color:#6b7280;">ฝ่ายที่มีมากที่สุด</div><div style="font-size:14px;font-weight:700;color:#db2777;">${maxDept.dept} (${maxDept.count} ฉบับ)</div></div>
+      <div style="width:1px;height:40px;background:#fce7f3;"></div>
+      <div><div style="font-size:10px;color:#6b7280;">ช่วงเวลา</div><div style="font-size:12px;font-weight:600;color:#374151;">${report.label}</div></div>
+    </div>
+
+    <!-- Dept cards -->
+    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📊 สรุปยอดตามฝ่าย</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      ${deptCardsHTML}
+    </div>
+
+    <!-- Bar chart -->
+    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📈 แผนภูมิแท่งเปรียบเทียบ</div>
+    <div style="background:#f9f9ff;border-radius:10px;padding:16px 20px;margin-bottom:20px;overflow-x:auto;">
+      <svg width="${barChartW+60}" height="${chartH+60}" style="overflow:visible;">
+        <g transform="translate(40,10)">
+          ${gridLines}
+          ${barsHTML}
+        </g>
+      </svg>
+    </div>
+
+    <!-- Timeline table -->
+    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📋 รายละเอียด${tlLabel}</div>
+    <div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
+            <th style="padding:9px 10px;text-align:left;color:white;font-weight:700;">${tlColHead}</th>
+            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">รวม</th>
+            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">วช</th>
+            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">บค</th>
+            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">งบ</th>
+            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">บท</th>
+          </tr>
+        </thead>
+        <tbody>${timelineTableRows}</tbody>
+        <tfoot>
+          <tr style="background:#fdf2f8;">
+            <td style="padding:8px 10px;font-weight:700;color:#374151;">รวมทั้งหมด</td>
+            <td style="padding:8px 10px;text-align:center;font-weight:900;color:#1e1e3c;">${total}</td>
+            ${deptStats.map(ds=>`<td style="padding:8px 10px;text-align:center;font-weight:700;color:${ds.color};">${ds.count}</td>`).join('')}
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
+
+  // ── Per-dept pages ──
+  function buildDeptPage(dept, deptData, pageLabel) {
+    const cfg = DEPT_CFG[dept];
+    const latestNum = deptData.map(r=>r.memoNum).sort().pop()||'-';
+    const firstNum  = deptData.map(r=>r.memoNum).sort()[0]||'-';
+    const rows = deptData.map((r,i)=>`
+      <tr style="background:${i%2===0?'#f9f9ff':'white'};">
+        <td style="padding:7px 8px;color:#9ca3af;font-size:11px;">${i+1}</td>
+        <td style="padding:7px 8px;font-weight:700;color:${cfg.color};font-family:'Kanit',sans-serif;">${r.memoNum}</td>
+        <td style="padding:7px 8px;">${r.name}</td>
+        <td style="padding:7px 8px;color:#6b7280;font-size:12px;">${r.position}</td>
+        <td style="padding:7px 8px;font-size:12px;">${r.subject.substring(0,36)}${r.subject.length>36?'…':''}</td>
+        <td style="padding:7px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
+      </tr>`).join('');
+
+    return `
+      <!-- Dept header -->
+      <div style="background:${cfg.color};border-radius:12px;padding:14px 20px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <div style="font-size:24px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${cfg.prefix} — ${dept}</div>
+          <div style="font-size:11px;opacity:0.85;margin-top:2px;">${report.label}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:36px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${deptData.length}</div>
+          <div style="font-size:11px;opacity:0.85;">ฉบับ</div>
+        </div>
+      </div>
+      <!-- Sub stats -->
+      <div style="background:${cfg.bg};border:1.5px solid ${cfg.border};border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;gap:24px;font-size:12px;flex-wrap:wrap;">
+        <div><span style="color:#6b7280;">เลขแรก:</span> <span style="font-weight:700;color:${cfg.color};">${firstNum}</span></div>
+        <div><span style="color:#6b7280;">เลขล่าสุด:</span> <span style="font-weight:700;color:${cfg.color};">${latestNum}</span></div>
+        <div><span style="color:#6b7280;">จำนวน:</span> <span style="font-weight:700;color:#1e1e3c;">${deptData.length} ฉบับ</span></div>
+        <div><span style="color:#6b7280;">สัดส่วน:</span> <span style="font-weight:700;color:#1e1e3c;">${total>0?Math.round(deptData.length/total*100):0}%</span></div>
+      </div>
+      <!-- Table -->
+      <div style="border-radius:10px;overflow:hidden;border:1px solid ${cfg.border};">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+          <thead>
+            <tr style="background:${cfg.color};">
+              <th style="padding:9px 8px;text-align:left;color:white;">#</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">เลขหนังสือ</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">ชื่อ-สกุล</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">ตำแหน่ง</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">เรื่อง</th>
+              <th style="padding:9px 8px;text-align:left;color:white;">วันที่</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+          <tfoot>
+            <tr style="background:${cfg.bg};">
+              <td colspan="6" style="padding:9px 10px;font-weight:700;color:${cfg.color};">รวม ${dept}: ${deptData.length} ฉบับ</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>`;
+  }
+
+  // ── Render pages to canvas → PDF ──
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const A4_W = 794; const A4_H = 1123;
+
+  async function renderPageToDoc(htmlContent, isFirst) {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = `position:fixed;left:-9999px;top:0;width:${A4_W}px;background:white;z-index:9999;`;
+    wrapper.innerHTML = htmlContent;
+    document.body.appendChild(wrapper);
+    // wait for fonts
+    await new Promise(r => setTimeout(r, 200));
+    const canvas = await html2canvas(wrapper, {
+      scale: 2, useCORS: true, allowTaint: true,
+      width: A4_W, backgroundColor: '#ffffff',
+      logging: false
     });
+    document.body.removeChild(wrapper);
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    if (!isFirst) doc.addPage();
+    doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+  }
 
-    // Total row
-    doc.setFillColor(dr,dg,db); doc.rect(ml, dy, cw, 8, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
-    doc.text(`รวม ${dept} ทั้งหมด: ${deptData.length} ฉบับ`, ml+4, dy+5.5);
+  // Page 1: overview
+  await renderPageToDoc(pageShell(page1Content), true);
 
-    deptPages.push(pageNum);
-    pageFooter(pageNum, '?');
-  });
+  // Per-dept pages
+  for (const dept of selectedDepts) {
+    const deptData = report.data.filter(r => r.dept === dept);
+    if (!deptData.length) continue;
+    // Split into chunks of ~20 rows per page
+    const ROWS_PER_PAGE = 20;
+    for (let start = 0; start < deptData.length; start += ROWS_PER_PAGE) {
+      const chunk = deptData.slice(start, start + ROWS_PER_PAGE);
+      const isFirstChunk = start === 0;
+      const pageLabel = deptData.length > ROWS_PER_PAGE
+        ? `(แสดง ${start+1}–${Math.min(start+ROWS_PER_PAGE, deptData.length)} จาก ${deptData.length} รายการ)`
+        : '';
+      await renderPageToDoc(
+        pageShell(buildDeptPage(dept, chunk, pageLabel), isFirstChunk ? '' : pageLabel),
+        false
+      );
+    }
+  }
 
-  // Fix total pages in all footers
-  const totalPagesStr = String(totalPages);
-  // Re-render footers with correct total (jsPDF doesn't support placeholder; use putTotalPages workaround via text replace)
-  // Simple workaround: just re-save with total embedded in filename approach
-  // Actually jsPDF supports internal total pages via doc.getNumberOfPages()
-  // We already use totalPages variable correctly above — footers already called with '?'
-  // So let's add a last page with summary if needed, or just use correct count
-  // Since jsPDF renders sequentially, we call all footers with '?' first then overwrite:
-  // Simplest: use autoTable or rely on page numbers already being correct since we track manually
-  // Let's just recreate footer on page 1 correctly
-  // (The '?' is already written; jsPDF doesn't allow retroactive edits without raw ops)
-  // Best approach: note this limitation or just leave as-is with correct page numbers going forward
-
-  const fn = `รายงานสรุป_${report.period === 'daily' ? 'รายวัน' : report.period === 'weekly' ? 'รายสัปดาห์' : 'รายปี'}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`;
+  const fn = `รายงานสรุป_${report.period==='daily'?'รายวัน':report.period==='weekly'?'รายสัปดาห์':'รายปี'}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`;
   doc.save(fn);
 }
 
-// Helper: draw a mini summary table
-function drawMiniTable(doc, x, y, w, rows, headers, colWidths) {
-  const rowH = 8.5;
-  const totalW = colWidths.reduce((a,b)=>a+b,0);
-  const scale = w / totalW;
-  const scaledW = colWidths.map(c => c * scale);
-
-  doc.setFillColor(236,72,153); doc.rect(x, y, w, 8.5, 'F');
-  doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(255,255,255);
-  let tx = x+2;
-  headers.forEach((h,i) => { doc.text(h, tx, y+5.5); tx += scaledW[i]; });
-
-  rows.forEach((row, ri) => {
-    const ry = y + 8.5 + ri*rowH;
-    if (ri%2===0) { doc.setFillColor(249,250,255); doc.rect(x, ry, w, rowH, 'F'); }
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(40,40,70);
-    tx = x+2;
-    row.forEach((cell,i) => { doc.text(String(cell), tx, ry+5.5); tx += scaledW[i]; });
-  });
-  // Bottom line
-  const bot = y + 8.5 + rows.length * rowH;
-  doc.setDrawColor(220,220,235); doc.setLineWidth(0.3);
-  doc.line(x, bot, x+w, bot);
-}
 
 // ══════════════════════════════════════════
 // NAVIGATION
