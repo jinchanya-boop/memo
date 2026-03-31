@@ -1663,9 +1663,9 @@ function renderTable(data) {
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.subject}">${r.subject}</td>
       <td style="font-size:13px;color:var(--gray-500);">${formatThaiDate(r.date)}</td>
       <td>
-        <button class="btn btn-secondary btn-sm" onclick="viewRecord(${r.id})" title="ดูรายละเอียด">👁️</button>
-        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadRecordPDF(${r.id})" title="ดาวน์โหลด PDF">📄</button>
-        <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="deleteRecord(${r.id})" title="ลบ">🗑️</button>
+        <button class="btn btn-secondary btn-sm" onclick="viewRecord('${r.id}')" title="ดูรายละเอียด">👁️</button>
+        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadRecordPDF('${r.id}')" title="ดาวน์โหลด PDF">📄</button>
+        <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="deleteRecord('${r.id}')" title="ลบ">🗑️</button>
       </td>
     </tr>`;
   }).join('');
@@ -1690,29 +1690,29 @@ function clearFilter() {
 }
 
 function viewRecord(id) {
-  const r = loadData().find(x => x.id === id);
-  if (!r) return;
+  const r = loadData().find(x => String(x.id) === String(id));
+  if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
   currentResult = r;
   populateResult(r);
   showPage('result');
 }
 
 async function downloadRecordPDF(id) {
-  const r = loadData().find(x => x.id === id);
-  if (!r) return;
+  const r = loadData().find(x => String(x.id) === String(id));
+  if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
   showLoading('กำลังสร้าง PDF...');
   try {
     await generateMemosPDF([r]);
     hideLoading();
-  } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด', 'error'); }
+  } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 let _pendingDeleteId = null;
 
 function deleteRecord(id) {
-  const record = loadData().find(x => x.id == id);
-  if (!record) return;
-  _pendingDeleteId = id;
+  const record = loadData().find(x => String(x.id) === String(id));
+  if (!record) { showToast('ไม่พบข้อมูล', 'error'); return; }
+  _pendingDeleteId = String(id);
   // แสดงข้อมูลที่จะลบใน modal
   document.getElementById('deleteTargetInfo').innerHTML =
     `<b>${record.memoNum}</b> — ${record.name}<br>
@@ -1742,7 +1742,7 @@ function confirmDelete() {
   const idToDelete = _pendingDeleteId;
   closeDeleteConfirm();
   // ลบจาก localStorage
-  let data = loadData().filter(x => x.id != idToDelete);
+  let data = loadData().filter(x => String(x.id) !== String(idToDelete));
   saveData(data);
   // ลบจาก Google Sheets ด้วย
   deleteFromSheets(idToDelete);
