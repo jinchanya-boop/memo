@@ -1108,7 +1108,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbwL8PpSlotf2KHroaXrVTS2mGSa0UTlbz1QPM-N8-jqQ580pPsumeX2mN3tbUTWW-yZ/exec';
+let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbye4PrDSh7fuUyDc6aHQMxF9kHa6zNnvuHOMHwB9k-pwBF0DJ6P42OUd_rh39AhMnzX/exec';
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -1198,6 +1198,32 @@ async function syncFromSheets() {
 }
 
 // ── Push record ไป Google Sheets ──
+async function deleteFromSheets(id) {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'delete', id: String(id) }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    console.log('[deleteFromSheets] ลบ id:', id);
+  } catch(e) { console.warn('deleteFromSheets failed:', e); }
+}
+
+async function clearAllFromSheets() {
+  if (!GAS_URL) return;
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'clearAll' }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    console.log('[clearAllFromSheets] ล้างข้อมูลทั้งหมดแล้ว');
+  } catch(e) { console.warn('clearAllFromSheets failed:', e); }
+}
+
 async function pushToSheets(record) {
   if (!GAS_URL) return;
   try {
@@ -1713,9 +1739,13 @@ function confirmDelete() {
     return;
   }
   // รหัสผ่านถูก — ลบได้เลย
+  const idToDelete = _pendingDeleteId;
   closeDeleteConfirm();
-  let data = loadData().filter(x => x.id != _pendingDeleteId);
+  // ลบจาก localStorage
+  let data = loadData().filter(x => x.id != idToDelete);
   saveData(data);
+  // ลบจาก Google Sheets ด้วย
+  deleteFromSheets(idToDelete);
   updateAdminStats();
   showToast('ลบรายการแล้ว', 'success');
   _pendingDeleteId = null;
@@ -1729,6 +1759,8 @@ function clearAllData() {
   }
   if (!confirm('ยืนยันล้างข้อมูลทั้งหมด?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้')) return;
   saveData([]);
+  // ล้างจาก Google Sheets ด้วย
+  clearAllFromSheets();
   updateAdminStats();
   showToast('ล้างข้อมูลทั้งหมดแล้ว', 'success');
 }
@@ -2695,9 +2727,26 @@ function doPost(e) {
     sheet.appendRow([String(r.id), r.memoNum, r.name,
       r.position, r.dept, r.subject,
       "'" + r.date, r.desc||'', r.timestamp]);
-    // บันทึก startConfig ถ้าส่งมาด้วย
-    if (body.startConfig) {
-      saveStartConfigSheet(body.startConfig);
+    if (body.startConfig) saveStartConfigSheet(body.startConfig);
+    return output({ status:'ok' });
+  }
+
+  if (body.action === 'delete') {
+    const sheet = getOrCreateSheet();
+    const rows = sheet.getDataRange().getValues();
+    for (let i = rows.length - 1; i >= 1; i--) {
+      if (String(rows[i][0]) === String(body.id)) {
+        sheet.deleteRow(i + 1);
+        break;
+      }
+    }
+    return output({ status:'ok' });
+  }
+
+  if (body.action === 'clearAll') {
+    const sheet = getOrCreateSheet();
+    if (sheet.getLastRow() > 1) {
+      sheet.deleteRows(2, sheet.getLastRow() - 1);
     }
     return output({ status:'ok' });
   }
