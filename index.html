@@ -1068,7 +1068,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz-vU-KHUYF9P9QBywdRKokH_1kxVNrUaqAAHTm-8t3zJ3WoQf-yIKf5-f7I4GGhz5l/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
+const GAS_URL = ''; // ใส่ URL Google Apps Script ของคุณที่นี่
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -1211,38 +1211,45 @@ function loadStartConfig() {
 }
 
 function getStartConfig(dept, year) {
+  // year ต้องเป็น พ.ศ. เสมอ เช่น 2569
   try {
     const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
     const key = dept + '_' + year;
-    return all[key] !== undefined ? parseInt(all[key]) : 0;
+    const val = all[key] !== undefined ? parseInt(all[key]) : 0;
+    return val;
   } catch { return 0; }
 }
 
 function setStartConfig(dept, year, val) {
+  // year ต้องเป็น พ.ศ. เสมอ เช่น 2569
   try {
     const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    all[dept + '_' + year] = val;
+    const key = dept + '_' + year;
+    all[key] = val;
     localStorage.setItem('startConfig', JSON.stringify(all));
-  } catch {}
+    console.log(`[startConfig] บันทึก: ${key} = ${val}`, all);
+  } catch(e) { console.error('setStartConfig error:', e); }
 }
 
 function getNextNumber(dept, year) {
+  // year ต้องเป็น พ.ศ. เสมอ (ได้จาก getThaiBE)
   const data = loadData();
   const cfg = DEPT_CONFIG[dept];
   const prefix = cfg.prefix;
   // ดึง startConfig เป็น floor ขั้นต่ำ
-  const startFloor = getStartConfig(dept, year);
-  // Filter same dept + year
+  const startFloor = getStartConfig(dept, year); // year = พ.ศ.
+  // Filter same dept + year (memoNum format คือ วช001/2569)
   const existing = data.filter(r => {
     const parts = r.memoNum.split('/');
-    return r.dept === dept && parts[1] == year;
+    return r.dept === dept && parseInt(parts[1]) === parseInt(year);
   });
-  let maxNum = startFloor; // เริ่มจาก startConfig ถ้าไม่มีข้อมูล
+  let maxNum = startFloor;
   existing.forEach(r => {
     const numPart = r.memoNum.replace(prefix, '').split('/')[0];
     const n = parseInt(numPart, 10);
     if (!isNaN(n) && n > maxNum) maxNum = n;
   });
+  console.log(`[getNextNumber] ${dept} ปี${year}: startFloor=${startFloor}, existing=${existing.length}, maxNum=${maxNum}, next=${maxNum+1}`);
   return maxNum + 1;
 }
 
@@ -2224,13 +2231,15 @@ function initSettingsPage() {
 }
 
 function renderStartNumGrid(year) {
+  // year ที่รับมาคือ พ.ศ. แล้ว
   const grid = document.getElementById('startNumGrid');
   if (!grid) return;
   const depts = Object.entries(DEPT_CONFIG);
   grid.innerHTML = depts.map(([dept, cfg]) => {
-    const cur = getStartConfig(dept, year);
+    const cur = getStartConfig(dept, year); // year = พ.ศ.
     const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
     const col = colors[cfg.prefix] || '#6b7280';
+    const nextNum = String(cur + 1).padStart(3,'0');
     return `<div style="background:white;border:1.5px solid ${col}30;border-radius:12px;padding:16px;border-top:3px solid ${col};">
       <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${dept}</div>
       <div style="font-size:18px;font-weight:800;color:${col};font-family:'Kanit',sans-serif;margin-bottom:10px;">${cfg.prefix}___/${year}</div>
@@ -2239,7 +2248,7 @@ function renderStartNumGrid(year) {
         value="${cur}" placeholder="0"
         oninput="renderPreviewNextNums(${year})"
         style="margin-top:4px;">
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${String(cur+1).padStart(3,'0')}/${year}</b></div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${nextNum}/${year}</b></div>
     </div>`;
   }).join('');
 }
@@ -2311,7 +2320,10 @@ function renderAllConfigTable() {
           <th style="padding:10px 14px;text-align:center;color:white;">จัดการ</th>
         </tr></thead>
         <tbody>${keys.map((k,i) => {
-          const [dept, year] = k.split('_');
+          // key format: "ฝ่ายวิชาการ_2569" — split ที่ _ ตัวสุดท้าย
+          const lastUnderscore = k.lastIndexOf('_');
+          const dept = k.substring(0, lastUnderscore);
+          const year = k.substring(lastUnderscore + 1);
           const cfg = DEPT_CONFIG[dept] || {};
           const val = all[k];
           const col = colors[cfg.prefix] || '#6b7280';
@@ -2333,7 +2345,8 @@ function renderAllConfigTable() {
 
 function clearOneDeptConfig(dept, year) {
   const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
-  delete all[dept + '_' + year];
+  const key = dept + '_' + year;
+  delete all[key];
   localStorage.setItem('startConfig', JSON.stringify(all));
   renderAllConfigTable();
   showToast(`ลบการตั้งค่า ${dept} ปี ${year} แล้ว`, 'success');
