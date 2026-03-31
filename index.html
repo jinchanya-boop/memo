@@ -1366,44 +1366,52 @@ function generateMemoNum(dept, dateStr) {
 // ══════════════════════════════════════════
 // FORM SUBMIT
 // ══════════════════════════════════════════
-function submitForm() {
-  const name = document.getElementById('f-name').value.trim();
+async function submitForm() {
+  const name     = document.getElementById('f-name').value.trim();
   const position = document.getElementById('f-position').value.trim();
-  const dept = document.getElementById('f-dept').value;
-  const dateVal = document.getElementById('f-date').value;
-  const subject = document.getElementById('f-subject').value.trim();
-  const desc = document.getElementById('f-desc').value.trim();
+  const dept     = document.getElementById('f-dept').value;
+  const dateVal  = document.getElementById('f-date').value;
+  const subject  = document.getElementById('f-subject').value.trim();
+  const desc     = document.getElementById('f-desc').value.trim();
 
   if (!name || !position || !dept || !dateVal || !subject) {
     showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
     return;
   }
 
+  showLoading('กำลังซิงค์ข้อมูลล่าสุด...');
+
+  // ── Step 1: sync ข้อมูล + startConfig จาก Sheets ก่อนออกเลขเสมอ ──
+  if (GAS_URL) {
+    const synced = await syncFromSheets();
+    if (synced) {
+      console.log(`[submitForm] sync สำเร็จ ${synced.length} รายการ`);
+    }
+  }
+
   showLoading('กำลังออกเลขที่บันทึกข้อความ...');
 
-  setTimeout(() => {
-    const memoNum = generateMemoNum(dept, dateVal);
-    const timestamp = new Date().toLocaleString('th-TH');
-    const dateNorm = dateVal.trim(); // ensure YYYY-MM-DD
-    const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateNorm, timestamp };
+  // ── Step 2: ออกเลข (ใช้ข้อมูลล่าสุดจาก Sheets แล้ว) ──
+  const memoNum  = generateMemoNum(dept, dateVal);
+  const timestamp = new Date().toLocaleString('th-TH');
+  const dateNorm  = dateVal.trim();
+  const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateNorm, timestamp };
 
-    // Save locally first (เพื่อให้ใช้งานได้ทันที)
-    const data = loadData();
-    data.unshift(record);
-    saveData(data);
+  // ── Step 3: บันทึกลง localStorage ──
+  const data = loadData();
+  data.unshift(record);
+  saveData(data);
 
-    // Push ไป Google Sheets (async ไม่รอผล)
-    pushToSheets(record);
+  // ── Step 4: push ไป Sheets ──
+  pushToSheets(record);
 
-    currentResult = record;
-    hideLoading();
-    updateAdminStats();
+  currentResult = record;
+  hideLoading();
+  updateAdminStats();
 
-    // Show popup
-    document.getElementById('popupMemoNum').textContent = memoNum;
-    document.getElementById('popupSubject').textContent = `เรื่อง: ${subject}`;
-    document.getElementById('successOverlay').classList.add('show');
-  }, 1200);
+  document.getElementById('popupMemoNum').textContent = memoNum;
+  document.getElementById('popupSubject').textContent = `เรื่อง: ${subject}`;
+  document.getElementById('successOverlay').classList.add('show');
 }
 
 function goToResult() {
