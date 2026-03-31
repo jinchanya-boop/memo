@@ -1087,7 +1087,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbzMaccWebMeQ9p-FWuN9LLI_UC1TpA-siWdnYL9KhPFkPUzoEBXCInoXju2SuivHngZ/exec';
+let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbwL8PpSlotf2KHroaXrVTS2mGSa0UTlbz1QPM-N8-jqQ580pPsumeX2mN3tbUTWW-yZ/exec';
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -1158,6 +1158,11 @@ async function syncFromSheets() {
             id: String(r.id)
           }));
           saveData(normalized);
+          // ── ดึง startConfig จาก Sheets มาด้วย (ถ้ามี) ──
+          if (json.startConfig) {
+            localStorage.setItem('startConfig', JSON.stringify(json.startConfig));
+            console.log('[sync] startConfig โหลดสำเร็จ:', json.startConfig);
+          }
           resolve(normalized);
         } else { resolve(null); }
       } catch(e) { resolve(null); }
@@ -1176,11 +1181,11 @@ async function pushToSheets(record) {
   if (!GAS_URL) return;
   try {
     // ใช้ no-cors เพื่อหลีกเลี่ยง CORS error
-    // GAS จะรับ POST แล้ว process โดยไม่ต้อง response กลับ
+    const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
     await fetch(GAS_URL, {
       method: 'POST',
       mode: 'no-cors',
-      body: JSON.stringify({ action: 'add', record }),
+      body: JSON.stringify({ action: 'add', record, startConfig }),
       headers: { 'Content-Type': 'text/plain' }
     });
     console.log('[pushToSheets] ส่งข้อมูลสำเร็จ:', record.memoNum);
@@ -1194,6 +1199,21 @@ async function pushToSheets(record) {
       console.log('[pushToSheets] บันทึกลง pendingQueue แทน');
     } catch {}
   }
+}
+
+// ── บันทึก startConfig ไป Sheets ทันทีที่มีการเปลี่ยนแปลง ──
+async function saveStartConfigToSheets() {
+  if (!GAS_URL) return;
+  try {
+    const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ action: 'saveStartConfig', startConfig }),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    console.log('[saveStartConfigToSheets] บันทึกสำเร็จ');
+  } catch(e) { console.warn('saveStartConfig failed:', e); }
 }
 
 // ── Flush pending queue เมื่อออนไลน์ ──
@@ -2428,6 +2448,8 @@ function saveStartConfig() {
   });
   renderAllConfigTable();
   renderPreviewNextNums(year);
+  // ── sync ไป Google Sheets ทันที ──
+  saveStartConfigToSheets();
   showToast('บันทึกการตั้งค่าเรียบร้อย ✓', 'success');
 }
 
@@ -2576,26 +2598,59 @@ function doGet(e) {
       });
       return obj;
     }).reverse();
-    return outputWithCallback({ status:'ok', data }, e.parameter.callback);
+    // โหลด startConfig จาก sheet มาส่งกลับด้วย
+    const startConfig = loadStartConfigSheet();
+    return outputWithCallback({ status:'ok', data, startConfig }, e.parameter.callback);
   }
   return outputWithCallback({ status:'error' }, e.parameter.callback);
 }
 
+function loadStartConfigSheet() {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName('StartConfig');
+    if (!sheet || sheet.getLastRow() <= 1) return {};
+    const rows = sheet.getDataRange().getValues().slice(1);
+    const cfg = {};
+    rows.forEach(r => { if (r[0]) cfg[r[0]] = parseInt(r[1]) || 0; });
+    return cfg;
+  } catch(e) { return {}; }
+}
+
 function doPost(e) {
   const body = JSON.parse(e.postData.contents);
+
   if (body.action === 'add') {
     const r = body.record;
     const sheet = getOrCreateSheet();
     if (sheet.getLastRow() === 0)
       sheet.appendRow(['id','memoNum','name','position',
                        'dept','subject','date','desc','timestamp']);
-    // prefix ' เพื่อกัน Sheets แปลง date เป็น Date object
     sheet.appendRow([String(r.id), r.memoNum, r.name,
       r.position, r.dept, r.subject,
       "'" + r.date, r.desc||'', r.timestamp]);
+    // บันทึก startConfig ถ้าส่งมาด้วย
+    if (body.startConfig) {
+      saveStartConfigSheet(body.startConfig);
+    }
     return output({ status:'ok' });
   }
+
+  if (body.action === 'saveStartConfig') {
+    saveStartConfigSheet(body.startConfig);
+    return output({ status:'ok' });
+  }
+
   return output({ status:'error' });
+}
+
+function saveStartConfigSheet(cfg) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName('StartConfig');
+  if (!sheet) sheet = ss.insertSheet('StartConfig');
+  sheet.clearContents();
+  sheet.appendRow(['key', 'value']);
+  Object.keys(cfg).forEach(k => sheet.appendRow([k, cfg[k]]));
 }
 
 function getOrCreateSheet() {
