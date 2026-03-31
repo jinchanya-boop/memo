@@ -865,6 +865,25 @@
       <div class="card">
         <div class="card-title"><span>🔢</span> กำหนดเลขเริ่มต้นแต่ละฝ่าย</div>
 
+        <!-- GAS URL Card -->
+        <div style="background:white;border:2px solid #bfdbfe;border-radius:12px;padding:18px 20px;margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:10px;">🔗 เชื่อมต่อ Google Sheets</div>
+          <div class="form-group" style="margin-bottom:10px;">
+            <label class="form-label">Google Apps Script URL</label>
+            <div style="display:flex;gap:8px;">
+              <input class="form-input" id="gasUrlInput" type="text"
+                placeholder="https://script.google.com/macros/s/..."
+                style="flex:1;font-size:12px;">
+              <button class="btn btn-info btn-sm" onclick="saveGasUrl()">💾 บันทึก</button>
+              <button class="btn btn-secondary btn-sm" onclick="testGasUrl()">🧪 ทดสอบ</button>
+            </div>
+          </div>
+          <div id="gasUrlStatus" style="font-size:12px;color:#6b7280;"></div>
+          <div style="margin-top:8px;font-size:11px;color:#9ca3af;">
+            💡 เมื่อบันทึก URL แล้ว ข้อมูลจะ sync ข้ามอุปกรณ์ได้ทันที
+          </div>
+        </div>
+
         <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#374151;">
           <b>💡 วิธีใช้:</b> ใส่เลขที่ต้องการเริ่มต้น เช่น ถ้าต้องการให้เลขถัดไปเป็น <b>วช126/2569</b> ให้ใส่ <b>125</b>
           (ระบบจะออกเลข 126 เป็นเลขถัดไป) หรือถ้าต้องการเริ่มที่ 1 ให้ใส่ 0
@@ -1068,7 +1087,7 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwSJMMgGE0ceMk_M9JJyTrqrIYPajs6e4ZGYVAYT31P0ovrZl7895Clv-Fcg6_gT1h8/exec'; // ใส่ URL Google Apps Script ของคุณที่นี่
+let GAS_URL = localStorage.getItem('gasUrl') || ''; // โหลดจาก localStorage อัตโนมัติ
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
 
@@ -1115,34 +1134,85 @@ function saveData(data) {
 // ── Sync จาก Google Sheets ──
 
 async function syncFromSheets() {
-  if (!GAS_URL) return;
-  try {
-    const res = await fetch(GAS_URL + '?action=getAll', { method: 'GET' });
-    const json = await res.json();
-    if (json.status === 'ok' && Array.isArray(json.data)) {
-      // Normalize date field ทุก record
-      const normalized = json.data.map(r => ({
-        ...r,
-        date: normalizeDateField(r.date),
-        id: Number(r.id) || r.id
-      }));
-      saveData(normalized);
-      return normalized;
-    }
-  } catch(e) { console.warn('Sync failed:', e); }
-  return null;
+  if (!GAS_URL) return null;
+  return new Promise((resolve) => {
+    const cbName = 'gasCallback_' + Date.now();
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      const el = document.getElementById('gas-jsonp-script');
+      if (el) el.remove();
+      console.warn('[syncFromSheets] timeout');
+      resolve(null);
+    }, 10000);
+
+    window[cbName] = function(json) {
+      clearTimeout(timeout);
+      delete window[cbName];
+      const el = document.getElementById('gas-jsonp-script');
+      if (el) el.remove();
+      try {
+        if (json.status === 'ok' && Array.isArray(json.data)) {
+          const normalized = json.data.map(r => ({
+            ...r,
+            date: normalizeDateField(r.date),
+            id: String(r.id)
+          }));
+          saveData(normalized);
+          resolve(normalized);
+        } else { resolve(null); }
+      } catch(e) { resolve(null); }
+    };
+
+    const script = document.createElement('script');
+    script.id = 'gas-jsonp-script';
+    script.src = GAS_URL + '?action=getAll&callback=' + cbName;
+    script.onerror = () => { clearTimeout(timeout); resolve(null); };
+    document.head.appendChild(script);
+  });
 }
 
 // ── Push record ไป Google Sheets ──
 async function pushToSheets(record) {
   if (!GAS_URL) return;
   try {
+    // ใช้ no-cors เพื่อหลีกเลี่ยง CORS error
+    // GAS จะรับ POST แล้ว process โดยไม่ต้อง response กลับ
     await fetch(GAS_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({ action: 'add', record }),
       headers: { 'Content-Type': 'text/plain' }
     });
-  } catch(e) { console.warn('Push failed:', e); }
+    console.log('[pushToSheets] ส่งข้อมูลสำเร็จ:', record.memoNum);
+  } catch(e) {
+    console.warn('[pushToSheets] failed:', e);
+    // fallback: เก็บในคิวรอส่งทีหลัง
+    try {
+      const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
+      q.push(record);
+      localStorage.setItem('pendingSync', JSON.stringify(q));
+      console.log('[pushToSheets] บันทึกลง pendingQueue แทน');
+    } catch {}
+  }
+}
+
+// ── Flush pending queue เมื่อออนไลน์ ──
+async function flushPendingSync() {
+  if (!GAS_URL) return;
+  try {
+    const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
+    if (!q.length) return;
+    for (const record of q) {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({ action: 'add', record }),
+        headers: { 'Content-Type': 'text/plain' }
+      });
+    }
+    localStorage.removeItem('pendingSync');
+    showToast(`ส่งข้อมูลที่ค้างอยู่ ${q.length} รายการสำเร็จ`, 'success');
+  } catch(e) { console.warn('flushPending failed:', e); }
 }
 let currentResult = null;
 
@@ -1162,8 +1232,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     showLoading('กำลังโหลดข้อมูลจาก Google Sheets...');
     const synced = await syncFromSheets();
     hideLoading();
-    if (synced) showToast(`โหลดข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
+    if (synced) {
+      showToast(`โหลดข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
+    }
+    // ส่งข้อมูลที่ค้างคิวด้วย
+    flushPendingSync();
   }
+
+  // แจ้งเมื่อออนไลน์กลับมา
+  window.addEventListener('online', () => {
+    if (GAS_URL) {
+      showToast('เชื่อมต่ออินเทอร์เน็ตแล้ว กำลัง sync...', 'info');
+      flushPendingSync();
+    }
+  });
 
   // Update admin stats
   updateAdminStats();
@@ -2099,6 +2181,68 @@ async function buildSummaryPDF(report) {
 
 
 // ══════════════════════════════════════════
+// GAS URL MANAGEMENT
+// ══════════════════════════════════════════
+function initGasUrlInput() {
+  const inp = document.getElementById('gasUrlInput');
+  if (inp) {
+    inp.value = localStorage.getItem('gasUrl') || '';
+    updateGasStatus();
+  }
+}
+
+function saveGasUrl() {
+  const url = document.getElementById('gasUrlInput').value.trim();
+  if (url && !url.startsWith('https://script.google.com')) {
+    showToast('URL ไม่ถูกต้อง ต้องขึ้นต้นด้วย https://script.google.com', 'error');
+    return;
+  }
+  localStorage.setItem('gasUrl', url);
+  GAS_URL = url;
+  updateGasStatus();
+  if (url) {
+    showToast('บันทึก GAS URL แล้ว กำลัง sync...', 'success');
+    syncFromSheets().then(d => {
+      if (d) {
+        updateAdminStats();
+        showToast(`Sync สำเร็จ ${d.length} รายการ`, 'success');
+      }
+    });
+  } else {
+    showToast('ลบ GAS URL แล้ว (ใช้ localStorage เท่านั้น)', 'success');
+  }
+}
+
+async function testGasUrl() {
+  const url = document.getElementById('gasUrlInput').value.trim();
+  if (!url) { showToast('กรุณาใส่ URL ก่อน', 'error'); return; }
+  const statusEl = document.getElementById('gasUrlStatus');
+  statusEl.innerHTML = '⏳ กำลังทดสอบการเชื่อมต่อ...';
+  const oldUrl = GAS_URL;
+  GAS_URL = url;
+  const result = await syncFromSheets();
+  GAS_URL = oldUrl;
+  if (result !== null) {
+    statusEl.innerHTML = `<span style="color:#059669;">✅ เชื่อมต่อสำเร็จ! พบข้อมูล ${result.length} รายการ</span>`;
+    showToast('ทดสอบสำเร็จ! Google Sheets เชื่อมต่อได้', 'success');
+  } else {
+    statusEl.innerHTML = `<span style="color:#ef4444;">❌ เชื่อมต่อไม่ได้ กรุณาตรวจสอบ URL และ Deploy settings</span>`;
+    showToast('เชื่อมต่อไม่ได้ ดูคำแนะนำด้านล่าง', 'error');
+  }
+}
+
+function updateGasStatus() {
+  const statusEl = document.getElementById('gasUrlStatus');
+  if (!statusEl) return;
+  const url = localStorage.getItem('gasUrl') || '';
+  if (url) {
+    statusEl.innerHTML = `<span style="color:#059669;">✅ เชื่อมต่ออยู่:</span> <span style="font-size:11px;color:#6b7280;word-break:break-all;">${url.substring(0,60)}...</span>`;
+  } else {
+    statusEl.innerHTML = '<span style="color:#f59e0b;">⚠️ ยังไม่ได้เชื่อมต่อ Google Sheets (ใช้ localStorage เท่านั้น)</span>';
+  }
+}
+
+// ══════════════════════════════════════════
 // ADMIN AUTH
 // ══════════════════════════════════════════
 const DEFAULT_ADMIN_PWD = 'admin1234'; // รหัสผ่านเริ่มต้น
@@ -2228,6 +2372,7 @@ function initSettingsPage() {
   renderStartNumGrid(thisYear);
   renderPreviewNextNums(thisYear);
   renderAllConfigTable();
+  initGasUrlInput();
 }
 
 function renderStartNumGrid(year) {
@@ -2409,7 +2554,7 @@ function doGet(e) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const sheet = ss.getSheetByName(SHEET_NAME);
     if (!sheet || sheet.getLastRow() <= 1)
-      return output({ status:'ok', data:[] });
+      return outputWithCallback({ status:'ok', data:[] }, e.parameter.callback);
     const rows = sheet.getDataRange().getValues();
     const headers = rows[0];
     const data = rows.slice(1).map(r => {
@@ -2417,7 +2562,6 @@ function doGet(e) {
       headers.forEach((h, i) => {
         let val = r[i];
         if (h === 'date') {
-          // force YYYY-MM-DD string
           if (val instanceof Date) {
             const y = val.getFullYear();
             const m = String(val.getMonth()+1).padStart(2,'0');
@@ -2432,9 +2576,9 @@ function doGet(e) {
       });
       return obj;
     }).reverse();
-    return output({ status:'ok', data });
+    return outputWithCallback({ status:'ok', data }, e.parameter.callback);
   }
-  return output({ status:'error' });
+  return outputWithCallback({ status:'error' }, e.parameter.callback);
 }
 
 function doPost(e) {
@@ -2464,6 +2608,16 @@ function output(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function outputWithCallback(obj, callback) {
+  if (callback) {
+    // JSONP response
+    return ContentService
+      .createTextOutput(callback + '(' + JSON.stringify(obj) + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return output(obj);
 }
     </code><br>
     3. Deploy → New deployment → Web app<br>
