@@ -1286,7 +1286,7 @@ let currentResult = null;
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   // Set default date = today
   const today = new Date();
   document.getElementById('f-date').value = today.toISOString().split('T')[0];
@@ -1294,16 +1294,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Dept preview on change
   document.getElementById('f-dept').addEventListener('change', updateDeptPreview);
 
-  // ── Sync จาก Google Sheets เมื่อเปิดระบบ ──
+  // แสดงหน้าเว็บทันที
+  updateAdminStats();
+  document.getElementById('stat-year').textContent = getThaiBE();
+
+  // ── Sync จาก Google Sheets ใน background (ไม่บล็อกหน้าเว็บ) ──
   if (GAS_URL) {
-    showLoading('กำลังโหลดข้อมูลจาก Google Sheets...');
-    const synced = await syncFromSheets();
-    hideLoading();
-    if (synced) {
-      showToast(`โหลดข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
-    }
-    // ส่งข้อมูลที่ค้างคิวด้วย
-    flushPendingSync();
+    // แสดง indicator เล็กๆ มุมขวาล่างแทน loading เต็มจอ
+    showSyncIndicator(true);
+    syncFromSheets().then(synced => {
+      showSyncIndicator(false);
+      if (synced) {
+        updateAdminStats();
+        showToast(`ซิงค์ข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
+      }
+      flushPendingSync();
+    }).catch(() => showSyncIndicator(false));
   }
 
   // แจ้งเมื่อออนไลน์กลับมา
@@ -1313,12 +1319,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       flushPendingSync();
     }
   });
-
-  // Update admin stats
-  updateAdminStats();
-
-  // Set year stat
-  document.getElementById('stat-year').textContent = getThaiBE();
 });
 
 function getThaiBE(dateStr) {
@@ -2638,6 +2638,28 @@ function showPage(name) {
 // ══════════════════════════════════════════
 // LOADING / TOAST
 // ══════════════════════════════════════════
+function showSyncIndicator(show) {
+  let el = document.getElementById('syncIndicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'syncIndicator';
+    el.style.cssText = `
+      position:fixed; bottom:70px; right:16px; z-index:90;
+      background:white; border:1.5px solid var(--pink-200);
+      border-radius:999px; padding:6px 14px;
+      display:flex; align-items:center; gap:8px;
+      font-size:12px; font-weight:600; color:var(--pink-600);
+      box-shadow:var(--shadow-md);
+      transition: opacity 0.3s, transform 0.3s;
+    `;
+    el.innerHTML = `<div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--pink-200);border-top-color:var(--pink-500);animation:spin 0.8s linear infinite;"></div> กำลัง sync...`;
+    document.body.appendChild(el);
+  }
+  el.style.opacity = show ? '1' : '0';
+  el.style.pointerEvents = show ? 'none' : 'none';
+  if (!show) setTimeout(() => { if (el) el.remove(); }, 400);
+}
+
 function showLoading(msg = 'กำลังประมวลผล...') {
   document.getElementById('loadingText').textContent = msg;
   document.getElementById('loadingOverlay').classList.add('show');
