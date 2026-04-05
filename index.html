@@ -10,81 +10,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
-    --pink-50: #fdf2f8;
-    --pink-100: #fce7f3;
-    --pink-200: #fbcfe8;
-    --pink-300: #f9a8d4;
-    --pink-400: #f472b6;
-    --pink-500: #ec4899;
-    --pink-600: #db2777;
-    --blue-50: #eff6ff;
-    --blue-100: #dbeafe;
-    --blue-200: #bfdbfe;
-    --blue-300: #93c5fd;
-    --blue-400: #60a5fa;
-    --blue-500: #3b82f6;
-    --blue-600: #2563eb;
-    --purple-100: #ede9fe;
-    --purple-400: #a78bfa;
-    --purple-600: #7c3aed;
-    --rose-100: #ffe4e6;
-    --emerald-100: #d1fae5;
-    --emerald-600: #059669;
-    --amber-100: #fef3c7;
-    --amber-600: #d97706;
-    --gray-50: #f9fafb;
-    --gray-100: #f3f4f6;
-    --gray-200: #e5e7eb;
-    --gray-300: #d1d5db;
-    --gray-400: #9ca3af;
-    --gray-500: #6b7280;
-    --gray-600: #4b5563;
-    --gray-700: #374151;
-    --gray-800: #1f2937;
-    --gray-900: #111827;
+    --pink-50: #fdf2f8; --pink-100: #fce7f3; --pink-200: #fbcfe8;
+    --pink-300: #f9a8d4; --pink-400: #f472b6; --pink-500: #ec4899; --pink-600: #db2777;
+    --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-200: #bfdbfe;
+    --blue-300: #93c5fd; --blue-400: #60a5fa; --blue-500: #3b82f6; --blue-600: #2563eb;
+    --purple-100: #ede9fe; --purple-400: #a78bfa; --purple-600: #7c3aed;
+    --rose-100: #ffe4e6; --emerald-100: #d1fae5; --emerald-600: #059669;
+    --amber-100: #fef3c7; --amber-600: #d97706;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+    --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563;
+    --gray-700: #374151; --gray-800: #1f2937; --gray-900: #111827;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
     --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
     --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
     --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
     --shadow-xl: 0 20px 25px rgba(0,0,0,0.1), 0 10px 10px rgba(0,0,0,0.04);
-    --radius: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 20px;
+    --radius: 12px; --radius-lg: 16px; --radius-xl: 20px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body {
     font-family: 'Sarabun', sans-serif;
     background: linear-gradient(135deg, #fdf2f8 0%, #eff6ff 50%, #fce7f3 100%);
-    min-height: 100vh;
-    color: var(--gray-800);
-    font-size: 15px;
-    line-height: 1.6;
+    min-height: 100vh; color: var(--gray-800); font-size: 15px; line-height: 1.6;
   }
 
   /* ─── NAV ─── */
   .navbar {
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(236,72,153,0.12);
-    position: sticky; top: 0; z-index: 100;
-    padding: 0 24px;
+    position: sticky; top: 0; z-index: 100; padding: 0 24px;
   }
   .nav-inner {
     max-width: 1200px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
   }
-  .nav-brand {
-    display: flex; align-items: center; gap: 10px;
-  }
+  .nav-brand { display: flex; align-items: center; gap: 10px; }
   .nav-icon {
     width: 40px; height: 40px;
     background: linear-gradient(135deg, var(--pink-400), var(--blue-400));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 4px 12px rgba(236,72,153,0.3);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; box-shadow: 0 4px 12px rgba(236,72,153,0.3);
   }
   .nav-title { font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 16px; color: var(--gray-800); }
   .nav-sub { font-size: 12px; color: var(--gray-500); }
@@ -104,42 +70,33 @@
   .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
 
   /* ─── HERO ─── */
-  .hero {
-    text-align: center; padding: 48px 24px 32px;
-    position: relative;
-  }
+  .hero { text-align: center; padding: 48px 24px 32px; position: relative; }
   .hero-badge {
     display: inline-flex; align-items: center; gap: 6px;
     background: var(--pink-100); color: var(--pink-600);
-    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
-    margin-bottom: 16px;
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; margin-bottom: 16px;
   }
   .hero-title {
     font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 32px;
     background: linear-gradient(135deg, var(--pink-600), var(--blue-600));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
   }
   .hero-sub { color: var(--gray-500); font-size: 15px; }
 
   /* ─── CARD ─── */
   .card {
-    background: rgba(255,255,255,0.9);
-    backdrop-filter: blur(12px);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(255,255,255,0.8);
-    box-shadow: var(--shadow-lg);
-    padding: 28px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl); border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: var(--shadow-lg); padding: 28px; transition: transform 0.2s, box-shadow 0.2s;
   }
   .card:hover { transform: translateY(-1px); box-shadow: var(--shadow-xl); }
   .card-title {
     font-family: 'Kanit', sans-serif; font-weight: 600; font-size: 17px;
     color: var(--gray-800); margin-bottom: 20px;
-    display: flex; align-items: center; gap-8px;
+    display: flex; align-items: center; gap: 8px;
     padding-bottom: 12px; border-bottom: 2px solid var(--pink-100);
   }
-  .card-title span { margin-right: 8px; }
+  .card-title span { margin-right: 0px; }
 
   /* ─── FORM ─── */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -148,15 +105,12 @@
   .form-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
   .form-label .req { color: var(--pink-500); margin-left: 2px; }
   .form-input, .form-select, .form-textarea {
-    padding: 11px 14px; border-radius: 10px;
-    border: 1.5px solid var(--gray-200); background: white;
-    font-family: 'Sarabun', sans-serif; font-size: 14px; color: var(--gray-800);
-    transition: all 0.2s; outline: none;
-    width: 100%;
+    padding: 11px 14px; border-radius: 10px; border: 1.5px solid var(--gray-200);
+    background: white; font-family: 'Sarabun', sans-serif; font-size: 14px;
+    color: var(--gray-800); transition: all 0.2s; outline: none; width: 100%;
   }
   .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--pink-400);
-    box-shadow: 0 0 0 3px rgba(236,72,153,0.1);
+    border-color: var(--pink-400); box-shadow: 0 0 0 3px rgba(236,72,153,0.1);
   }
   .form-textarea { resize: vertical; min-height: 80px; }
   .form-select { cursor: pointer; }
@@ -168,18 +122,10 @@
     font-family: 'Sarabun', sans-serif; font-size: 14px; font-weight: 600;
     transition: all 0.2s; white-space: nowrap;
   }
-  .btn-primary {
-    background: linear-gradient(135deg, var(--pink-500), var(--blue-500));
-    color: white;
-    box-shadow: 0 4px 14px rgba(236,72,153,0.35);
-  }
+  .btn-primary { background: linear-gradient(135deg, var(--pink-500), var(--blue-500)); color: white; box-shadow: 0 4px 14px rgba(236,72,153,0.35); }
   .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(236,72,153,0.45); }
   .btn-primary:active { transform: translateY(0); }
-  .btn-secondary {
-    background: white; color: var(--gray-700);
-    border: 1.5px solid var(--gray-200);
-    box-shadow: var(--shadow-sm);
-  }
+  .btn-secondary { background: white; color: var(--gray-700); border: 1.5px solid var(--gray-200); box-shadow: var(--shadow-sm); }
   .btn-secondary:hover { border-color: var(--pink-300); color: var(--pink-600); }
   .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 14px rgba(16,185,129,0.3); }
   .btn-success:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.4); }
@@ -191,22 +137,14 @@
   .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
   /* ─── STATS ROW ─── */
-  .stats-row {
-    display: grid !important; grid-template-columns: repeat(4, 1fr); gap: 16px;
-    margin-bottom: 28px;
-  }
+  .stats-row { display: grid !important; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
   .stat-card {
     background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
     border-radius: var(--radius-lg); padding: 20px;
-    border: 1px solid rgba(255,255,255,0.8);
-    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255,255,255,0.8); box-shadow: var(--shadow-md);
     display: flex; align-items: center; gap: 14px;
   }
-  .stat-icon {
-    width: 46px; height: 46px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0;
-  }
+  .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
   .stat-icon.pink { background: var(--pink-100); }
   .stat-icon.blue { background: var(--blue-100); }
   .stat-icon.purple { background: var(--purple-100); }
@@ -215,10 +153,7 @@
   .stat-label { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
 
   /* ─── DEPT BADGES ─── */
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
-  }
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
   .badge-วช { background: var(--blue-100); color: var(--blue-600); }
   .badge-บค { background: var(--pink-100); color: var(--pink-600); }
   .badge-งบ { background: var(--amber-100); color: var(--amber-600); }
@@ -228,15 +163,8 @@
   .table-wrap { overflow-x: auto; border-radius: 12px; }
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   thead tr { background: linear-gradient(135deg, var(--pink-50), var(--blue-50)); }
-  thead th {
-    padding: 12px 14px; text-align: left;
-    font-weight: 600; color: var(--gray-700); font-size: 13px;
-    border-bottom: 2px solid var(--gray-200);
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--gray-100);
-    transition: background 0.15s;
-  }
+  thead th { padding: 12px 14px; text-align: left; font-weight: 600; color: var(--gray-700); font-size: 13px; border-bottom: 2px solid var(--gray-200); }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.15s; }
   tbody tr:hover { background: var(--pink-50); }
   tbody td { padding: 12px 14px; color: var(--gray-700); }
   .memo-num { font-family: 'Kanit', sans-serif; font-weight: 700; color: var(--pink-600); font-size: 15px; }
@@ -246,8 +174,8 @@
 
   /* ─── FILTER ROW ─── */
   .filter-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
-  .filter-row .form-input, .filter-row .form-select { max-width: 200px; }
   .filter-row .form-input { max-width: 260px; }
+  .filter-row .form-select { max-width: 200px; }
 
   /* ─── RESULT PAGE ─── */
   .result-hero {
@@ -259,281 +187,53 @@
     font-family: 'Kanit', sans-serif; font-size: 52px; font-weight: 800;
     background: linear-gradient(135deg, var(--pink-500), var(--blue-600));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    letter-spacing: 2px; line-height: 1;
-    margin: 16px 0 8px;
+    letter-spacing: 2px; line-height: 1; margin: 16px 0 8px;
     animation: scaleIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
   }
   @keyframes scaleIn { from { opacity:0; transform: scale(0.7); } to { opacity:1; transform:none; } }
   .result-label { font-size: 14px; color: var(--gray-500); margin-bottom: 6px; }
-  .result-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--pink-100), var(--blue-100));
-    color: var(--pink-700); font-weight: 700; font-size: 13px;
-    padding: 4px 14px; border-radius: 999px;
-  }
-  .info-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-    margin: 20px 0;
-  }
+  .result-badge { display: inline-block; background: linear-gradient(135deg, var(--pink-100), var(--blue-100)); color: var(--pink-700); font-weight: 700; font-size: 13px; padding: 4px 14px; border-radius: 999px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 20px 0; }
   .info-row { background: var(--gray-50); border-radius: 10px; padding: 12px 16px; }
   .info-row-label { font-size: 12px; color: var(--gray-500); font-weight: 600; margin-bottom: 2px; }
   .info-row-val { font-size: 14px; color: var(--gray-800); font-weight: 500; }
 
   /* ─── OVERLAY / POPUP ─── */
-  .overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(15,15,35,0.5); backdrop-filter: blur(6px);
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
+  .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(15,15,35,0.5); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: all; }
-  .popup {
-    background: white; border-radius: var(--radius-xl);
-    padding: 40px 36px; max-width: 440px; width: 90%;
-    text-align: center; box-shadow: var(--shadow-xl);
-    transform: scale(0.85) translateY(20px); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  }
+  .popup { background: white; border-radius: var(--radius-xl); padding: 40px 36px; max-width: 440px; width: 90%; text-align: center; box-shadow: var(--shadow-xl); transform: scale(0.85) translateY(20px); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
   .overlay.show .popup { transform: none; }
   .popup-icon { font-size: 54px; margin-bottom: 16px; display: block; animation: bounce 0.6s 0.2s both; }
   @keyframes bounce { 0%{transform:scale(0)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
   .popup-title { font-family: 'Kanit', sans-serif; font-size: 22px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
-  .popup-memo { font-family: 'Kanit', sans-serif; font-size: 36px; font-weight: 800;
-    background: linear-gradient(135deg, var(--pink-500), var(--blue-600));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin: 14px 0; animation: scaleIn 0.5s 0.3s both;
-  }
+  .popup-memo { font-family: 'Kanit', sans-serif; font-size: 36px; font-weight: 800; background: linear-gradient(135deg, var(--pink-500), var(--blue-600)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 14px 0; animation: scaleIn 0.5s 0.3s both; }
   .popup-sub { color: var(--gray-500); font-size: 14px; margin-bottom: 24px; }
 
   /* ─── LOADING ─── */
-  .loading-overlay {
-    position: fixed; inset: 0; z-index: 300;
-    background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.2s;
-  }
+  .loading-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
   .loading-overlay.show { opacity: 1; pointer-events: all; }
-  .spinner {
-    width: 52px; height: 52px; border-radius: 50%;
-    border: 4px solid var(--gray-200);
-    border-top-color: var(--pink-500);
-    animation: spin 0.8s linear infinite;
-    margin-bottom: 16px;
-  }
+  .spinner { width: 52px; height: 52px; border-radius: 50%; border: 4px solid var(--gray-200); border-top-color: var(--pink-500); animation: spin 0.8s linear infinite; margin-bottom: 16px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .loading-text { font-family: 'Kanit', sans-serif; font-size: 16px; color: var(--gray-600); }
 
   /* ─── TOAST ─── */
   .toast-area { position: fixed; top: 80px; right: 24px; z-index: 400; display: flex; flex-direction: column; gap: 8px; }
-  .toast {
-    background: white; border-radius: 12px; padding: 14px 18px;
-    box-shadow: var(--shadow-xl); min-width: 260px;
-    display: flex; align-items: center; gap: 12px;
-    transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    border-left: 4px solid var(--pink-500);
-  }
+  .toast { background: white; border-radius: 12px; padding: 14px 18px; box-shadow: var(--shadow-xl); min-width: 260px; display: flex; align-items: center; gap: 12px; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); border-left: 4px solid var(--pink-500); }
   .toast.show { transform: none; }
   .toast.success { border-left-color: var(--emerald-600); }
   .toast.error { border-left-color: #ef4444; }
   .toast-icon { font-size: 20px; }
   .toast-msg { font-size: 13px; font-weight: 500; color: var(--gray-700); }
 
-  /* ─── RESPONSIVE ─── */
-  /* ══════════════════════════════════════
-     RESPONSIVE — ทุกขนาดอุปกรณ์
-     ══════════════════════════════════════
-
-     Breakpoints:
-       xl  : > 1280px  (จอใหญ่ / iMac)
-       lg  : 1024–1280px (โน้ตบุ๊ก 13–15")
-       md  : 768–1023px  (iPad landscape / tablet)
-       sm  : 600–767px   (iPad portrait / tablet เล็ก)
-       xs  : < 600px     (มือถือ)
-       xxs : < 400px     (มือถือเล็ก)
-  ═══════════════════════════════════════ */
-
-  /* ── โน้ตบุ๊ก / iPad landscape (lg) ── */
-  @media (max-width: 1280px) {
-    .container { padding: 24px 20px; }
-  }
-
-  /* ── iPad landscape / tablet (md) ── */
-  @media (max-width: 1023px) {
-    .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .dept-counter { grid-template-columns: repeat(2, 1fr); }
-    .container { padding: 20px 16px; }
-    .nav-title { font-size: 14px; }
-    .nav-sub { display: none; }
-  }
-
-  /* ── iPad portrait / tablet เล็ก (sm) ── */
-  @media (max-width: 767px) {
-    /* Navbar */
-    .nav-inner { height: auto; padding: 10px 0; flex-direction: column; gap: 10px; align-items: flex-start; }
-    .nav-tabs { width: 100%; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 2px; }
-    .nav-tab { flex-shrink: 0; padding: 8px 14px; font-size: 13px; }
-    .nav-brand { width: 100%; }
-
-    /* Hero */
-    .hero { padding: 24px 16px 16px; }
-    .hero-title { font-size: 22px; }
-    .hero-sub { font-size: 13px; }
-    .hero-badge { font-size: 12px; }
-
-    /* Form */
-    .form-grid { grid-template-columns: 1fr; }
-    .card { padding: 20px 16px; }
-    .card-title { font-size: 15px; }
-
-    /* Result */
-    .result-num { font-size: 36px; }
-    .info-grid { grid-template-columns: 1fr; }
-
-    /* Dashboard */
-    .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px; }
-    .stat-card { padding: 14px 12px; gap: 10px; }
-    .stat-num { font-size: 22px; }
-    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .dept-card { padding: 12px; }
-    .dept-card-prefix { font-size: 18px; }
-    .dept-card-num { font-size: 24px; }
-    .section-head { flex-direction: column; align-items: flex-start; }
-    .section-title { font-size: 17px; }
-
-    /* Filter row */
-    .filter-row { flex-direction: column; align-items: stretch; }
-    .filter-row .form-input,
-    .filter-row .form-select { max-width: 100%; }
-
-    /* Table: horizontal scroll */
-    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    table { min-width: 600px; }
-    thead th, tbody td { padding: 10px 10px; font-size: 12px; }
-
-    /* Buttons */
-    .btn-row { flex-direction: column; }
-    .btn-row .btn { width: 100%; justify-content: center; }
-    .btn-lg { padding: 13px 20px; font-size: 15px; }
-
-    /* Popup */
-    .popup { padding: 28px 20px; }
-    .popup-memo { font-size: 28px; }
-
-    /* Report modal */
-    .popup[style*="max-width:520px"] { max-width: 96vw !important; padding: 24px 16px; }
-
-    /* GAS details panel */
-    details[style*="bottom:16px"] { 
-      bottom: 8px !important; right: 8px !important; 
-      max-width: calc(100vw - 16px) !important; 
-    }
-  }
-
-  /* ── มือถือ (xs) ── */
-  @media (max-width: 599px) {
-    body { font-size: 14px; }
-    .navbar { padding: 0 12px; }
-    .nav-inner { padding: 8px 0; gap: 8px; }
-    .nav-icon { width: 34px; height: 34px; font-size: 16px; }
-    .nav-title { font-size: 13px; }
-    .nav-tab { padding: 7px 10px; font-size: 12px; border-radius: 7px; }
-
-    .hero { padding: 20px 12px 12px; }
-    .hero-title { font-size: 19px; }
-    .container { padding: 16px 12px; }
-    .card { padding: 16px 14px; border-radius: 14px; }
-
-    /* Stats: 2 columns on phone */
-    .stats-row { grid-template-columns: 1fr 1fr !important; gap: 8px; display: grid !important; }
-    .stat-card { padding: 12px 10px; gap: 8px; }
-    .stat-icon { width: 38px; height: 38px; font-size: 18px; }
-    .stat-num { font-size: 20px; }
-    .stat-label { font-size: 11px; }
-
-    /* Dept cards: 2 columns */
-    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .dept-card { padding: 10px 8px; border-radius: 10px; }
-    .dept-card-prefix { font-size: 16px; }
-    .dept-card-num { font-size: 22px; }
-    .dept-card-name { font-size: 10px; }
-
-    /* Info cards in result */
-    .info-row { padding: 10px 12px; border-radius: 8px; }
-    .info-row-label { font-size: 11px; }
-    .info-row-val { font-size: 13px; }
-
-    .result-num { font-size: 30px; letter-spacing: 1px; }
-    .result-hero { padding: 24px 16px; }
-
-    /* Form inputs */
-    .form-input, .form-select, .form-textarea { padding: 10px 12px; font-size: 14px; }
-    .form-label { font-size: 12px; }
-
-    /* Table */
-    table { min-width: 520px; font-size: 11px; }
-    thead th { padding: 9px 8px; font-size: 11px; }
-    tbody td { padding: 9px 8px; }
-
-    /* Popup */
-    .popup-memo { font-size: 26px; }
-    .popup-title { font-size: 18px; }
-    .popup-icon { font-size: 42px; }
-
-    /* Period buttons in report modal */
-    .period-btn { padding: 10px 6px; }
-    .period-icon { font-size: 18px; }
-    .period-label { font-size: 12px; }
-
-    /* Dept check buttons */
-    .dept-check-btn { padding: 6px 10px; font-size: 12px; }
-
-    /* Toast */
-    .toast-area { right: 8px; top: 70px; }
-    .toast { min-width: 200px; padding: 12px 14px; }
-  }
-
-  /* ── มือถือเล็กมาก (xxs) ── */
-  @media (max-width: 399px) {
-    .nav-tabs { gap: 2px; }
-    .nav-tab { padding: 6px 8px; font-size: 11px; }
-    .hero-title { font-size: 17px; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .dept-counter { grid-template-columns: 1fr 1fr; }
-    .result-num { font-size: 26px; }
-    .btn { font-size: 13px; padding: 10px 16px; }
-  }
-
-  /* ── Touch device: ปรับ hover ── */
-  @media (hover: none) {
-    .card:hover { transform: none; box-shadow: var(--shadow-lg); }
-    .btn-primary:hover { transform: none; }
-    .btn-success:hover { transform: none; }
-    .btn-info:hover { transform: none; }
-    .dept-card:hover { transform: none; }
-  }
-
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    20%      { transform: translateX(-8px); }
-    40%      { transform: translateX(8px); }
-    60%      { transform: translateX(-6px); }
-    80%      { transform: translateX(6px); }
-  }
-
   /* ─── DECORATIVE BG ─── */
-  .bg-orb {
-    position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1;
-  }
+  .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: -1; }
   .bg-orb-1 { width: 400px; height: 400px; background: rgba(236,72,153,0.08); top: -100px; right: -100px; }
   .bg-orb-2 { width: 350px; height: 350px; background: rgba(59,130,246,0.08); bottom: -80px; left: -80px; }
 
   .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
   .section-title { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
   .dept-counter { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
-  .dept-card {
-    background: white; border-radius: 14px; padding: 16px;
-    border: 1.5px solid var(--gray-100); box-shadow: var(--shadow-sm);
-    text-align: center; transition: all 0.2s;
-  }
+  .dept-card { background: white; border-radius: 14px; padding: 16px; border: 1.5px solid var(--gray-100); box-shadow: var(--shadow-sm); text-align: center; transition: all 0.2s; }
   .dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .dept-card-prefix { font-family: 'Kanit', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 2px; }
   .dept-card-name { font-size: 11px; color: var(--gray-500); margin-bottom: 6px; }
@@ -547,13 +247,91 @@
   .dept-card.งบ .dept-card-num { color: var(--amber-600); }
   .dept-card.บท .dept-card-num { color: var(--emerald-600); }
 
-  /* PDF Preview area (hidden) */
-  #pdf-preview { display: none; }
+  /* ─── BATCH ─── */
+  #batchDropZone.drag-over { border-color: var(--pink-500) !important; background: var(--pink-50) !important; transform: scale(1.01); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1023px) {
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dept-counter { grid-template-columns: repeat(2, 1fr); }
+    .container { padding: 20px 16px; }
+    .nav-title { font-size: 14px; }
+    .nav-sub { display: none; }
+  }
+  @media (max-width: 767px) {
+    .nav-inner { height: auto; padding: 10px 0; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .nav-tabs { width: 100%; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 2px; }
+    .nav-tab { flex-shrink: 0; padding: 8px 14px; font-size: 13px; }
+    .nav-brand { width: 100%; }
+    .hero { padding: 24px 16px 16px; }
+    .hero-title { font-size: 22px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .card { padding: 20px 16px; }
+    .result-num { font-size: 36px; }
+    .info-grid { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .stat-card { padding: 14px 12px; gap: 10px; }
+    .stat-num { font-size: 22px; }
+    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .filter-row { flex-direction: column; align-items: stretch; }
+    .filter-row .form-input, .filter-row .form-select { max-width: 100%; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 600px; }
+    .btn-row { flex-direction: column; }
+    .btn-row .btn { width: 100%; justify-content: center; }
+  }
+  @media (max-width: 599px) {
+    body { font-size: 14px; }
+    .navbar { padding: 0 12px; }
+    .nav-inner { padding: 8px 0; gap: 8px; }
+    .nav-icon { width: 34px; height: 34px; font-size: 16px; }
+    .nav-title { font-size: 13px; }
+    .nav-tab { padding: 7px 10px; font-size: 12px; border-radius: 7px; }
+    .hero { padding: 20px 12px 12px; }
+    .hero-title { font-size: 19px; }
+    .container { padding: 16px 12px; }
+    .card { padding: 16px 14px; border-radius: 14px; }
+    .stats-row { grid-template-columns: 1fr 1fr !important; gap: 8px; display: grid !important; }
+    .stat-card { padding: 12px 10px; gap: 8px; }
+    .stat-icon { width: 38px; height: 38px; font-size: 18px; }
+    .stat-num { font-size: 20px; }
+    .stat-label { font-size: 11px; }
+    .dept-counter { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .dept-card { padding: 10px 8px; border-radius: 10px; }
+    .dept-card-prefix { font-size: 16px; }
+    .dept-card-num { font-size: 22px; }
+    .dept-card-name { font-size: 10px; }
+    .result-num { font-size: 30px; letter-spacing: 1px; }
+    .result-hero { padding: 24px 16px; }
+    .form-input, .form-select, .form-textarea { padding: 10px 12px; font-size: 14px; }
+    .form-label { font-size: 12px; }
+    table { min-width: 520px; font-size: 11px; }
+    thead th { padding: 9px 8px; font-size: 11px; }
+    tbody td { padding: 9px 8px; }
+    .toast-area { right: 8px; top: 70px; }
+    .toast { min-width: 200px; padding: 12px 14px; }
+  }
+  @media (hover: none) {
+    .card:hover { transform: none; box-shadow: var(--shadow-lg); }
+    .btn-primary:hover, .btn-success:hover, .btn-info:hover { transform: none; }
+    .dept-card:hover { transform: none; }
+  }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+
+  /* Period buttons */
+  .period-btn { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 8px; border-radius:12px; cursor:pointer; border:2px solid var(--gray-200); background:white; transition:all 0.2s; user-select:none; }
+  .period-btn:has(input:checked) { border-color:var(--pink-400); background:var(--pink-50); box-shadow:0 0 0 3px rgba(236,72,153,0.1); }
+  .period-btn input { display:none; }
+  .period-icon { font-size:22px; }
+  .period-label { font-size:13px; font-weight:600; color:var(--gray-700); }
+  .period-btn:has(input:checked) .period-label { color:var(--pink-600); }
+  .dept-check-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:999px; cursor:pointer; border:1.5px solid var(--gray-200); background:white; font-size:13px; font-weight:500; color:var(--gray-600); transition:all 0.18s; user-select:none; }
+  .dept-check-btn:has(input:checked) { border-color:var(--pink-400); background:var(--pink-50); color:var(--pink-700); }
+  .dept-check-btn input { display:none; }
 </style>
 </head>
 <body>
 
-<!-- Background orbs -->
 <div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
 
@@ -585,7 +363,9 @@
 <nav class="navbar">
   <div class="nav-inner">
     <div class="nav-brand">
-      <div class="nav-icon" style="padding:0;overflow:hidden;"><img src="https://img2.pic.in.th/pic/sa1.png" style="width:100%;height:100%;object-fit:cover;border-radius:10px;"></div>
+      <div class="nav-icon" style="padding:0;overflow:hidden;">
+        <img src="https://img2.pic.in.th/pic/sa1.png" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+      </div>
       <div>
         <div class="nav-title">ระบบขอเลขที่บันทึกข้อความ</div>
         <div class="nav-sub">โรงเรียนสา จ.น่าน</div>
@@ -595,6 +375,8 @@
       <button class="nav-tab active" onclick="showPage('form')">📝 ขอเลขที่บันทึก</button>
       <button class="nav-tab" onclick="showPage('result')" id="resultTab">📄 ผลลัพธ์</button>
       <button class="nav-tab" onclick="showPage('admin')">📊 แดชบอร์ด</button>
+      <!-- ★ TAB ใหม่: ขอเลขหมู่ -->
+      <button class="nav-tab" onclick="showPage('batch')">📦 ขอเลขหมู่</button>
       <button class="nav-tab" id="tab-settings" onclick="openAdminLogin()">⚙️ ตั้งค่า</button>
     </div>
   </div>
@@ -608,7 +390,6 @@
       <h1 class="hero-title">ขอเลขที่บันทึกข้อความ</h1>
       <p class="hero-sub">กรอกข้อมูลด้านล่างเพื่อรับเลขที่บันทึกข้อความโดยอัตโนมัติ</p>
     </div>
-
     <div style="max-width:760px;margin:0 auto;">
       <div class="card">
         <div class="card-title"><span>📝</span> แบบฟอร์มขอเลขที่บันทึกข้อความ</div>
@@ -644,22 +425,15 @@
             <textarea class="form-textarea" id="f-desc" placeholder="รายละเอียดหรือหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
         </div>
-
-        <!-- Dept Preview -->
         <div id="deptPreview" style="display:none;margin-top:16px;padding:14px 16px;border-radius:10px;background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px dashed var(--pink-300);">
           <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ตัวอย่างรูปแบบเลขที่บันทึกของฝ่ายที่เลือก</div>
           <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;" id="deptPreviewNum">—</div>
         </div>
-
         <div class="btn-row">
-          <button class="btn btn-primary btn-lg" onclick="submitForm()">
-            ✨ ขอเลขที่บันทึกข้อความ
-          </button>
+          <button class="btn btn-primary btn-lg" onclick="submitForm()">✨ ขอเลขที่บันทึกข้อความ</button>
           <button class="btn btn-secondary" onclick="resetForm()">🔄 ล้างข้อมูล</button>
         </div>
       </div>
-
-      <!-- Info Card -->
       <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(236,72,153,0.04),rgba(59,130,246,0.04));">
         <div class="card-title"><span>ℹ️</span> ข้อมูลรูปแบบเลขที่บันทึกข้อความ</div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
@@ -697,34 +471,16 @@
           <div class="result-badge" id="r-dept">—</div>
           <div style="margin-top:10px;color:var(--gray-400);font-size:13px;">ออกเลขเมื่อ: <span id="r-timestamp">—</span></div>
         </div>
-
         <div class="info-grid">
-          <div class="info-row">
-            <div class="info-row-label">👤 ชื่อ-สกุล</div>
-            <div class="info-row-val" id="r-name">—</div>
-          </div>
-          <div class="info-row">
-            <div class="info-row-label">🏷️ ตำแหน่ง</div>
-            <div class="info-row-val" id="r-position">—</div>
-          </div>
-          <div class="info-row" style="grid-column:1/-1">
-            <div class="info-row-label">📌 เรื่อง</div>
-            <div class="info-row-val" id="r-subject">—</div>
-          </div>
-          <div class="info-row">
-            <div class="info-row-label">📅 วันที่</div>
-            <div class="info-row-val" id="r-date">—</div>
-          </div>
-          <div class="info-row">
-            <div class="info-row-label">🏢 ฝ่าย</div>
-            <div class="info-row-val" id="r-deptFull">—</div>
-          </div>
+          <div class="info-row"><div class="info-row-label">👤 ชื่อ-สกุล</div><div class="info-row-val" id="r-name">—</div></div>
+          <div class="info-row"><div class="info-row-label">🏷️ ตำแหน่ง</div><div class="info-row-val" id="r-position">—</div></div>
+          <div class="info-row" style="grid-column:1/-1"><div class="info-row-label">📌 เรื่อง</div><div class="info-row-val" id="r-subject">—</div></div>
+          <div class="info-row"><div class="info-row-label">📅 วันที่</div><div class="info-row-val" id="r-date">—</div></div>
+          <div class="info-row"><div class="info-row-label">🏢 ฝ่าย</div><div class="info-row-val" id="r-deptFull">—</div></div>
           <div class="info-row" style="grid-column:1/-1" id="r-desc-row">
-            <div class="info-row-label">📝 รายละเอียด</div>
-            <div class="info-row-val" id="r-desc">—</div>
+            <div class="info-row-label">📝 รายละเอียด</div><div class="info-row-val" id="r-desc">—</div>
           </div>
         </div>
-
         <div class="btn-row" style="justify-content:center;">
           <button class="btn btn-primary btn-lg" onclick="downloadPDF()">⬇️ ดาวน์โหลด PDF</button>
           <button class="btn btn-secondary" onclick="showPage('form')">📝 ขอเลขใหม่</button>
@@ -744,68 +500,18 @@
         <button class="btn btn-info btn-sm" onclick="openReportModal()">📄 สรุปรายงาน PDF</button>
       </div>
     </div>
-
-    <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-icon pink">📋</div>
-        <div>
-          <div class="stat-num" id="stat-total">0</div>
-          <div class="stat-label">หนังสือทั้งหมด</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon blue">📅</div>
-        <div>
-          <div class="stat-num" id="stat-today">0</div>
-          <div class="stat-label">วันนี้</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon purple">🏢</div>
-        <div>
-          <div class="stat-num">4</div>
-          <div class="stat-label">ฝ่ายทั้งหมด</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon emerald">🗓️</div>
-        <div>
-          <div class="stat-num" id="stat-year">2569</div>
-          <div class="stat-label">ปีงบประมาณ</div>
-        </div>
-      </div>
+      <div class="stat-card"><div class="stat-icon pink">📋</div><div><div class="stat-num" id="stat-total">0</div><div class="stat-label">หนังสือทั้งหมด</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue">📅</div><div><div class="stat-num" id="stat-today">0</div><div class="stat-label">วันนี้</div></div></div>
+      <div class="stat-card"><div class="stat-icon purple">🏢</div><div><div class="stat-num">4</div><div class="stat-label">ฝ่ายทั้งหมด</div></div></div>
+      <div class="stat-card"><div class="stat-icon emerald">🗓️</div><div><div class="stat-num" id="stat-year">2569</div><div class="stat-label">ปีงบประมาณ</div></div></div>
     </div>
-
-    <!-- Dept Counters -->
     <div class="dept-counter">
-      <div class="dept-card วช">
-        <div class="dept-card-prefix">วช</div>
-        <div class="dept-card-name">ฝ่ายวิชาการ</div>
-        <div class="dept-card-num" id="cnt-วช">0</div>
-        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
-      </div>
-      <div class="dept-card บค">
-        <div class="dept-card-prefix">บค</div>
-        <div class="dept-card-name">ฝ่ายบุคคล</div>
-        <div class="dept-card-num" id="cnt-บค">0</div>
-        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
-      </div>
-      <div class="dept-card งบ">
-        <div class="dept-card-prefix">งบ</div>
-        <div class="dept-card-name">ฝ่ายงบประมาณ</div>
-        <div class="dept-card-num" id="cnt-งบ">0</div>
-        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
-      </div>
-      <div class="dept-card บท">
-        <div class="dept-card-prefix">บท</div>
-        <div class="dept-card-name">ฝ่ายบริหารทั่วไป</div>
-        <div class="dept-card-num" id="cnt-บท">0</div>
-        <div style="font-size:11px;color:var(--gray-400);">ฉบับ</div>
-      </div>
+      <div class="dept-card วช"><div class="dept-card-prefix">วช</div><div class="dept-card-name">ฝ่ายวิชาการ</div><div class="dept-card-num" id="cnt-วช">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
+      <div class="dept-card บค"><div class="dept-card-prefix">บค</div><div class="dept-card-name">ฝ่ายบุคคล</div><div class="dept-card-num" id="cnt-บค">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
+      <div class="dept-card งบ"><div class="dept-card-prefix">งบ</div><div class="dept-card-name">ฝ่ายงบประมาณ</div><div class="dept-card-num" id="cnt-งบ">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
+      <div class="dept-card บท"><div class="dept-card-prefix">บท</div><div class="dept-card-name">ฝ่ายบริหารทั่วไป</div><div class="dept-card-num" id="cnt-บท">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
     </div>
-
-    <!-- Filter -->
     <div class="card">
       <div class="filter-row">
         <input class="form-input" id="searchInput" placeholder="🔍 ค้นหาชื่อ หรือ เลขที่บันทึก..." oninput="filterTable()">
@@ -822,26 +528,135 @@
       </div>
       <div class="table-wrap">
         <table id="memoTable">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>เลขที่บันทึก</th>
-              <th>ชื่อ-สกุล</th>
-              <th>ตำแหน่ง</th>
-              <th>ฝ่าย</th>
-              <th>เรื่อง</th>
-              <th>วันที่</th>
-              <th>จัดการ</th>
-            </tr>
-          </thead>
+          <thead><tr><th>#</th><th>เลขที่บันทึก</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ฝ่าย</th><th>เรื่อง</th><th>วันที่</th><th>จัดการ</th></tr></thead>
           <tbody id="tableBody"></tbody>
         </table>
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">📭</div>
-          <p>ยังไม่มีข้อมูล กรุณาส่งคำขอครั้งแรก</p>
-        </div>
+        <div class="empty-state" id="emptyState"><div class="empty-icon">📭</div><p>ยังไม่มีข้อมูล กรุณาส่งคำขอครั้งแรก</p></div>
       </div>
       <div style="margin-top:12px;font-size:13px;color:var(--gray-400);" id="tableInfo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PAGE: BATCH (ขอเลขหมู่) ══════════════ -->
+<div class="page" id="page-batch">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">📦 ขอเลขหมู่</div>
+      <h1 class="hero-title">ขอเลขที่บันทึกข้อความ — หลายคนพร้อมกัน</h1>
+      <p class="hero-sub">อัปโหลดไฟล์ Excel/CSV ที่มีรายชื่อ แล้วระบบออกเลขให้อัตโนมัติทุกคน</p>
+    </div>
+    <div style="max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:20px;">
+
+      <!-- ขั้นที่ 1: ค่าร่วม -->
+      <div class="card">
+        <div class="card-title"><span>⚙️</span> ขั้นตอนที่ 1 — กำหนดค่าร่วมสำหรับทุกคน</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">ฝ่าย <span class="req">*</span></label>
+            <select class="form-select" id="b-dept" onchange="batchUpdatePreview()">
+              <option value="">-- เลือกฝ่าย --</option>
+              <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
+              <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
+              <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
+              <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">วันที่ <span class="req">*</span></label>
+            <input class="form-input" id="b-date" type="date">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">เรื่อง <span class="req">*</span></label>
+            <input class="form-input" id="b-subject" type="text" placeholder="เรื่องที่ใช้สำหรับทุกคนในชุดนี้">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">รายละเอียดเพิ่มเติม (ใช้ร่วมกัน)</label>
+            <textarea class="form-textarea" id="b-desc" placeholder="รายละเอียดหรือหมายเหตุ (ถ้ามี)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ขั้นที่ 2: อัปโหลดไฟล์ -->
+      <div class="card">
+        <div class="card-title"><span>📂</span> ขั้นตอนที่ 2 — อัปโหลดรายชื่อ (Excel หรือ CSV)</div>
+        <div style="background:linear-gradient(135deg,#eff6ff,#dbeafe);border:1.5px solid #93c5fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:2px;">📋 รูปแบบไฟล์ที่รองรับ</div>
+            <div style="font-size:12px;color:#3b82f6;">คอลัมน์ที่ต้องมี: <b>name</b> (ชื่อ-สกุล), <b>position</b> (ตำแหน่ง)</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:2px;">ชื่อคอลัมน์ภาษาไทยก็ได้: <b>ชื่อ-สกุล</b> หรือ <b>ชื่อ</b>, <b>ตำแหน่ง</b></div>
+          </div>
+          <button class="btn btn-info btn-sm" onclick="downloadBatchTemplate()">⬇️ ดาวน์โหลด Template</button>
+        </div>
+        <div id="batchDropZone"
+          onclick="document.getElementById('batchFileInput').click()"
+          ondragover="event.preventDefault();this.classList.add('drag-over')"
+          ondragleave="this.classList.remove('drag-over')"
+          ondrop="handleBatchDrop(event)"
+          style="border:2.5px dashed #f9a8d4;border-radius:14px;padding:36px;text-align:center;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,rgba(236,72,153,0.03),rgba(59,130,246,0.03));">
+          <div style="font-size:40px;margin-bottom:10px;">📂</div>
+          <div style="font-size:15px;font-weight:600;color:#374151;margin-bottom:4px;">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</div>
+          <div style="font-size:12px;color:#9ca3af;">.xlsx, .xls, .csv — รองรับสูงสุด 200 รายการ</div>
+        </div>
+        <input type="file" id="batchFileInput" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleBatchFile(this.files[0])">
+        <div id="batchFileInfo" style="display:none;margin-top:12px;padding:10px 14px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;font-size:13px;color:#166534;align-items:center;gap:8px;">
+          <span>✅</span><span id="batchFileInfoText"></span>
+          <button onclick="clearBatchFile()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:#6b7280;font-size:18px;">✕</button>
+        </div>
+      </div>
+
+      <!-- ขั้นที่ 3: Preview -->
+      <div class="card" id="batchPreviewCard" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+          <div class="card-title" style="margin:0;border:0;padding:0;"><span>👁️</span> ขั้นตอนที่ 3 — ตรวจสอบรายการก่อนยืนยัน</div>
+          <div id="batchSummaryBadge" style="background:linear-gradient(135deg,#ec4899,#3b82f6);color:white;padding:6px 16px;border-radius:999px;font-size:13px;font-weight:700;"></div>
+        </div>
+        <div class="table-wrap" style="max-height:380px;overflow-y:auto;">
+          <table id="batchPreviewTable">
+            <thead><tr><th>#</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>เลขที่จะออก</th><th>ลบ</th></tr></thead>
+            <tbody id="batchPreviewBody"></tbody>
+          </table>
+        </div>
+        <!-- เพิ่มแถวเอง -->
+        <div style="margin-top:14px;padding:12px 14px;background:var(--gray-50);border-radius:10px;border:1.5px dashed var(--gray-200);">
+          <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">➕ เพิ่มรายการด้วยตัวเอง</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:11px;">ชื่อ-สกุล</label>
+              <input class="form-input" id="b-addName" type="text" placeholder="ชื่อ-สกุล" style="padding:8px 12px;font-size:13px;">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label" style="font-size:11px;">ตำแหน่ง</label>
+              <input class="form-input" id="b-addPosition" type="text" placeholder="ตำแหน่ง" style="padding:8px 12px;font-size:13px;">
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="batchAddRow()" style="height:38px;">➕ เพิ่ม</button>
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:20px;">
+          <button class="btn btn-primary btn-lg" onclick="submitBatch()" id="batchSubmitBtn">
+            ✨ ยืนยันขอเลข <span id="batchSubmitCount"></span> รายการ
+          </button>
+          <button class="btn btn-secondary" onclick="clearBatchFile()">🔄 เริ่มใหม่</button>
+        </div>
+      </div>
+
+      <!-- ผลลัพธ์ Batch -->
+      <div class="card" id="batchResultCard" style="display:none;">
+        <div class="card-title"><span>🎉</span> ออกเลขสำเร็จทั้งหมด!</div>
+        <div id="batchResultSummary" style="margin-bottom:16px;padding:14px 16px;background:linear-gradient(135deg,#f0fdf4,#eff6ff);border-radius:10px;border:1.5px solid #86efac;"></div>
+        <div class="table-wrap">
+          <table id="batchResultTable">
+            <thead><tr><th>#</th><th>เลขที่บันทึก</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>PDF</th></tr></thead>
+            <tbody id="batchResultBody"></tbody>
+          </table>
+        </div>
+        <div class="btn-row" style="margin-top:20px;justify-content:center;">
+          <button class="btn btn-primary btn-lg" onclick="downloadBatchPDF()">⬇️ ดาวน์โหลด PDF รวม</button>
+          <button class="btn btn-success btn-lg" onclick="downloadBatchExcel()">📊 ส่งออก Excel สรุป</button>
+          <button class="btn btn-secondary" onclick="resetBatchPage()">🔄 ขอเลขชุดใหม่</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -850,7 +665,6 @@
 <div class="page" id="page-settings">
   <div class="container">
     <div style="max-width:700px;margin:0 auto;">
-
       <div class="hero" style="padding:32px 0 20px;">
         <div class="hero-badge">⚙️ ตั้งค่าระบบ</div>
         <h1 class="hero-title">กำหนดเลขเริ่มต้น</h1>
@@ -860,115 +674,75 @@
           <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="logoutAdmin()">🚪 ออกจากระบบ</button>
         </div>
       </div>
-
-      <!-- Starting number card -->
       <div class="card">
         <div class="card-title"><span>🔢</span> กำหนดเลขเริ่มต้นแต่ละฝ่าย</div>
-
-        <!-- GAS URL Card -->
         <div style="background:white;border:2px solid #bfdbfe;border-radius:12px;padding:18px 20px;margin-bottom:20px;">
           <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:10px;">🔗 เชื่อมต่อ Google Sheets</div>
           <div class="form-group" style="margin-bottom:10px;">
             <label class="form-label">Google Apps Script URL</label>
             <div style="display:flex;gap:8px;">
-              <input class="form-input" id="gasUrlInput" type="text"
-                placeholder="https://script.google.com/macros/s/..."
-                style="flex:1;font-size:12px;">
+              <input class="form-input" id="gasUrlInput" type="text" placeholder="https://script.google.com/macros/s/..." style="flex:1;font-size:12px;">
               <button class="btn btn-info btn-sm" onclick="saveGasUrl()">💾 บันทึก</button>
               <button class="btn btn-secondary btn-sm" onclick="testGasUrl()">🧪 ทดสอบ</button>
             </div>
           </div>
           <div id="gasUrlStatus" style="font-size:12px;color:#6b7280;"></div>
-          <div style="margin-top:8px;font-size:11px;color:#9ca3af;">
-            💡 เมื่อบันทึก URL แล้ว ข้อมูลจะ sync ข้ามอุปกรณ์ได้ทันที
-          </div>
+          <div style="margin-top:8px;font-size:11px;color:#9ca3af;">💡 เมื่อบันทึก URL แล้ว ข้อมูลจะ sync ข้ามอุปกรณ์ได้ทันที</div>
         </div>
-
         <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:#374151;">
           <b>💡 วิธีใช้:</b> ใส่เลขที่ต้องการเริ่มต้น เช่น ถ้าต้องการให้เลขถัดไปเป็น <b>วช126/2569</b> ให้ใส่ <b>125</b>
-          (ระบบจะออกเลข 126 เป็นเลขถัดไป) หรือถ้าต้องการเริ่มที่ 1 ให้ใส่ 0
         </div>
-
         <div style="margin-bottom:16px;">
           <label class="form-label" style="margin-bottom:8px;">ปี พ.ศ. ที่ต้องการตั้งค่า</label>
-          <select class="form-select" id="cfg-year" style="max-width:200px;" onchange="loadStartConfig()">
-          </select>
+          <select class="form-select" id="cfg-year" style="max-width:200px;" onchange="loadStartConfig()"></select>
         </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="startNumGrid">
-          <!-- filled by JS -->
-        </div>
-
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" id="startNumGrid"></div>
         <div style="margin-top:20px;padding:14px 16px;background:#f9f9ff;border-radius:10px;border:1.5px dashed #e0e7ff;">
           <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;">👁️ ตัวอย่างเลขที่จะออกถัดไป</div>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;" id="previewNextNums">
-            <!-- filled by JS -->
-          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;" id="previewNextNums"></div>
         </div>
-
         <div class="btn-row" style="margin-top:20px;">
           <button class="btn btn-primary" onclick="saveStartConfig()">💾 บันทึกการตั้งค่า</button>
           <button class="btn btn-secondary" onclick="resetStartConfig()">↩️ รีเซ็ตเป็นค่าเริ่มต้น</button>
         </div>
       </div>
-
-      <!-- Current config display -->
       <div class="card" style="margin-top:16px;">
         <div class="card-title"><span>📋</span> การตั้งค่าปัจจุบันทั้งหมด</div>
         <div id="allConfigTable"></div>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ══════════════ ADMIN LOGIN MODAL ══════════════ -->
+<!-- ══════════════ MODALS ══════════════ -->
+<!-- Admin Login -->
 <div class="overlay" id="adminLoginOverlay">
-  <div class="popup" style="max-width:400px;width:92%;text-align:center;padding:36px 32px;">
+  <div class="popup" style="max-width:400px;width:92%;padding:36px 32px;">
     <div style="font-size:52px;margin-bottom:12px;">🔐</div>
     <div style="font-family:'Kanit',sans-serif;font-size:20px;font-weight:700;color:#1e1e3c;margin-bottom:4px;">ยืนยันตัวตนผู้ดูแลระบบ</div>
     <div style="font-size:13px;color:#6b7280;margin-bottom:24px;">กรุณาใส่รหัสผ่านเพื่อเข้าหน้าตั้งค่า</div>
-
     <div style="position:relative;margin-bottom:8px;">
-      <input id="adminPwdInput" type="password" class="form-input"
-        placeholder="รหัสผ่านผู้ดูแลระบบ"
-        style="padding-right:44px;text-align:center;font-size:18px;letter-spacing:4px;"
-        onkeydown="if(event.key==='Enter')verifyAdminPwd()">
-      <button onclick="togglePwdVisibility()" id="togglePwdBtn"
-        style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:#9ca3af;">👁️</button>
+      <input id="adminPwdInput" type="password" class="form-input" placeholder="รหัสผ่านผู้ดูแลระบบ" style="padding-right:44px;text-align:center;font-size:18px;letter-spacing:4px;" onkeydown="if(event.key==='Enter')verifyAdminPwd()">
+      <button onclick="togglePwdVisibility()" id="togglePwdBtn" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;color:#9ca3af;">👁️</button>
     </div>
     <div id="adminPwdError" style="color:#ef4444;font-size:12px;margin-bottom:12px;min-height:18px;"></div>
-
     <div style="display:flex;gap:10px;justify-content:center;">
       <button class="btn btn-primary" style="flex:1;" onclick="verifyAdminPwd()">🔓 เข้าสู่ระบบ</button>
       <button class="btn btn-secondary" onclick="closeAdminLogin()">ยกเลิก</button>
     </div>
-
-    <div style="margin-top:20px;padding:10px 14px;background:#fffbeb;border-radius:8px;border:1px solid #fcd34d;font-size:12px;color:#92400e;">
-      🔑 หากต้องการเปลี่ยนรหัสผ่าน สามารถทำได้ในหน้าตั้งค่า (หลังเข้าสู่ระบบ)
-    </div>
   </div>
 </div>
 
-<!-- ══════════════ CHANGE PASSWORD MODAL ══════════════ -->
+<!-- Change Password -->
 <div class="overlay" id="changePwdOverlay">
   <div class="popup" style="max-width:420px;width:92%;text-align:left;padding:32px 28px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:#1e1e3c;">🔑 เปลี่ยนรหัสผ่าน</div>
       <button onclick="closeChangePwd()" style="background:#f3f4f6;border:none;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;color:#6b7280;">✕</button>
     </div>
-    <div class="form-group" style="margin-bottom:14px;">
-      <label class="form-label">รหัสผ่านปัจจุบัน</label>
-      <input id="oldPwdInput" type="password" class="form-input" placeholder="รหัสผ่านปัจจุบัน">
-    </div>
-    <div class="form-group" style="margin-bottom:14px;">
-      <label class="form-label">รหัสผ่านใหม่</label>
-      <input id="newPwdInput" type="password" class="form-input" placeholder="รหัสผ่านใหม่ (อย่างน้อย 4 ตัวอักษร)">
-    </div>
-    <div class="form-group" style="margin-bottom:20px;">
-      <label class="form-label">ยืนยันรหัสผ่านใหม่</label>
-      <input id="confirmPwdInput" type="password" class="form-input" placeholder="ยืนยันรหัสผ่านใหม่">
-    </div>
+    <div class="form-group" style="margin-bottom:14px;"><label class="form-label">รหัสผ่านปัจจุบัน</label><input id="oldPwdInput" type="password" class="form-input"></div>
+    <div class="form-group" style="margin-bottom:14px;"><label class="form-label">รหัสผ่านใหม่</label><input id="newPwdInput" type="password" class="form-input" placeholder="อย่างน้อย 4 ตัวอักษร"></div>
+    <div class="form-group" style="margin-bottom:20px;"><label class="form-label">ยืนยันรหัสผ่านใหม่</label><input id="confirmPwdInput" type="password" class="form-input"></div>
     <div id="changePwdError" style="color:#ef4444;font-size:12px;margin-bottom:12px;min-height:18px;"></div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-primary" style="flex:1;" onclick="doChangePwd()">💾 บันทึกรหัสผ่านใหม่</button>
@@ -977,18 +751,15 @@
   </div>
 </div>
 
-<!-- ══════════════ DELETE CONFIRM MODAL ══════════════ -->
+<!-- Delete Confirm -->
 <div class="overlay" id="deleteConfirmOverlay">
-  <div class="popup" style="max-width:400px;width:92%;text-align:center;padding:36px 28px;">
+  <div class="popup" style="max-width:400px;width:92%;padding:36px 28px;">
     <div style="font-size:48px;margin-bottom:12px;">🗑️</div>
     <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:#1e1e3c;margin-bottom:4px;">ยืนยันการลบข้อมูล</div>
     <div id="deleteTargetInfo" style="background:#fff5f5;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;margin:14px 0;font-size:13px;color:#374151;"></div>
     <div style="font-size:13px;color:#6b7280;margin-bottom:18px;">กรุณาใส่รหัสผ่านผู้ดูแลระบบเพื่อยืนยัน</div>
     <div style="position:relative;margin-bottom:6px;">
-      <input id="deletePwdInput" type="password" class="form-input"
-        placeholder="รหัสผ่านผู้ดูแลระบบ"
-        style="text-align:center;font-size:16px;letter-spacing:3px;"
-        onkeydown="if(event.key==='Enter')confirmDelete()">
+      <input id="deletePwdInput" type="password" class="form-input" placeholder="รหัสผ่านผู้ดูแลระบบ" style="text-align:center;font-size:16px;letter-spacing:3px;" onkeydown="if(event.key==='Enter')confirmDelete()">
     </div>
     <div id="deletePwdError" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:14px;"></div>
     <div style="display:flex;gap:10px;justify-content:center;">
@@ -998,111 +769,40 @@
   </div>
 </div>
 
-<!-- ══════════════ REPORT MODAL ══════════════ -->
+<!-- Report Modal -->
 <div class="overlay" id="reportOverlay">
   <div class="popup" style="max-width:520px;width:94%;text-align:left;padding:32px 30px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <div style="font-family:'Kanit',sans-serif;font-size:19px;font-weight:700;color:var(--gray-800);">📄 สร้างรายงานสรุป PDF</div>
       <button onclick="closeReportModal()" style="background:var(--gray-100);border:none;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;color:var(--gray-500);">✕</button>
     </div>
-
-    <!-- Period Type -->
     <div style="margin-bottom:18px;">
       <div class="form-label" style="margin-bottom:8px;">ประเภทรายงาน</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-        <label class="period-btn" id="pBtn-daily">
-          <input type="radio" name="period" value="daily" checked onchange="onPeriodChange()">
-          <span class="period-icon">📅</span>
-          <span class="period-label">รายวัน</span>
-        </label>
-        <label class="period-btn" id="pBtn-weekly">
-          <input type="radio" name="period" value="weekly" onchange="onPeriodChange()">
-          <span class="period-icon">🗓️</span>
-          <span class="period-label">รายสัปดาห์</span>
-        </label>
-        <label class="period-btn" id="pBtn-monthly">
-          <input type="radio" name="period" value="monthly" onchange="onPeriodChange()">
-          <span class="period-icon">📋</span>
-          <span class="period-label">รายเดือน</span>
-        </label>
-        <label class="period-btn" id="pBtn-yearly">
-          <input type="radio" name="period" value="yearly" onchange="onPeriodChange()">
-          <span class="period-icon">📆</span>
-          <span class="period-label">รายปี</span>
-        </label>
+        <label class="period-btn" id="pBtn-daily"><input type="radio" name="period" value="daily" checked onchange="onPeriodChange()"><span class="period-icon">📅</span><span class="period-label">รายวัน</span></label>
+        <label class="period-btn" id="pBtn-weekly"><input type="radio" name="period" value="weekly" onchange="onPeriodChange()"><span class="period-icon">🗓️</span><span class="period-label">รายสัปดาห์</span></label>
+        <label class="period-btn" id="pBtn-monthly"><input type="radio" name="period" value="monthly" onchange="onPeriodChange()"><span class="period-icon">📋</span><span class="period-label">รายเดือน</span></label>
+        <label class="period-btn" id="pBtn-yearly"><input type="radio" name="period" value="yearly" onchange="onPeriodChange()"><span class="period-icon">📆</span><span class="period-label">รายปี</span></label>
       </div>
     </div>
-
-    <!-- Dynamic date inputs -->
     <div id="periodInputs" style="margin-bottom:18px;"></div>
-
-    <!-- Dept filter -->
     <div style="margin-bottom:20px;">
       <div class="form-label" style="margin-bottom:8px;">ฝ่ายที่ต้องการรายงาน</div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;" id="deptCheckboxes">
-        <label class="dept-check-btn" data-dept="all">
-          <input type="checkbox" value="all" checked onchange="toggleAllDepts(this)">ทุกฝ่าย
-        </label>
-        <label class="dept-check-btn" data-dept="ฝ่ายวิชาการ">
-          <input type="checkbox" value="ฝ่ายวิชาการ" checked>ฝ่ายวิชาการ
-        </label>
-        <label class="dept-check-btn" data-dept="ฝ่ายบุคคล">
-          <input type="checkbox" value="ฝ่ายบุคคล" checked>ฝ่ายบุคคล
-        </label>
-        <label class="dept-check-btn" data-dept="ฝ่ายงบประมาณ">
-          <input type="checkbox" value="ฝ่ายงบประมาณ" checked>ฝ่ายงบประมาณ
-        </label>
-        <label class="dept-check-btn" data-dept="ฝ่ายบริหารทั่วไป">
-          <input type="checkbox" value="ฝ่ายบริหารทั่วไป" checked>ฝ่ายบริหารทั่วไป
-        </label>
+        <label class="dept-check-btn" data-dept="all"><input type="checkbox" value="all" checked onchange="toggleAllDepts(this)">ทุกฝ่าย</label>
+        <label class="dept-check-btn" data-dept="ฝ่ายวิชาการ"><input type="checkbox" value="ฝ่ายวิชาการ" checked>ฝ่ายวิชาการ</label>
+        <label class="dept-check-btn" data-dept="ฝ่ายบุคคล"><input type="checkbox" value="ฝ่ายบุคคล" checked>ฝ่ายบุคคล</label>
+        <label class="dept-check-btn" data-dept="ฝ่ายงบประมาณ"><input type="checkbox" value="ฝ่ายงบประมาณ" checked>ฝ่ายงบประมาณ</label>
+        <label class="dept-check-btn" data-dept="ฝ่ายบริหารทั่วไป"><input type="checkbox" value="ฝ่ายบริหารทั่วไป" checked>ฝ่ายบริหารทั่วไป</label>
       </div>
     </div>
-
-    <!-- Preview info box -->
-    <div id="reportPreviewBox" style="background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px solid var(--pink-200);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">
-      กำลังคำนวณข้อมูลรายงาน...
-    </div>
-
+    <div id="reportPreviewBox" style="background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px solid var(--pink-200);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">กำลังคำนวณข้อมูลรายงาน...</div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn-primary" style="flex:1;" onclick="generateReportPDF()">⬇️ สร้างและดาวน์โหลด PDF</button>
       <button class="btn btn-secondary" onclick="closeReportModal()">ยกเลิก</button>
     </div>
   </div>
 </div>
-
-<style>
-/* Period radio buttons */
-.period-btn {
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-  padding:14px 8px; border-radius:12px; cursor:pointer;
-  border:2px solid var(--gray-200); background:white;
-  transition:all 0.2s; user-select:none;
-}
-.period-btn:has(input:checked) {
-  border-color:var(--pink-400); background:var(--pink-50);
-  box-shadow:0 0 0 3px rgba(236,72,153,0.1);
-}
-.period-btn input { display:none; }
-.period-icon { font-size:22px; }
-.period-label { font-size:13px; font-weight:600; color:var(--gray-700); }
-.period-btn:has(input:checked) .period-label { color:var(--pink-600); }
-
-/* Dept checkboxes */
-.dept-check-btn {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:7px 14px; border-radius:999px; cursor:pointer;
-  border:1.5px solid var(--gray-200); background:white;
-  font-size:13px; font-weight:500; color:var(--gray-600);
-  transition:all 0.18s; user-select:none;
-}
-.dept-check-btn:has(input:checked) {
-  border-color:var(--pink-400); background:var(--pink-50); color:var(--pink-700);
-}
-.dept-check-btn input { display:none; }
-
-/* Report section headers in PDF preview */
-.report-section { margin-bottom:16px; }
-</style>
 
 <script>
 // ══════════════════════════════════════════
@@ -1111,7 +811,6 @@
 let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbye4PrDSh7fuUyDc6aHQMxF9kHa6zNnvuHOMHwB9k-pwBF0DJ6P42OUd_rh39AhMnzX/exec';
 const SCHOOL_NAME = 'โรงเรียนสา';
 const SCHOOL_PROVINCE = 'จังหวัดน่าน';
-
 const DEPT_CONFIG = {
   'ฝ่ายวิชาการ':    { prefix: 'วช', color: '#2563eb' },
   'ฝ่ายบุคคล':      { prefix: 'บค', color: '#db2777' },
@@ -1120,39 +819,25 @@ const DEPT_CONFIG = {
 };
 
 // ══════════════════════════════════════════
-// STATE (localStorage as local DB)
+// STATE & LOCAL DB
 // ══════════════════════════════════════════
 function normalizeDateField(val) {
-  // Google Sheets อาจส่ง date เป็น "Sun Mar 30 2026 00:00:00 GMT+0700" หรือ "30/3/2569" หรือ "2026-03-30"
-  // → normalize ให้เป็น YYYY-MM-DD เสมอ
   if (!val) return '';
   const s = String(val).trim();
-  // Already YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  // Try parse as date object string
   const d = new Date(s);
   if (!isNaN(d.getTime())) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    return `${y}-${m}-${day}`;
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
   return s;
 }
-
-// ── Local cache (fallback เมื่อ offline หรือยังไม่ได้ตั้ง GAS_URL) ──
 function loadData() {
   try {
     const raw = JSON.parse(localStorage.getItem('memoData') || '[]');
-    // normalize date field ทุก record เผื่อข้อมูลเก่าผิด format
     return raw.map(r => ({ ...r, date: normalizeDateField(r.date || '') }));
   } catch { return []; }
 }
-function saveData(data) {
-  localStorage.setItem('memoData', JSON.stringify(data));
-}
-
-// ── Sync จาก Google Sheets ──
+function saveData(data) { localStorage.setItem('memoData', JSON.stringify(data)); }
 
 async function syncFromSheets() {
   if (!GAS_URL) return null;
@@ -1162,10 +847,8 @@ async function syncFromSheets() {
       delete window[cbName];
       const el = document.getElementById('gas-jsonp-script');
       if (el) el.remove();
-      console.warn('[syncFromSheets] timeout');
       resolve(null);
     }, 10000);
-
     window[cbName] = function(json) {
       clearTimeout(timeout);
       delete window[cbName];
@@ -1173,22 +856,13 @@ async function syncFromSheets() {
       if (el) el.remove();
       try {
         if (json.status === 'ok' && Array.isArray(json.data)) {
-          const normalized = json.data.map(r => ({
-            ...r,
-            date: normalizeDateField(r.date),
-            id: String(r.id)
-          }));
+          const normalized = json.data.map(r => ({ ...r, date: normalizeDateField(r.date), id: String(r.id) }));
           saveData(normalized);
-          // ── ดึง startConfig จาก Sheets มาด้วย (ถ้ามี) ──
-          if (json.startConfig) {
-            localStorage.setItem('startConfig', JSON.stringify(json.startConfig));
-            console.log('[sync] startConfig โหลดสำเร็จ:', json.startConfig);
-          }
+          if (json.startConfig) localStorage.setItem('startConfig', JSON.stringify(json.startConfig));
           resolve(normalized);
         } else { resolve(null); }
       } catch(e) { resolve(null); }
     };
-
     const script = document.createElement('script');
     script.id = 'gas-jsonp-script';
     script.src = GAS_URL + '?action=getAll&callback=' + cbName;
@@ -1197,138 +871,95 @@ async function syncFromSheets() {
   });
 }
 
-// ── Push record ไป Google Sheets ──
-async function deleteFromSheets(id) {
-  if (!GAS_URL) return;
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'delete', id: String(id) }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    console.log('[deleteFromSheets] ลบ id:', id);
-  } catch(e) { console.warn('deleteFromSheets failed:', e); }
-}
-
-async function clearAllFromSheets() {
-  if (!GAS_URL) return;
-  try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'clearAll' }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    console.log('[clearAllFromSheets] ล้างข้อมูลทั้งหมดแล้ว');
-  } catch(e) { console.warn('clearAllFromSheets failed:', e); }
-}
-
 async function pushToSheets(record) {
   if (!GAS_URL) return;
   try {
-    // ใช้ no-cors เพื่อหลีกเลี่ยง CORS error
     const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'add', record, startConfig }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    console.log('[pushToSheets] ส่งข้อมูลสำเร็จ:', record.memoNum);
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'add', record, startConfig }), headers:{'Content-Type':'text/plain'} });
   } catch(e) {
-    console.warn('[pushToSheets] failed:', e);
-    // fallback: เก็บในคิวรอส่งทีหลัง
     try {
       const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
       q.push(record);
       localStorage.setItem('pendingSync', JSON.stringify(q));
-      console.log('[pushToSheets] บันทึกลง pendingQueue แทน');
     } catch {}
   }
 }
 
-// ── บันทึก startConfig ไป Sheets ทันทีที่มีการเปลี่ยนแปลง ──
+async function pushBatchToSheets(records) {
+  if (!GAS_URL) return;
+  try {
+    const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBatch', records, startConfig }), headers:{'Content-Type':'text/plain'} });
+    console.log(`[pushBatchToSheets] ส่ง ${records.length} รายการ`);
+  } catch(e) {
+    try {
+      const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
+      records.forEach(r => q.push(r));
+      localStorage.setItem('pendingSync', JSON.stringify(q));
+    } catch {}
+  }
+}
+
+async function deleteFromSheets(id) {
+  if (!GAS_URL) return;
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'delete', id: String(id) }), headers:{'Content-Type':'text/plain'} }); } catch {}
+}
+
+async function clearAllFromSheets() {
+  if (!GAS_URL) return;
+  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'clearAll' }), headers:{'Content-Type':'text/plain'} }); } catch {}
+}
+
 async function saveStartConfigToSheets() {
   if (!GAS_URL) return;
   try {
     const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ action: 'saveStartConfig', startConfig }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-    console.log('[saveStartConfigToSheets] บันทึกสำเร็จ');
-  } catch(e) { console.warn('saveStartConfig failed:', e); }
+    await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'saveStartConfig', startConfig }), headers:{'Content-Type':'text/plain'} });
+  } catch {}
 }
 
-// ── Flush pending queue เมื่อออนไลน์ ──
 async function flushPendingSync() {
   if (!GAS_URL) return;
   try {
     const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
     if (!q.length) return;
     for (const record of q) {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'add', record }),
-        headers: { 'Content-Type': 'text/plain' }
-      });
+      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'add', record }), headers:{'Content-Type':'text/plain'} });
     }
     localStorage.removeItem('pendingSync');
     showToast(`ส่งข้อมูลที่ค้างอยู่ ${q.length} รายการสำเร็จ`, 'success');
-  } catch(e) { console.warn('flushPending failed:', e); }
+  } catch {}
 }
+
 let currentResult = null;
 
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // Set default date = today
   const today = new Date();
   document.getElementById('f-date').value = today.toISOString().split('T')[0];
-
-  // Dept preview on change
+  document.getElementById('b-date').value = today.toISOString().split('T')[0];
   document.getElementById('f-dept').addEventListener('change', updateDeptPreview);
-
-  // แสดงหน้าเว็บทันที
   updateAdminStats();
   document.getElementById('stat-year').textContent = getThaiBE();
-
-  // ── Sync จาก Google Sheets ใน background (ไม่บล็อกหน้าเว็บ) ──
   if (GAS_URL) {
-    // แสดง indicator เล็กๆ มุมขวาล่างแทน loading เต็มจอ
     showSyncIndicator(true);
     syncFromSheets().then(synced => {
       showSyncIndicator(false);
-      if (synced) {
-        updateAdminStats();
-        showToast(`ซิงค์ข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success');
-      }
+      if (synced) { updateAdminStats(); showToast(`ซิงค์ข้อมูลสำเร็จ (${synced.length} รายการ)`, 'success'); }
       flushPendingSync();
     }).catch(() => showSyncIndicator(false));
   }
-
-  // แจ้งเมื่อออนไลน์กลับมา
-  window.addEventListener('online', () => {
-    if (GAS_URL) {
-      showToast('เชื่อมต่ออินเทอร์เน็ตแล้ว กำลัง sync...', 'info');
-      flushPendingSync();
-    }
-  });
+  window.addEventListener('online', () => { if (GAS_URL) flushPendingSync(); });
 });
 
 function getThaiBE(dateStr) {
   const d = dateStr ? new Date(dateStr) : new Date();
   return d.getFullYear() + 543;
 }
-
 function formatThaiDate(dateStr) {
-  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
   const d = new Date(dateStr);
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 543}`;
 }
@@ -1352,42 +983,25 @@ function updateDeptPreview() {
 // ══════════════════════════════════════════
 // MEMO NUMBER LOGIC
 // ══════════════════════════════════════════
-function loadStartConfig() {
-  const year = parseInt(document.getElementById('cfg-year')?.value || getThaiBE());
-  renderStartNumGrid(year);
-  renderPreviewNextNums(year);
-  renderAllConfigTable();
-}
-
 function getStartConfig(dept, year) {
-  // year ต้องเป็น พ.ศ. เสมอ เช่น 2569
   try {
     const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
     const key = dept + '_' + year;
-    const val = all[key] !== undefined ? parseInt(all[key]) : 0;
-    return val;
+    return all[key] !== undefined ? parseInt(all[key]) : 0;
   } catch { return 0; }
 }
-
 function setStartConfig(dept, year, val) {
-  // year ต้องเป็น พ.ศ. เสมอ เช่น 2569
   try {
     const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    const key = dept + '_' + year;
-    all[key] = val;
+    all[dept + '_' + year] = val;
     localStorage.setItem('startConfig', JSON.stringify(all));
-    console.log(`[startConfig] บันทึก: ${key} = ${val}`, all);
-  } catch(e) { console.error('setStartConfig error:', e); }
+  } catch {}
 }
-
 function getNextNumber(dept, year) {
-  // year ต้องเป็น พ.ศ. เสมอ (ได้จาก getThaiBE)
   const data = loadData();
   const cfg = DEPT_CONFIG[dept];
   const prefix = cfg.prefix;
-  // ดึง startConfig เป็น floor ขั้นต่ำ
-  const startFloor = getStartConfig(dept, year); // year = พ.ศ.
-  // Filter same dept + year (memoNum format คือ วช001/2569)
+  const startFloor = getStartConfig(dept, year);
   const existing = data.filter(r => {
     const parts = r.memoNum.split('/');
     return r.dept === dept && parseInt(parts[1]) === parseInt(year);
@@ -1398,20 +1012,17 @@ function getNextNumber(dept, year) {
     const n = parseInt(numPart, 10);
     if (!isNaN(n) && n > maxNum) maxNum = n;
   });
-  console.log(`[getNextNumber] ${dept} ปี${year}: startFloor=${startFloor}, existing=${existing.length}, maxNum=${maxNum}, next=${maxNum+1}`);
   return maxNum + 1;
 }
-
 function generateMemoNum(dept, dateStr) {
   const cfg = DEPT_CONFIG[dept];
   const year = getThaiBE(dateStr);
   const seq = getNextNumber(dept, year);
-  const num = String(seq).padStart(3, '0');
-  return `${cfg.prefix}${num}/${year}`;
+  return `${cfg.prefix}${String(seq).padStart(3,'0')}/${year}`;
 }
 
 // ══════════════════════════════════════════
-// FORM SUBMIT
+// FORM SUBMIT (รายคนเดียว)
 // ══════════════════════════════════════════
 async function submitForm() {
   const name     = document.getElementById('f-name').value.trim();
@@ -1420,66 +1031,30 @@ async function submitForm() {
   const dateVal  = document.getElementById('f-date').value;
   const subject  = document.getElementById('f-subject').value.trim();
   const desc     = document.getElementById('f-desc').value.trim();
-
-  if (!name || !position || !dept || !dateVal || !subject) {
-    showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error');
-    return;
-  }
-
-  showLoading('กำลังซิงค์ข้อมูลล่าสุด...');
-
-  // ── Step 1: sync ข้อมูล + startConfig จาก Sheets ก่อนออกเลขเสมอ ──
-  if (GAS_URL) {
-    const synced = await syncFromSheets();
-    if (synced) {
-      console.log(`[submitForm] sync สำเร็จ ${synced.length} รายการ`);
-    }
-  }
-
+  if (!name || !position || !dept || !dateVal || !subject) { showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error'); return; }
+  showLoading('กำลัง sync ข้อมูลล่าสุด...');
+  if (GAS_URL) { const synced = await syncFromSheets(); if (synced) console.log(`sync ${synced.length} รายการ`); }
   showLoading('กำลังออกเลขที่บันทึกข้อความ...');
-
-  // ── Step 2: ออกเลข (ใช้ข้อมูลล่าสุดจาก Sheets แล้ว) ──
-  const memoNum  = generateMemoNum(dept, dateVal);
+  const memoNum   = generateMemoNum(dept, dateVal);
   const timestamp = new Date().toLocaleString('th-TH');
-  const dateNorm  = dateVal.trim();
-  const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateNorm, timestamp };
-
-  // ── Step 3: บันทึกลง localStorage ──
-  const data = loadData();
-  data.unshift(record);
-  saveData(data);
-
-  // ── Step 4: push ไป Sheets ──
+  const record    = { id: Date.now(), memoNum, name, position, dept, subject, desc, date: dateVal.trim(), timestamp };
+  const data = loadData(); data.unshift(record); saveData(data);
   pushToSheets(record);
-
   currentResult = record;
   hideLoading();
   updateAdminStats();
-
   document.getElementById('popupMemoNum').textContent = memoNum;
   document.getElementById('popupSubject').textContent = `เรื่อง: ${subject}`;
   document.getElementById('successOverlay').classList.add('show');
 }
 
-function goToResult() {
-  closePopup();
-  populateResult(currentResult);
-  showPage('result');
-}
-
-function closePopup() {
-  document.getElementById('successOverlay').classList.remove('show');
-}
-
+function goToResult() { closePopup(); populateResult(currentResult); showPage('result'); }
+function closePopup() { document.getElementById('successOverlay').classList.remove('show'); }
 function resetForm() {
-  document.getElementById('f-name').value = '';
-  document.getElementById('f-position').value = '';
+  ['f-name','f-position','f-subject','f-desc'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-dept').value = '';
-  document.getElementById('f-subject').value = '';
-  document.getElementById('f-desc').value = '';
   document.getElementById('deptPreview').style.display = 'none';
-  const today = new Date();
-  document.getElementById('f-date').value = today.toISOString().split('T')[0];
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
   showToast('ล้างข้อมูลแล้ว', 'success');
 }
 
@@ -1496,105 +1071,60 @@ function populateResult(r) {
   document.getElementById('r-subject').textContent = r.subject;
   document.getElementById('r-date').textContent = formatThaiDate(r.date);
   document.getElementById('r-timestamp').textContent = r.timestamp;
-  if (r.desc) {
-    document.getElementById('r-desc').textContent = r.desc;
-    document.getElementById('r-desc-row').style.display = '';
-  } else {
-    document.getElementById('r-desc-row').style.display = 'none';
-  }
-  // Color based on dept
+  if (r.desc) { document.getElementById('r-desc').textContent = r.desc; document.getElementById('r-desc-row').style.display = ''; }
+  else { document.getElementById('r-desc-row').style.display = 'none'; }
   const cfg = DEPT_CONFIG[r.dept];
   if (cfg) document.getElementById('r-memoNum').style.background = `linear-gradient(135deg, ${cfg.color}, #3b82f6)`;
 }
 
 // ══════════════════════════════════════════
-// PDF EXPORT
+// PDF
 // ══════════════════════════════════════════
 async function downloadPDF() {
   if (!currentResult) { showToast('ไม่มีข้อมูลสำหรับสร้าง PDF', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
-  try {
-    await generateMemosPDF([currentResult]);
-    hideLoading();
-  } catch(e) {
-    hideLoading();
-    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
-  }
+  try { await generateMemosPDF([currentResult]); hideLoading(); }
+  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 async function generateMemosPDF(records) {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   for (let i = 0; i < records.length; i++) {
     const r = records[i];
-    const cfg = Object.values(DEPT_CONFIG).find(c => c.prefix === (DEPT_CONFIG[r.dept]||{}).prefix) || {};
     const deptColor = DEPT_CONFIG[r.dept]?.color || '#ec4899';
-
     const memoHTML = `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;box-sizing:border-box;padding:0;position:relative;">
       <div style="height:8px;background:linear-gradient(90deg,#ec4899,#3b82f6);"></div>
       <div style="text-align:center;padding:20px 0 12px;">
         <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
         <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
-        <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ / บันทึกข้อความ</div>
+        <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ</div>
       </div>
       <div style="margin:0 36px;border-top:2px solid #fce7f3;"></div>
-
       <div style="padding:24px 48px 80px;">
-        <!-- Memo number hero -->
         <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
           <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขที่บันทึกข้อความ</div>
           <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.memoNum}</div>
           <div style="display:inline-block;background:${deptColor};color:white;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:700;margin-top:8px;">${r.dept}</div>
         </div>
-
-        <!-- Info table -->
         <table style="width:100%;border-collapse:collapse;font-size:14px;">
-          <tr style="background:#f9f9ff;">
-            <td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ชื่อ-สกุล</td>
-            <td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td>
-          </tr>
-          <tr>
-            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏷️ ตำแหน่ง</td>
-            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.position}</td>
-          </tr>
-          <tr style="background:#f9f9ff;">
-            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏢 ฝ่าย</td>
-            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.dept}</td>
-          </tr>
-          <tr>
-            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td>
-            <td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td>
-          </tr>
-          <tr style="background:#f9f9ff;">
-            <td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td>
-            <td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td>
-          </tr>
+          <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ชื่อ-สกุล</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td></tr>
+          <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏷️ ตำแหน่ง</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.position}</td></tr>
+          <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏢 ฝ่าย</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.dept}</td></tr>
+          <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td></tr>
+          <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td></tr>
           ${r.desc ? `<tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
         </table>
-
-        <!-- Timestamp -->
-        <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">
-          ออกเลขเมื่อ: ${r.timestamp}
-        </div>
-
-        <!-- Signature area -->
+        <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
         <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
-          ${['ผู้ขอ','ผู้ตรวจสอบ','ผู้อนุมัติ'].map(lbl=>`
-            <div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;">
-              <div style="height:50px;"></div>
-              <div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div>
-            </div>`).join('')}
+          ${['ผู้ขอ','ผู้ตรวจสอบ','ผู้อนุมัติ'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
         </div>
       </div>
-
-      <!-- Footer -->
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
         <div style="color:white;font-size:10px;">เลขที่ ${r.memoNum}</div>
         <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME}</div>
       </div>
     </div>`;
-
     const wrapper = document.createElement('div');
     wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:9999;';
     wrapper.innerHTML = memoHTML;
@@ -1606,13 +1136,12 @@ async function generateMemosPDF(records) {
     if (i > 0) doc.addPage();
     doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
   }
-
-  doc.save(`บันทึกข้อความ_${records[0].memoNum.replace('/','-')}.pdf`);
+  doc.save(`บันทึกข้อความ_${records[0].memoNum.replace('/','-')}${records.length > 1 ? `_ถึง_${records[records.length-1].memoNum.replace('/','-')}` : ''}.pdf`);
   showToast('ดาวน์โหลด PDF สำเร็จ', 'success');
 }
 
 // ══════════════════════════════════════════
-// ADMIN
+// ADMIN / TABLE
 // ══════════════════════════════════════════
 let filteredRows = [];
 
@@ -1620,19 +1149,12 @@ function updateAdminStats() {
   const data = loadData();
   document.getElementById('stat-total').textContent = data.length;
   const todayStr = new Date().toISOString().split('T')[0];
-  const todayCount = data.filter(r => r.date === todayStr).length;
-  document.getElementById('stat-today').textContent = todayCount;
-
-  const year = getThaiBE();
-  document.getElementById('stat-year').textContent = year;
-
-  // Dept counters
+  document.getElementById('stat-today').textContent = data.filter(r => r.date === todayStr).length;
+  document.getElementById('stat-year').textContent = getThaiBE();
   Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
-    const cnt = data.filter(r => r.dept === dept).length;
     const el = document.getElementById(`cnt-${cfg.prefix}`);
-    if (el) el.textContent = cnt;
+    if (el) el.textContent = data.filter(r => r.dept === dept).length;
   });
-
   renderTable(data);
 }
 
@@ -1640,17 +1162,10 @@ function renderTable(data) {
   filteredRows = data;
   const tbody = document.getElementById('tableBody');
   const empty = document.getElementById('emptyState');
-  const info = document.getElementById('tableInfo');
-
-  if (!data.length) {
-    tbody.innerHTML = '';
-    empty.style.display = '';
-    info.textContent = '';
-    return;
-  }
+  const info  = document.getElementById('tableInfo');
+  if (!data.length) { tbody.innerHTML = ''; empty.style.display = ''; info.textContent = ''; return; }
   empty.style.display = 'none';
   info.textContent = `แสดง ${data.length} รายการ`;
-
   tbody.innerHTML = data.map((r, i) => {
     const cfg = DEPT_CONFIG[r.dept] || {};
     const prefix = cfg.prefix || '';
@@ -1663,113 +1178,80 @@ function renderTable(data) {
       <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.subject}">${r.subject}</td>
       <td style="font-size:13px;color:var(--gray-500);">${formatThaiDate(r.date)}</td>
       <td>
-        <button class="btn btn-secondary btn-sm" onclick="viewRecord('${r.id}')" title="ดูรายละเอียด">👁️</button>
-        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadRecordPDF('${r.id}')" title="ดาวน์โหลด PDF">📄</button>
-        <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="deleteRecord('${r.id}')" title="ลบ">🗑️</button>
+        <button class="btn btn-secondary btn-sm" onclick="viewRecord('${r.id}')">👁️</button>
+        <button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadRecordPDF('${r.id}')">📄</button>
+        <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="deleteRecord('${r.id}')">🗑️</button>
       </td>
     </tr>`;
   }).join('');
 }
 
 function filterTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
+  const q    = document.getElementById('searchInput').value.toLowerCase();
   const dept = document.getElementById('filterDept').value;
   const date = document.getElementById('filterDate').value;
-  let data = loadData();
-  if (q) data = data.filter(r => r.name.toLowerCase().includes(q) || r.memoNum.toLowerCase().includes(q) || r.subject.toLowerCase().includes(q));
+  let data   = loadData();
+  if (q)    data = data.filter(r => r.name.toLowerCase().includes(q) || r.memoNum.toLowerCase().includes(q) || r.subject.toLowerCase().includes(q));
   if (dept) data = data.filter(r => r.dept === dept);
   if (date) data = data.filter(r => (r.date||'').trim() === date.trim());
   renderTable(data);
 }
-
 function clearFilter() {
   document.getElementById('searchInput').value = '';
-  document.getElementById('filterDept').value = '';
-  document.getElementById('filterDate').value = '';
+  document.getElementById('filterDept').value  = '';
+  document.getElementById('filterDate').value  = '';
   renderTable(loadData());
 }
-
 function viewRecord(id) {
   const r = loadData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  currentResult = r;
-  populateResult(r);
-  showPage('result');
+  currentResult = r; populateResult(r); showPage('result');
 }
-
 async function downloadRecordPDF(id) {
   const r = loadData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
   showLoading('กำลังสร้าง PDF...');
-  try {
-    await generateMemosPDF([r]);
-    hideLoading();
-  } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  try { await generateMemosPDF([r]); hideLoading(); }
+  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 let _pendingDeleteId = null;
-
 function deleteRecord(id) {
   const record = loadData().find(x => String(x.id) === String(id));
   if (!record) { showToast('ไม่พบข้อมูล', 'error'); return; }
   _pendingDeleteId = String(id);
-  // แสดงข้อมูลที่จะลบใน modal
-  document.getElementById('deleteTargetInfo').innerHTML =
-    `<b>${record.memoNum}</b> — ${record.name}<br>
-     <span style="color:#6b7280;font-size:12px;">${record.dept} | ${record.subject}</span>`;
+  document.getElementById('deleteTargetInfo').innerHTML = `<b>${record.memoNum}</b> — ${record.name}<br><span style="color:#6b7280;font-size:12px;">${record.dept} | ${record.subject}</span>`;
   document.getElementById('deletePwdInput').value = '';
   document.getElementById('deletePwdError').textContent = '';
   document.getElementById('deleteConfirmOverlay').classList.add('show');
   setTimeout(() => document.getElementById('deletePwdInput').focus(), 300);
 }
-
-function closeDeleteConfirm() {
-  document.getElementById('deleteConfirmOverlay').classList.remove('show');
-  _pendingDeleteId = null;
-}
-
+function closeDeleteConfirm() { document.getElementById('deleteConfirmOverlay').classList.remove('show'); _pendingDeleteId = null; }
 function confirmDelete() {
   const pwd = document.getElementById('deletePwdInput').value;
   const errEl = document.getElementById('deletePwdError');
   if (!pwd) { errEl.textContent = 'กรุณาใส่รหัสผ่าน'; return; }
-  if (pwd !== getAdminPwd()) {
-    errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง';
-    document.getElementById('deletePwdInput').value = '';
-    document.getElementById('deletePwdInput').focus();
-    return;
-  }
-  // รหัสผ่านถูก — ลบได้เลย
+  if (pwd !== getAdminPwd()) { errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง'; document.getElementById('deletePwdInput').value = ''; document.getElementById('deletePwdInput').focus(); return; }
   const idToDelete = _pendingDeleteId;
   closeDeleteConfirm();
-  // ลบจาก localStorage
-  let data = loadData().filter(x => String(x.id) !== String(idToDelete));
-  saveData(data);
-  // ลบจาก Google Sheets ด้วย
+  saveData(loadData().filter(x => String(x.id) !== String(idToDelete)));
   deleteFromSheets(idToDelete);
   updateAdminStats();
   showToast('ลบรายการแล้ว', 'success');
-  _pendingDeleteId = null;
 }
-
 function clearAllData() {
   const pwd = prompt('⚠️ ล้างข้อมูลทั้งหมด\nกรุณาใส่รหัสผ่านผู้ดูแลระบบ:');
   if (pwd === null) return;
-  if (pwd !== getAdminPwd()) {
-    showToast('รหัสผ่านไม่ถูกต้อง', 'error'); return;
-  }
-  if (!confirm('ยืนยันล้างข้อมูลทั้งหมด?\nการดำเนินการนี้ไม่สามารถย้อนกลับได้')) return;
-  saveData([]);
-  // ล้างจาก Google Sheets ด้วย
-  clearAllFromSheets();
-  updateAdminStats();
+  if (pwd !== getAdminPwd()) { showToast('รหัสผ่านไม่ถูกต้อง', 'error'); return; }
+  if (!confirm('ยืนยันล้างข้อมูลทั้งหมด?')) return;
+  saveData([]); clearAllFromSheets(); updateAdminStats();
   showToast('ล้างข้อมูลทั้งหมดแล้ว', 'success');
 }
-
 function exportExcel() {
   const data = filteredRows.length ? filteredRows : loadData();
-  if (!data.length) { showToast('ไม่มีข้อมูลสำหรับส่งออก', 'error'); return; }
+  if (!data.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
   const rows = [['เลขที่บันทึก','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
-  data.forEach(r => rows.push([r.memoNum, r.name, r.position, r.dept, r.subject, formatThaiDate(r.date), r.desc || '', r.timestamp]));
+  data.forEach(r => rows.push([r.memoNum, r.name, r.position, r.dept, r.subject, formatThaiDate(r.date), r.desc||'', r.timestamp]));
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'บันทึกข้อความ');
@@ -1778,215 +1260,355 @@ function exportExcel() {
 }
 
 // ══════════════════════════════════════════
+// BATCH UPLOAD SYSTEM
+// ══════════════════════════════════════════
+let batchRows    = [];
+let batchResults = [];
+
+function downloadBatchTemplate() {
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['name','position'],
+    ['นายสมชาย ใจดี','ครู'],
+    ['นางสาวสมหญิง รักเรียน','ครูผู้ช่วย'],
+    ['นายวิชัย สุขใส','พนักงานราชการ'],
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'รายชื่อ');
+  XLSX.writeFile(wb, 'template_ขอเลขหมู่.xlsx');
+  showToast('ดาวน์โหลด Template แล้ว', 'success');
+}
+
+function handleBatchDrop(e) {
+  e.preventDefault();
+  document.getElementById('batchDropZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleBatchFile(file);
+}
+
+function handleBatchFile(file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['xlsx','xls','csv'].includes(ext)) { showToast('รองรับเฉพาะ .xlsx, .xls, .csv', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      let rows = [];
+      if (ext === 'csv') {
+        const text  = ev.target.result;
+        const lines = text.split(/\r?\n/).filter(l => l.trim());
+        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,'').toLowerCase());
+        const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('ชื่อ'));
+        const posIdx  = headers.findIndex(h => h.includes('position') || h.includes('ตำแหน่ง'));
+        if (nameIdx < 0) { showToast('ไม่พบคอลัมน์ "name" หรือ "ชื่อ"', 'error'); return; }
+        lines.slice(1).forEach(line => {
+          const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g,''));
+          const name = cols[nameIdx] || '';
+          const pos  = posIdx >= 0 ? (cols[posIdx] || '') : '';
+          if (name) rows.push({ name, position: pos });
+        });
+      } else {
+        const wb   = XLSX.read(ev.target.result, { type:'array' });
+        const ws   = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { defval:'' });
+        data.forEach(row => {
+          const keys    = Object.keys(row);
+          const nameKey = keys.find(k => /name|ชื่อ/i.test(k));
+          const posKey  = keys.find(k => /position|ตำแหน่ง/i.test(k));
+          const name = nameKey ? String(row[nameKey]).trim() : '';
+          const pos  = posKey  ? String(row[posKey]).trim()  : '';
+          if (name) rows.push({ name, position: pos });
+        });
+      }
+      if (!rows.length) { showToast('ไม่พบข้อมูลในไฟล์', 'error'); return; }
+      if (rows.length > 200) { showToast('รองรับสูงสุด 200 รายการ', 'error'); return; }
+      batchRows = rows;
+      renderBatchPreview();
+      const infoEl = document.getElementById('batchFileInfo');
+      document.getElementById('batchFileInfoText').textContent = `${file.name} — พบ ${rows.length} รายการ`;
+      infoEl.style.display = 'flex';
+      showToast(`โหลดไฟล์สำเร็จ พบ ${rows.length} รายการ`, 'success');
+    } catch(err) { showToast('อ่านไฟล์ไม่ได้: ' + err.message, 'error'); }
+  };
+  ext === 'csv' ? reader.readAsText(file, 'UTF-8') : reader.readAsArrayBuffer(file);
+}
+
+function clearBatchFile() {
+  batchRows = [];
+  document.getElementById('batchFileInput').value = '';
+  document.getElementById('batchFileInfo').style.display = 'none';
+  document.getElementById('batchPreviewCard').style.display = 'none';
+  document.getElementById('batchResultCard').style.display = 'none';
+}
+
+function batchUpdatePreview() { if (batchRows.length) renderBatchPreview(); }
+
+function renderBatchPreview() {
+  const dept    = document.getElementById('b-dept').value;
+  const dateVal = document.getElementById('b-date').value;
+  const card    = document.getElementById('batchPreviewCard');
+  card.style.display = 'block';
+  card.scrollIntoView({ behavior:'smooth', block:'start' });
+  const year    = getThaiBE(dateVal);
+  let   nextNum = dept ? getNextNumber(dept, year) : 1;
+  const cfg     = dept ? DEPT_CONFIG[dept] : { prefix:'???', color:'#6b7280' };
+  const tbody   = document.getElementById('batchPreviewBody');
+  tbody.innerHTML = batchRows.map((r, i) => {
+    const seqNum  = String(nextNum + i).padStart(3,'0');
+    const memoNum = dept ? `${cfg.prefix}${seqNum}/${year}` : '(เลือกฝ่ายก่อน)';
+    return `<tr>
+      <td style="color:var(--gray-400);font-size:12px;">${i+1}</td>
+      <td>${r.name}</td>
+      <td style="color:var(--gray-500);font-size:13px;">${r.position||'—'}</td>
+      <td style="font-family:'Kanit',sans-serif;font-weight:700;color:${dept?cfg.color:'#9ca3af'};">${memoNum}</td>
+      <td><button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;padding:4px 10px;" onclick="batchRemoveRow(${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('batchSummaryBadge').textContent = `${batchRows.length} รายการ`;
+  document.getElementById('batchSubmitCount').textContent  = `(${batchRows.length})`;
+}
+
+function batchRemoveRow(idx) {
+  batchRows.splice(idx, 1);
+  if (!batchRows.length) { clearBatchFile(); return; }
+  renderBatchPreview();
+}
+
+function batchAddRow() {
+  const name = document.getElementById('b-addName').value.trim();
+  const pos  = document.getElementById('b-addPosition').value.trim();
+  if (!name) { showToast('กรุณาใส่ชื่อ-สกุล', 'error'); return; }
+  batchRows.push({ name, position: pos });
+  document.getElementById('b-addName').value     = '';
+  document.getElementById('b-addPosition').value = '';
+  // แสดง preview ถ้ายังไม่มีไฟล์
+  const card = document.getElementById('batchPreviewCard');
+  card.style.display = 'block';
+  renderBatchPreview();
+  showToast('เพิ่มรายการแล้ว', 'success');
+}
+
+async function submitBatch() {
+  const dept    = document.getElementById('b-dept').value;
+  const dateVal = document.getElementById('b-date').value;
+  const subject = document.getElementById('b-subject').value.trim();
+  const desc    = document.getElementById('b-desc').value.trim();
+  if (!dept)          { showToast('กรุณาเลือกฝ่าย', 'error'); return; }
+  if (!dateVal)       { showToast('กรุณาเลือกวันที่', 'error'); return; }
+  if (!subject)       { showToast('กรุณาใส่เรื่อง', 'error'); return; }
+  if (!batchRows.length) { showToast('ไม่มีรายการ', 'error'); return; }
+  showLoading('กำลัง sync ข้อมูลล่าสุด...');
+  if (GAS_URL) { const synced = await syncFromSheets(); if (synced) console.log(`[batch] sync ${synced.length}`); }
+  showLoading(`กำลังออกเลข ${batchRows.length} รายการ...`);
+  const year      = getThaiBE(dateVal);
+  const cfg       = DEPT_CONFIG[dept];
+  let   nextNum   = getNextNumber(dept, year);
+  const timestamp = new Date().toLocaleString('th-TH');
+  const records   = batchRows.map((r, i) => ({
+    id:       Date.now() + i,
+    memoNum:  `${cfg.prefix}${String(nextNum+i).padStart(3,'0')}/${year}`,
+    name:     r.name,
+    position: r.position || '',
+    dept, subject, desc,
+    date:     dateVal,
+    timestamp
+  }));
+  const data = loadData();
+  records.forEach(r => data.unshift(r));
+  saveData(data);
+  await pushBatchToSheets(records);
+  batchResults = records;
+  updateAdminStats();
+  hideLoading();
+  renderBatchResult(records, dept, subject, dateVal);
+  showToast(`ออกเลขสำเร็จ ${records.length} รายการ! 🎉`, 'success');
+}
+
+function renderBatchResult(records, dept, subject, dateVal) {
+  document.getElementById('batchPreviewCard').style.display = 'none';
+  const resultCard = document.getElementById('batchResultCard');
+  resultCard.style.display = 'block';
+  resultCard.scrollIntoView({ behavior:'smooth' });
+  const cfg = DEPT_CONFIG[dept];
+  document.getElementById('batchResultSummary').innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:11px;color:#6b7280;">ออกเลขทั้งหมด</div>
+        <div style="font-size:32px;font-weight:900;color:#059669;font-family:'Kanit',sans-serif;line-height:1;">${records.length} <span style="font-size:14px;font-weight:400;color:#6b7280;">รายการ</span></div>
+      </div>
+      <div style="width:1px;height:40px;background:#86efac;"></div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;">ช่วงเลขที่</div>
+        <div style="font-size:15px;font-weight:700;color:${cfg.color};">${records[0].memoNum} — ${records[records.length-1].memoNum}</div>
+      </div>
+      <div style="width:1px;height:40px;background:#86efac;"></div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;">เรื่อง</div>
+        <div style="font-size:13px;font-weight:600;color:#374151;">${subject}</div>
+        <div style="font-size:12px;color:#6b7280;">${formatThaiDate(dateVal)}</div>
+      </div>
+    </div>`;
+  document.getElementById('batchResultBody').innerHTML = records.map((r, i) => `
+    <tr>
+      <td style="color:var(--gray-400);font-size:12px;">${i+1}</td>
+      <td><span class="memo-num" style="color:${cfg.color};">${r.memoNum}</span></td>
+      <td>${r.name}</td>
+      <td style="color:var(--gray-500);font-size:13px;">${r.position}</td>
+      <td><button class="btn btn-sm" style="background:var(--pink-50);color:var(--pink-600);border:1px solid var(--pink-200);" onclick="downloadSingleFromBatch(${i})">📄 PDF</button></td>
+    </tr>`).join('');
+}
+
+async function downloadSingleFromBatch(idx) {
+  const r = batchResults[idx];
+  if (!r) return;
+  currentResult = r;
+  showLoading('กำลังสร้าง PDF...');
+  try { await generateMemosPDF([r]); hideLoading(); }
+  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+}
+
+async function downloadBatchPDF() {
+  if (!batchResults.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
+  showLoading(`กำลังสร้าง PDF ${batchResults.length} หน้า...`);
+  try { await generateMemosPDF(batchResults); hideLoading(); }
+  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+}
+
+function downloadBatchExcel() {
+  if (!batchResults.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
+  const rows = [['เลขที่บันทึก','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย','เรื่อง','วันที่','เวลาบันทึก']];
+  batchResults.forEach(r => rows.push([r.memoNum, r.name, r.position, r.dept, r.subject, formatThaiDate(r.date), r.timestamp]));
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'บันทึกข้อความ');
+  XLSX.writeFile(wb, `ขอเลขหมู่_${batchResults[0].memoNum.replace('/','-')}_ถึง_${batchResults[batchResults.length-1].memoNum.replace('/','-')}.xlsx`);
+  showToast('ส่งออก Excel สำเร็จ', 'success');
+}
+
+function resetBatchPage() {
+  batchRows = []; batchResults = [];
+  document.getElementById('batchFileInput').value = '';
+  document.getElementById('batchFileInfo').style.display   = 'none';
+  document.getElementById('batchPreviewCard').style.display = 'none';
+  document.getElementById('batchResultCard').style.display  = 'none';
+  document.getElementById('b-dept').value    = '';
+  document.getElementById('b-subject').value = '';
+  document.getElementById('b-desc').value    = '';
+  document.getElementById('b-date').value    = new Date().toISOString().split('T')[0];
+  showToast('รีเซ็ตแล้ว พร้อมขอเลขชุดใหม่', 'success');
+}
+
+// ══════════════════════════════════════════
 // REPORT MODAL
 // ══════════════════════════════════════════
-function openReportModal() {
-  onPeriodChange(); // init inputs
-  updateReportPreview();
-  document.getElementById('reportOverlay').classList.add('show');
-}
-function closeReportModal() {
-  document.getElementById('reportOverlay').classList.remove('show');
-}
+function openReportModal() { onPeriodChange(); updateReportPreview(); document.getElementById('reportOverlay').classList.add('show'); }
+function closeReportModal() { document.getElementById('reportOverlay').classList.remove('show'); }
 
 function onPeriodChange() {
   const period = document.querySelector('input[name="period"]:checked').value;
-  const box = document.getElementById('periodInputs');
-  const today = new Date().toISOString().split('T')[0];
-
+  const box    = document.getElementById('periodInputs');
+  const today  = new Date().toISOString().split('T')[0];
   if (period === 'daily') {
-    box.innerHTML = `
-      <div class="form-group">
-        <label class="form-label">เลือกวันที่</label>
-        <input class="form-input" id="rp-date" type="date" value="${today}" onchange="updateReportPreview()">
-      </div>`;
+    box.innerHTML = `<div class="form-group"><label class="form-label">เลือกวันที่</label><input class="form-input" id="rp-date" type="date" value="${today}" onchange="updateReportPreview()"></div>`;
   } else if (period === 'weekly') {
-    // Default = current week Mon-Sun
-    const d = new Date();
-    const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    const fmt = d => d.toISOString().split('T')[0];
-    box.innerHTML = `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="form-group">
-          <label class="form-label">วันเริ่มต้น</label>
-          <input class="form-input" id="rp-from" type="date" value="${fmt(mon)}" onchange="updateReportPreview()">
-        </div>
-        <div class="form-group">
-          <label class="form-label">วันสิ้นสุด</label>
-          <input class="form-input" id="rp-to" type="date" value="${fmt(sun)}" onchange="updateReportPreview()">
-        </div>
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;" id="weekShortcuts">
-        <button class="btn btn-secondary btn-sm" onclick="setWeek(0)">สัปดาห์นี้</button>
-        <button class="btn btn-secondary btn-sm" onclick="setWeek(-1)">สัปดาห์ที่แล้ว</button>
-        <button class="btn btn-secondary btn-sm" onclick="setWeek(-2)">2 สัปดาห์ก่อน</button>
-      </div>`;
+    const d = new Date(), mon = new Date(d), sun = new Date(d);
+    mon.setDate(d.getDate() - ((d.getDay()+6)%7)); sun.setDate(mon.getDate()+6);
+    const fmt = x => x.toISOString().split('T')[0];
+    box.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">วันเริ่มต้น</label><input class="form-input" id="rp-from" type="date" value="${fmt(mon)}" onchange="updateReportPreview()"></div>
+      <div class="form-group"><label class="form-label">วันสิ้นสุด</label><input class="form-input" id="rp-to" type="date" value="${fmt(sun)}" onchange="updateReportPreview()"></div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="setWeek(0)">สัปดาห์นี้</button>
+      <button class="btn btn-secondary btn-sm" onclick="setWeek(-1)">สัปดาห์ที่แล้ว</button>
+    </div>`;
   } else if (period === 'monthly') {
-    const thisYear = new Date().getFullYear();
-    const thisMonth = new Date().getMonth() + 1;
-    let yearOpts = '';
-    for (let y = thisYear; y >= thisYear - 3; y--) {
-      yearOpts += `<option value="${y}">${y + 543}</option>`;
-    }
-    const thMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-    let monthOpts = thMonths.map((m,i) =>
-      `<option value="${i+1}" ${i+1===thisMonth?'selected':''}>${m}</option>`).join('');
-    box.innerHTML = `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="form-group">
-          <label class="form-label">เดือน</label>
-          <select class="form-select" id="rp-month" onchange="updateReportPreview()">${monthOpts}</select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">ปี พ.ศ.</label>
-          <select class="form-select" id="rp-myear" onchange="updateReportPreview()">${yearOpts}</select>
-        </div>
-      </div>
-      <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
-        <button class="btn btn-secondary btn-sm" onclick="setMonth(0)">เดือนนี้</button>
-        <button class="btn btn-secondary btn-sm" onclick="setMonth(-1)">เดือนที่แล้ว</button>
-        <button class="btn btn-secondary btn-sm" onclick="setMonth(-2)">2 เดือนก่อน</button>
-      </div>`;
+    const thisYear = new Date().getFullYear(), thisMonth = new Date().getMonth()+1;
+    let yearOpts=''; for(let y=thisYear;y>=thisYear-3;y--) yearOpts+=`<option value="${y}">${y+543}</option>`;
+    const thM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    let monthOpts=thM.map((m,i)=>`<option value="${i+1}" ${i+1===thisMonth?'selected':''}>${m}</option>`).join('');
+    box.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">เดือน</label><select class="form-select" id="rp-month" onchange="updateReportPreview()">${monthOpts}</select></div>
+      <div class="form-group"><label class="form-label">ปี พ.ศ.</label><select class="form-select" id="rp-myear" onchange="updateReportPreview()">${yearOpts}</select></div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:6px;">
+      <button class="btn btn-secondary btn-sm" onclick="setMonth(0)">เดือนนี้</button>
+      <button class="btn btn-secondary btn-sm" onclick="setMonth(-1)">เดือนที่แล้ว</button>
+    </div>`;
   } else {
-    // yearly
     const thisYear = new Date().getFullYear();
-    let opts = '';
-    for (let y = thisYear; y >= thisYear - 3; y--) {
-      opts += `<option value="${y}">${y + 543} (${y})</option>`;
-    }
-    box.innerHTML = `
-      <div class="form-group">
-        <label class="form-label">ปี พ.ศ.</label>
-        <select class="form-select" id="rp-year" onchange="updateReportPreview()">${opts}</select>
-      </div>`;
+    let opts=''; for(let y=thisYear;y>=thisYear-3;y--) opts+=`<option value="${y}">${y+543} (${y})</option>`;
+    box.innerHTML = `<div class="form-group"><label class="form-label">ปี พ.ศ.</label><select class="form-select" id="rp-year" onchange="updateReportPreview()">${opts}</select></div>`;
   }
   updateReportPreview();
 }
-
 function setWeek(offset) {
-  const d = new Date();
-  d.setDate(d.getDate() + offset * 7);
-  const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7));
-  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-  const fmt = d => d.toISOString().split('T')[0];
+  const d = new Date(); d.setDate(d.getDate()+offset*7);
+  const mon = new Date(d); mon.setDate(d.getDate()-((d.getDay()+6)%7));
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  const fmt = x => x.toISOString().split('T')[0];
   document.getElementById('rp-from').value = fmt(mon);
-  document.getElementById('rp-to').value = fmt(sun);
+  document.getElementById('rp-to').value   = fmt(sun);
   updateReportPreview();
 }
-
 function setMonth(offset) {
-  const d = new Date();
-  d.setMonth(d.getMonth() + offset);
-  const mEl = document.getElementById('rp-month');
-  const yEl = document.getElementById('rp-myear');
-  if (mEl) mEl.value = d.getMonth() + 1;
+  const d = new Date(); d.setMonth(d.getMonth()+offset);
+  const mEl = document.getElementById('rp-month'), yEl = document.getElementById('rp-myear');
+  if (mEl) mEl.value = d.getMonth()+1;
   if (yEl) yEl.value = d.getFullYear();
   updateReportPreview();
 }
-
 function toggleAllDepts(cb) {
-  const boxes = document.querySelectorAll('#deptCheckboxes input[type=checkbox]:not([value=all])');
-  boxes.forEach(b => b.checked = cb.checked);
+  document.querySelectorAll('#deptCheckboxes input[type=checkbox]:not([value=all])').forEach(b => b.checked = cb.checked);
   updateReportPreview();
 }
-
 function getSelectedDepts() {
   const allCb = document.querySelector('#deptCheckboxes input[value=all]');
   if (allCb && allCb.checked) return Object.keys(DEPT_CONFIG);
-  return [...document.querySelectorAll('#deptCheckboxes input[type=checkbox]:not([value=all]):checked')]
-    .map(b => b.value);
+  return [...document.querySelectorAll('#deptCheckboxes input[type=checkbox]:not([value=all]):checked')].map(b=>b.value);
 }
-
 function getReportData() {
   const period = document.querySelector('input[name="period"]:checked').value;
-  const depts = getSelectedDepts();
+  const depts  = getSelectedDepts();
   let data = loadData();
-  // Filter by dept
   if (depts.length < 4) data = data.filter(r => depts.includes(r.dept));
-
   if (period === 'daily') {
     const d = (document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0]).trim();
     data = data.filter(r => (r.date||'').trim() === d);
-    return { period, label: `ประจำวันที่ ${formatThaiDate(d)}`, data, from: d, to: d };
+    return { period, label:`ประจำวันที่ ${formatThaiDate(d)}`, data, from:d, to:d };
   } else if (period === 'weekly') {
-    const from = document.getElementById('rp-from')?.value;
-    const to = document.getElementById('rp-to')?.value;
-    if (!from || !to) return { period, label: '', data: [], from, to };
+    const from = document.getElementById('rp-from')?.value, to = document.getElementById('rp-to')?.value;
+    if (!from||!to) return { period, label:'', data:[], from, to };
     data = data.filter(r => (r.date||'').trim() >= from && (r.date||'').trim() <= to);
-    return { period, label: `ประจำสัปดาห์ ${formatThaiDate(from)} – ${formatThaiDate(to)}`, data, from, to };
+    return { period, label:`ประจำสัปดาห์ ${formatThaiDate(from)} – ${formatThaiDate(to)}`, data, from, to };
   } else if (period === 'monthly') {
-    const monthEl = document.getElementById('rp-month');
-    const myearEl = document.getElementById('rp-myear');
-    const month = monthEl ? parseInt(monthEl.value) : new Date().getMonth() + 1;
-    const year = myearEl ? parseInt(myearEl.value) : new Date().getFullYear();
-    data = data.filter(r => {
-      const rd = (r.date||'').trim();
-      if (!rd) return false;
-      const d2 = new Date(rd);
-      return d2.getFullYear() === year && d2.getMonth() + 1 === month;
-    });
-    const thMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-    return { period, label: `ประจำเดือน${thMonths[month-1]} พ.ศ. ${year + 543}`, data, month, year };
+    const month = parseInt(document.getElementById('rp-month')?.value||new Date().getMonth()+1);
+    const year  = parseInt(document.getElementById('rp-myear')?.value||new Date().getFullYear());
+    data = data.filter(r => { const rd=(r.date||'').trim(); if(!rd) return false; const d2=new Date(rd); return d2.getFullYear()===year && d2.getMonth()+1===month; });
+    const thM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    return { period, label:`ประจำเดือน${thM[month-1]} พ.ศ. ${year+543}`, data, month, year };
   } else {
-    const yearEl = document.getElementById('rp-year');
-    const year = yearEl ? parseInt(yearEl.value) : new Date().getFullYear();
-    data = data.filter(r => {
-      const rd = (r.date||'').trim();
-      return rd && new Date(rd).getFullYear() === year;
-    });
-    return { period, label: `ประจำปี พ.ศ. ${year + 543}`, data, year };
+    const year = parseInt(document.getElementById('rp-year')?.value||new Date().getFullYear());
+    data = data.filter(r => { const rd=(r.date||'').trim(); return rd && new Date(rd).getFullYear()===year; });
+    return { period, label:`ประจำปี พ.ศ. ${year+543}`, data, year };
   }
 }
-
 function updateReportPreview() {
-  const box = document.getElementById('reportPreviewBox');
-  if (!box) return;
+  const box = document.getElementById('reportPreviewBox'); if (!box) return;
   try {
-    const { label, data, period, from, to } = getReportData();
+    const { label, data } = getReportData();
     const depts = getSelectedDepts();
-    const allData = loadData();
-    const deptSummary = depts.map(d => {
-      const cnt = data.filter(r => r.dept === d).length;
-      return `${d}: <b>${cnt} ฉบับ</b>`;
-    }).join(' &nbsp;|&nbsp; ');
-    // Debug: แสดง date range ที่ใช้ filter
-    const rangeInfo = period === 'daily' ? `วันที่: ${from}` : period === 'weekly' ? `${from} ถึง ${to}` : period === 'monthly' ? `เดือน ${report.month}/${report.year}` : '';
-    box.innerHTML = `
-      <div style="font-weight:600;color:var(--pink-700);margin-bottom:4px;">📋 ${label || '—'}</div>
-      <div style="margin-bottom:4px;">${deptSummary || '—'}</div>
-      <div style="color:var(--gray-500);">รวมทั้งหมด <b style="color:var(--gray-800)">${data.length} ฉบับ</b> &nbsp;|&nbsp; ${depts.length} ฝ่าย</div>
-      ${rangeInfo ? `<div style="color:#9ca3af;font-size:11px;margin-top:3px;">🔍 กรอง: ${rangeInfo} &nbsp;|&nbsp; ข้อมูลทั้งหมดในระบบ: ${allData.length} รายการ</div>` : ''}`;
-  } catch(e) {
-    box.innerHTML = 'กรุณาเลือกช่วงเวลา';
-  }
+    const summary = depts.map(d => `${d}: <b>${data.filter(r=>r.dept===d).length} ฉบับ</b>`).join(' &nbsp;|&nbsp; ');
+    box.innerHTML = `<div style="font-weight:600;color:var(--pink-700);margin-bottom:4px;">📋 ${label||'—'}</div><div style="margin-bottom:4px;">${summary||'—'}</div><div style="color:var(--gray-500);">รวม <b style="color:var(--gray-800)">${data.length} ฉบับ</b></div>`;
+  } catch { box.innerHTML = 'กรุณาเลือกช่วงเวลา'; }
 }
-
-// ══════════════════════════════════════════
-// SUMMARY REPORT PDF ENGINE
-// ══════════════════════════════════════════
 async function generateReportPDF() {
   const report = getReportData();
-  if (!report.data.length) { showToast('ไม่มีข้อมูลในช่วงเวลาที่เลือก', 'error'); return; }
-
-  closeReportModal();
-  showLoading('กำลังสร้างรายงานสรุป PDF... (อาจใช้เวลา 5-15 วินาที)');
-
-  try {
-    await buildSummaryPDF(report);
-    hideLoading();
-    showToast('สร้างรายงาน PDF สำเร็จ', 'success');
-  } catch(e) {
-    hideLoading();
-    showToast('เกิดข้อผิดพลาด: ' + e.message, 'error');
-    console.error(e);
-  }
+  if (!report.data.length) { showToast('ไม่มีข้อมูลในช่วงที่เลือก', 'error'); return; }
+  closeReportModal(); showLoading('กำลังสร้างรายงาน PDF...');
+  try { await buildSummaryPDF(report); hideLoading(); showToast('สร้างรายงาน PDF สำเร็จ', 'success'); }
+  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
-
 async function buildSummaryPDF(report) {
-  // ── Build HTML pages, render with html2canvas, export as PDF ──
   const DEPT_CFG = {
     'ฝ่ายวิชาการ':     { prefix:'วช', color:'#2563eb', bg:'#eff6ff', border:'#93c5fd' },
     'ฝ่ายบุคคล':       { prefix:'บค', color:'#db2777', bg:'#fdf2f8', border:'#f9a8d4' },
@@ -1995,537 +1617,272 @@ async function buildSummaryPDF(report) {
   };
   const selectedDepts = getSelectedDepts();
   const total = report.data.length;
+  const deptStats = Object.keys(DEPT_CFG).map(d => ({ dept:d, ...DEPT_CFG[d], count: report.data.filter(r=>r.dept===d).length }));
+  const maxCount  = Math.max(...deptStats.map(d=>d.count), 1);
 
-  // ── Compute stats ──
-  const deptStats = Object.keys(DEPT_CFG).map(d => ({
-    dept: d,
-    prefix: DEPT_CFG[d].prefix,
-    color: DEPT_CFG[d].color,
-    bg: DEPT_CFG[d].bg,
-    border: DEPT_CFG[d].border,
-    count: report.data.filter(r => r.dept === d).length
-  }));
-  const maxCount = Math.max(...deptStats.map(d => d.count), 1);
-
-  // ── Timeline rows ──
-  function getTimelineRows() {
-    if (report.period === 'daily') {
-      const byHour = {};
-      report.data.forEach(r => {
-        const ts = r.timestamp || '';
-        const m = ts.match(/(\d+):(\d+)/);
-        const h = m ? parseInt(m[1]) : 0;
-        if (!byHour[h]) byHour[h] = { วช:0,บค:0,งบ:0,บท:0,total:0 };
-        byHour[h][DEPT_CFG[r.dept]?.prefix||'']++;
-        byHour[h].total++;
-      });
-      return Object.keys(byHour).sort((a,b)=>+a-+b).map(h => [
-        `${h}:00 น.`, byHour[h].total, byHour[h].วช||0, byHour[h].บค||0, byHour[h].งบ||0, byHour[h].บท||0
-      ]);
-    } else if (report.period === 'monthly') {
-      // breakdown รายวันในเดือน
-      const year = report.year;
-      const month = report.month;
-      const daysInMonth = new Date(year, month, 0).getDate();
-      const rows = [];
-      for (let day = 1; day <= daysInMonth; day++) {
-        const ds = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        const dayData = report.data.filter(r => (r.date||'').trim() === ds);
-        if (dayData.length > 0) {
-          rows.push([`วันที่ ${day}`, dayData.length,
-            dayData.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
-            dayData.filter(r=>r.dept==='ฝ่ายบุคคล').length,
-            dayData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
-            dayData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length]);
-        }
-      }
-      return rows;
-    } else if (report.period === 'weekly') {
-      const days=[]; const d0=new Date(report.from); const dE=new Date(report.to);
-      const thD=['อา.','จ.','อ.','พ.','พฤ.','ศ.','ส.'];
-      for(let d=new Date(d0);d<=dE;d.setDate(d.getDate()+1)){
-        const ds=d.toISOString().split('T')[0];
-        const dd=new Date(ds);
-        const dayData=report.data.filter(r=>r.date===ds);
-        days.push([`${thD[dd.getDay()]} ${dd.getDate()}/${dd.getMonth()+1}/${dd.getFullYear()+543}`,
-          dayData.length,
-          dayData.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
-          dayData.filter(r=>r.dept==='ฝ่ายบุคคล').length,
-          dayData.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
-          dayData.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length]);
-      }
-      return days;
-    } else {
-      const thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-      return thM.map((m,mi)=>{
-        const md=report.data.filter(r=>new Date(r.date).getMonth()===mi);
-        return [m,md.length,
-          md.filter(r=>r.dept==='ฝ่ายวิชาการ').length,
-          md.filter(r=>r.dept==='ฝ่ายบุคคล').length,
-          md.filter(r=>r.dept==='ฝ่ายงบประมาณ').length,
-          md.filter(r=>r.dept==='ฝ่ายบริหารทั่วไป').length];
-      }).filter(r=>r[1]>0);
-    }
-  }
-  const timelineRows = getTimelineRows();
-  const tlLabel = report.period==='daily'?'ตามชั่วโมง':report.period==='weekly'?'ตามวัน':report.period==='monthly'?'ตามวันในเดือน':'ตามเดือน';
-  const tlColHead = report.period==='daily'?'ชั่วโมง':report.period==='weekly'?'วัน':report.period==='monthly'?'วันที่':'เดือน';
-
-  // ── Bar chart SVG ──
-  const barW=80; const barGap=16; const chartH=120; const barChartW=deptStats.length*(barW+barGap);
-  const barsHTML = deptStats.map((ds,i)=>{
-    const bh = Math.max(4, (ds.count/maxCount)*chartH);
-    const by = chartH - bh;
-    return `<g>
-      <rect x="${i*(barW+barGap)}" y="${by}" width="${barW}" height="${bh}" rx="6" fill="${ds.color}" opacity="0.9"/>
-      <text x="${i*(barW+barGap)+barW/2}" y="${by-6}" text-anchor="middle" font-size="13" font-weight="700" fill="${ds.color}" font-family="Sarabun,sans-serif">${ds.count}</text>
-      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+18}" text-anchor="middle" font-size="11" font-weight="700" fill="#374151" font-family="Sarabun,sans-serif">${ds.prefix}</text>
-      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+32}" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Sarabun,sans-serif">${ds.dept.replace('ฝ่าย','')}</text>
-    </g>`;
-  }).join('');
-  const gridLines = [0,0.25,0.5,0.75,1].map(p=>{
-    const gy=chartH*(1-p);
-    return `<line x1="0" y1="${gy}" x2="${barChartW}" y2="${gy}" stroke="#e5e7eb" stroke-width="0.8"/>
-            <text x="-6" y="${gy+4}" text-anchor="end" font-size="10" fill="#9ca3af" font-family="Sarabun,sans-serif">${Math.round(maxCount*p)}</text>`;
-  }).join('');
-
-  // ── Page HTML builder ──
-  function pageShell(content, pageLabel='') {
-    return `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;position:relative;box-sizing:border-box;padding:0;">
-      <!-- Header bar -->
+  function pageShell(content) {
+    return `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;position:relative;box-sizing:border-box;">
       <div style="height:8px;background:linear-gradient(90deg,#ec4899,#3b82f6);"></div>
-      <!-- School header -->
-      <div style="text-align:center;padding:16px 0 6px;">
+      <div style="text-align:center;padding:14px 0 6px;">
         <div style="font-size:18px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
         <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
-        <div style="display:inline-block;margin-top:6px;background:#fdf2f8;border:1.5px solid #ec4899;border-radius:999px;padding:3px 16px;font-size:11px;font-weight:700;color:#db2777;">
-          ${report.period==='daily'?'รายงานประจำวัน':report.period==='weekly'?'รายงานประจำสัปดาห์':report.period==='monthly'?'รายงานประจำเดือน':'รายงานประจำปี'}
-        </div>
-        <div style="font-size:14px;font-weight:700;color:#1e1e3c;margin-top:6px;">${report.label}</div>
-        ${pageLabel?`<div style="font-size:11px;color:#9ca3af;">${pageLabel}</div>`:''}
+        <div style="display:inline-block;margin-top:5px;background:#fdf2f8;border:1.5px solid #ec4899;border-radius:999px;padding:2px 14px;font-size:11px;font-weight:700;color:#db2777;">${report.label}</div>
       </div>
       <div style="margin:0 28px;border-top:1.5px solid #fce7f3;"></div>
-      <div style="padding:16px 28px 60px;">${content}</div>
-      <!-- Footer -->
-      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:6px 20px;display:flex;justify-content:space-between;align-items:center;">
-        <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME} • พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
+      <div style="padding:14px 28px 60px;">${content}</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:6px 20px;display:flex;justify-content:space-between;">
+        <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME}</div>
+        <div style="color:white;font-size:10px;">พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
       </div>
     </div>`;
   }
 
-  // ── PAGE 1: Overview ──
-  const maxDept = deptStats.reduce((a,b)=>b.count>a.count?b:a,deptStats[0]);
+  const barW=80, barGap=16, chartH=110;
+  const barsHTML = deptStats.map((ds,i)=>{
+    const bh=Math.max(4,(ds.count/maxCount)*chartH), by=chartH-bh;
+    return `<g><rect x="${i*(barW+barGap)}" y="${by}" width="${barW}" height="${bh}" rx="6" fill="${ds.color}" opacity="0.9"/>
+      <text x="${i*(barW+barGap)+barW/2}" y="${by-5}" text-anchor="middle" font-size="13" font-weight="700" fill="${ds.color}" font-family="Sarabun,sans-serif">${ds.count}</text>
+      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+16}" text-anchor="middle" font-size="11" font-weight="700" fill="#374151" font-family="Sarabun,sans-serif">${ds.prefix}</text>
+      <text x="${i*(barW+barGap)+barW/2}" y="${chartH+29}" text-anchor="middle" font-size="10" fill="#6b7280" font-family="Sarabun,sans-serif">${ds.dept.replace('ฝ่าย','')}</text></g>`;
+  }).join('');
+  const gridLines = [0,0.5,1].map(p=>{const gy=chartH*(1-p); return `<line x1="0" y1="${gy}" x2="${deptStats.length*(barW+barGap)}" y2="${gy}" stroke="#e5e7eb" stroke-width="0.8"/><text x="-6" y="${gy+4}" text-anchor="end" font-size="10" fill="#9ca3af" font-family="Sarabun,sans-serif">${Math.round(maxCount*p)}</text>`;}).join('');
+
   const deptCardsHTML = deptStats.map(ds=>`
-    <div style="background:${ds.color};border-radius:12px;padding:16px 18px;color:white;position:relative;overflow:hidden;">
-      <div style="font-size:11px;opacity:0.85;margin-bottom:2px;">${ds.dept}</div>
+    <div style="background:${ds.color};border-radius:10px;padding:14px 16px;color:white;">
+      <div style="font-size:11px;opacity:0.85;">${ds.dept}</div>
       <div style="display:flex;align-items:flex-end;justify-content:space-between;">
-        <div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.prefix}</div>
-        <div style="font-size:40px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.count}</div>
+        <div style="font-size:28px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.prefix}</div>
+        <div style="font-size:36px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${ds.count}</div>
       </div>
-      <div style="font-size:10px;opacity:0.75;margin-top:2px;">ฉบับ</div>
-      <div style="margin-top:8px;background:rgba(255,255,255,0.25);border-radius:4px;height:5px;">
-        <div style="background:rgba(255,255,255,0.85);border-radius:4px;height:5px;width:${total>0?Math.round(ds.count/total*100):0}%;"></div>
+      <div style="margin-top:6px;background:rgba(255,255,255,0.25);border-radius:4px;height:4px;">
+        <div style="background:rgba(255,255,255,0.85);border-radius:4px;height:4px;width:${total>0?Math.round(ds.count/total*100):0}%;"></div>
       </div>
       <div style="font-size:10px;opacity:0.8;margin-top:2px;">${total>0?Math.round(ds.count/total*100):0}%</div>
     </div>`).join('');
 
-  const timelineTableRows = timelineRows.map((r,i)=>`
-    <tr style="background:${i%2===0?'#f9f9ff':'white'};">
-      <td style="padding:7px 10px;font-weight:500;">${r[0]}</td>
-      <td style="padding:7px 10px;text-align:center;font-weight:700;color:#1e1e3c;">${r[1]}</td>
-      <td style="padding:7px 10px;text-align:center;color:#2563eb;">${r[2]}</td>
-      <td style="padding:7px 10px;text-align:center;color:#db2777;">${r[3]}</td>
-      <td style="padding:7px 10px;text-align:center;color:#d97706;">${r[4]}</td>
-      <td style="padding:7px 10px;text-align:center;color:#059669;">${r[5]}</td>
-    </tr>`).join('');
-
-  const page1Content = `
-    <!-- KPI summary strip -->
-    <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-      <div><div style="font-size:10px;color:#6b7280;">รวมหนังสือทั้งหมด</div><div style="font-size:28px;font-weight:900;color:#1e1e3c;font-family:'Kanit',sans-serif;line-height:1;">${total} <span style="font-size:12px;font-weight:400;color:#6b7280;">ฉบับ</span></div></div>
-      <div style="width:1px;height:40px;background:#fce7f3;"></div>
-      <div><div style="font-size:10px;color:#6b7280;">ฝ่ายที่มีมากที่สุด</div><div style="font-size:14px;font-weight:700;color:#db2777;">${maxDept.dept} (${maxDept.count} ฉบับ)</div></div>
-      <div style="width:1px;height:40px;background:#fce7f3;"></div>
-      <div><div style="font-size:10px;color:#6b7280;">ช่วงเวลา</div><div style="font-size:12px;font-weight:600;color:#374151;">${report.label}</div></div>
+  const page1 = `
+    <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border-radius:10px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div><div style="font-size:10px;color:#6b7280;">รวมทั้งหมด</div><div style="font-size:26px;font-weight:900;color:#1e1e3c;font-family:'Kanit',sans-serif;line-height:1;">${total} <span style="font-size:12px;font-weight:400;color:#6b7280;">ฉบับ</span></div></div>
     </div>
-
-    <!-- Dept cards -->
-    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📊 สรุปยอดตามฝ่าย</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-      ${deptCardsHTML}
+    <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;">📊 สรุปยอดตามฝ่าย</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">${deptCardsHTML}</div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px;">📈 แผนภูมิแท่ง</div>
+    <div style="background:#f9f9ff;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+      <svg width="${deptStats.length*(barW+barGap)+60}" height="${chartH+50}" style="overflow:visible;"><g transform="translate(40,10)">${gridLines}${barsHTML}</g></svg>
     </div>
-
-    <!-- Bar chart -->
-    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📈 แผนภูมิแท่งเปรียบเทียบ</div>
-    <div style="background:#f9f9ff;border-radius:10px;padding:16px 20px;margin-bottom:20px;overflow-x:auto;">
-      <svg width="${barChartW+60}" height="${chartH+60}" style="overflow:visible;">
-        <g transform="translate(40,10)">
-          ${gridLines}
-          ${barsHTML}
-        </g>
-      </svg>
-    </div>
-
-    <!-- Timeline table -->
-    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:8px;">📋 รายละเอียด${tlLabel}</div>
     <div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
       <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead>
-          <tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
-            <th style="padding:9px 10px;text-align:left;color:white;font-weight:700;">${tlColHead}</th>
-            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">รวม</th>
-            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">วช</th>
-            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">บค</th>
-            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">งบ</th>
-            <th style="padding:9px 10px;text-align:center;color:white;font-weight:700;">บท</th>
-          </tr>
-        </thead>
-        <tbody>${timelineTableRows}</tbody>
-        <tfoot>
-          <tr style="background:#fdf2f8;">
-            <td style="padding:8px 10px;font-weight:700;color:#374151;">รวมทั้งหมด</td>
-            <td style="padding:8px 10px;text-align:center;font-weight:900;color:#1e1e3c;">${total}</td>
-            ${deptStats.map(ds=>`<td style="padding:8px 10px;text-align:center;font-weight:700;color:${ds.color};">${ds.count}</td>`).join('')}
-          </tr>
-        </tfoot>
+        <thead><tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
+          <th style="padding:8px 10px;text-align:left;color:white;">ฝ่าย</th>
+          <th style="padding:8px 10px;text-align:center;color:white;">จำนวน</th>
+          <th style="padding:8px 10px;text-align:center;color:white;">สัดส่วน</th>
+        </tr></thead>
+        <tbody>${deptStats.map((ds,i)=>`<tr style="background:${i%2===0?'#f9f9ff':'white'};">
+          <td style="padding:8px 10px;font-weight:600;">${ds.dept}</td>
+          <td style="padding:8px 10px;text-align:center;font-weight:700;color:${ds.color};">${ds.count}</td>
+          <td style="padding:8px 10px;text-align:center;color:#6b7280;">${total>0?Math.round(ds.count/total*100):0}%</td>
+        </tr>`).join('')}</tbody>
       </table>
     </div>`;
 
-  // ── Per-dept pages ──
-  function buildDeptPage(dept, deptData, pageLabel) {
-    const cfg = DEPT_CFG[dept];
-    const latestNum = deptData.map(r=>r.memoNum).sort().pop()||'-';
-    const firstNum  = deptData.map(r=>r.memoNum).sort()[0]||'-';
-    const rows = deptData.map((r,i)=>`
-      <tr style="background:${i%2===0?'#f9f9ff':'white'};">
-        <td style="padding:7px 8px;color:#9ca3af;font-size:11px;">${i+1}</td>
-        <td style="padding:7px 8px;font-weight:700;color:${cfg.color};font-family:'Kanit',sans-serif;">${r.memoNum}</td>
-        <td style="padding:7px 8px;">${r.name}</td>
-        <td style="padding:7px 8px;color:#6b7280;font-size:12px;">${r.position}</td>
-        <td style="padding:7px 8px;font-size:12px;">${r.subject.substring(0,36)}${r.subject.length>36?'…':''}</td>
-        <td style="padding:7px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
-      </tr>`).join('');
-
-    return `
-      <!-- Dept header -->
-      <div style="background:${cfg.color};border-radius:12px;padding:14px 20px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <div>
-          <div style="font-size:24px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${cfg.prefix} — ${dept}</div>
-          <div style="font-size:11px;opacity:0.85;margin-top:2px;">${report.label}</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-size:36px;font-weight:900;font-family:'Kanit',sans-serif;line-height:1;">${deptData.length}</div>
-          <div style="font-size:11px;opacity:0.85;">ฉบับ</div>
-        </div>
-      </div>
-      <!-- Sub stats -->
-      <div style="background:${cfg.bg};border:1.5px solid ${cfg.border};border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;gap:24px;font-size:12px;flex-wrap:wrap;">
-        <div><span style="color:#6b7280;">เลขแรก:</span> <span style="font-weight:700;color:${cfg.color};">${firstNum}</span></div>
-        <div><span style="color:#6b7280;">เลขล่าสุด:</span> <span style="font-weight:700;color:${cfg.color};">${latestNum}</span></div>
-        <div><span style="color:#6b7280;">จำนวน:</span> <span style="font-weight:700;color:#1e1e3c;">${deptData.length} ฉบับ</span></div>
-        <div><span style="color:#6b7280;">สัดส่วน:</span> <span style="font-weight:700;color:#1e1e3c;">${total>0?Math.round(deptData.length/total*100):0}%</span></div>
-      </div>
-      <!-- Table -->
-      <div style="border-radius:10px;overflow:hidden;border:1px solid ${cfg.border};">
-        <table style="width:100%;border-collapse:collapse;font-size:12px;">
-          <thead>
-            <tr style="background:${cfg.color};">
-              <th style="padding:9px 8px;text-align:left;color:white;">#</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">เลขที่บันทึก</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">ชื่อ-สกุล</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">ตำแหน่ง</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">เรื่อง</th>
-              <th style="padding:9px 8px;text-align:left;color:white;">วันที่</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-          <tfoot>
-            <tr style="background:${cfg.bg};">
-              <td colspan="6" style="padding:9px 10px;font-weight:700;color:${cfg.color};">รวม ${dept}: ${deptData.length} ฉบับ</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>`;
-  }
-
-  // ── Render pages to canvas → PDF ──
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
-  const A4_W = 794; const A4_H = 1123;
 
-  async function renderPageToDoc(htmlContent, isFirst) {
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = `position:fixed;left:-9999px;top:0;width:${A4_W}px;background:white;z-index:9999;`;
-    wrapper.innerHTML = htmlContent;
-    document.body.appendChild(wrapper);
-    // wait for fonts
+  async function renderPage(html, isFirst) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:9999;';
+    wrap.innerHTML = html; document.body.appendChild(wrap);
     await new Promise(r => setTimeout(r, 200));
-    const canvas = await html2canvas(wrapper, {
-      scale: 2, useCORS: true, allowTaint: true,
-      width: A4_W, backgroundColor: '#ffffff',
-      logging: false
-    });
-    document.body.removeChild(wrapper);
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const canvas = await html2canvas(wrap, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    document.body.removeChild(wrap);
     if (!isFirst) doc.addPage();
-    doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+    doc.addImage(canvas.toDataURL('image/jpeg',0.95), 'JPEG', 0, 0, 210, 297);
   }
 
-  // Page 1: overview
-  await renderPageToDoc(pageShell(page1Content), true);
+  await renderPage(pageShell(page1), true);
 
-  // Per-dept pages
   for (const dept of selectedDepts) {
     const deptData = report.data.filter(r => r.dept === dept);
     if (!deptData.length) continue;
-    // Split into chunks of ~20 rows per page
-    const ROWS_PER_PAGE = 20;
-    for (let start = 0; start < deptData.length; start += ROWS_PER_PAGE) {
-      const chunk = deptData.slice(start, start + ROWS_PER_PAGE);
-      const isFirstChunk = start === 0;
-      const pageLabel = deptData.length > ROWS_PER_PAGE
-        ? `(แสดง ${start+1}–${Math.min(start+ROWS_PER_PAGE, deptData.length)} จาก ${deptData.length} รายการ)`
-        : '';
-      await renderPageToDoc(
-        pageShell(buildDeptPage(dept, chunk, pageLabel), isFirstChunk ? '' : pageLabel),
-        false
-      );
+    const cfg = DEPT_CFG[dept];
+    const ROWS = 22;
+    for (let start = 0; start < deptData.length; start += ROWS) {
+      const chunk = deptData.slice(start, start+ROWS);
+      const rows  = chunk.map((r,i)=>`<tr style="background:${i%2===0?'#f9f9ff':'white'};">
+        <td style="padding:6px 8px;color:#9ca3af;font-size:11px;">${start+i+1}</td>
+        <td style="padding:6px 8px;font-weight:700;color:${cfg.color};font-family:'Kanit',sans-serif;">${r.memoNum}</td>
+        <td style="padding:6px 8px;">${r.name}</td>
+        <td style="padding:6px 8px;color:#6b7280;font-size:12px;">${r.position}</td>
+        <td style="padding:6px 8px;font-size:12px;">${r.subject.substring(0,34)}${r.subject.length>34?'…':''}</td>
+        <td style="padding:6px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
+      </tr>`).join('');
+      const content = `
+        <div style="background:${cfg.color};border-radius:10px;padding:12px 18px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div><div style="font-size:20px;font-weight:900;font-family:'Kanit',sans-serif;">${cfg.prefix} — ${dept}</div></div>
+          <div style="text-align:right;"><div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;">${deptData.length}</div><div style="font-size:11px;opacity:0.85;">ฉบับ</div></div>
+        </div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid ${cfg.border};">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead><tr style="background:${cfg.color};">
+              <th style="padding:8px;text-align:left;color:white;">#</th>
+              <th style="padding:8px;text-align:left;color:white;">เลขที่</th>
+              <th style="padding:8px;text-align:left;color:white;">ชื่อ-สกุล</th>
+              <th style="padding:8px;text-align:left;color:white;">ตำแหน่ง</th>
+              <th style="padding:8px;text-align:left;color:white;">เรื่อง</th>
+              <th style="padding:8px;text-align:left;color:white;">วันที่</th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+      await renderPage(pageShell(content), false);
     }
   }
 
-  const fn = `รายงานสรุป_${report.period==='daily'?'รายวัน':report.period==='weekly'?'รายสัปดาห์':report.period==='monthly'?'รายเดือน':'รายปี'}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`;
-  doc.save(fn);
+  doc.save(`รายงานสรุป_${report.period}_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.pdf`);
 }
 
-
 // ══════════════════════════════════════════
-// GAS URL MANAGEMENT
+// GAS URL
 // ══════════════════════════════════════════
 function initGasUrlInput() {
   const inp = document.getElementById('gasUrlInput');
-  if (inp) {
-    inp.value = localStorage.getItem('gasUrl') || '';
-    updateGasStatus();
-  }
+  if (inp) { inp.value = localStorage.getItem('gasUrl') || ''; updateGasStatus(); }
 }
-
 function saveGasUrl() {
   const url = document.getElementById('gasUrlInput').value.trim();
-  if (url && !url.startsWith('https://script.google.com')) {
-    showToast('URL ไม่ถูกต้อง ต้องขึ้นต้นด้วย https://script.google.com', 'error');
-    return;
-  }
-  localStorage.setItem('gasUrl', url);
-  GAS_URL = url;
-  updateGasStatus();
-  if (url) {
-    showToast('บันทึก GAS URL แล้ว กำลัง sync...', 'success');
-    syncFromSheets().then(d => {
-      if (d) {
-        updateAdminStats();
-        showToast(`Sync สำเร็จ ${d.length} รายการ`, 'success');
-      }
-    });
-  } else {
-    showToast('ลบ GAS URL แล้ว (ใช้ localStorage เท่านั้น)', 'success');
-  }
+  if (url && !url.startsWith('https://script.google.com')) { showToast('URL ไม่ถูกต้อง', 'error'); return; }
+  localStorage.setItem('gasUrl', url); GAS_URL = url; updateGasStatus();
+  if (url) { showToast('บันทึก GAS URL แล้ว กำลัง sync...', 'success'); syncFromSheets().then(d => { if(d) { updateAdminStats(); showToast(`Sync สำเร็จ ${d.length} รายการ`, 'success'); } }); }
+  else showToast('ลบ GAS URL แล้ว', 'success');
 }
-
 async function testGasUrl() {
   const url = document.getElementById('gasUrlInput').value.trim();
   if (!url) { showToast('กรุณาใส่ URL ก่อน', 'error'); return; }
   const statusEl = document.getElementById('gasUrlStatus');
-  statusEl.innerHTML = '⏳ กำลังทดสอบการเชื่อมต่อ...';
-  const oldUrl = GAS_URL;
-  GAS_URL = url;
-  const result = await syncFromSheets();
-  GAS_URL = oldUrl;
-  if (result !== null) {
-    statusEl.innerHTML = `<span style="color:#059669;">✅ เชื่อมต่อสำเร็จ! พบข้อมูล ${result.length} รายการ</span>`;
-    showToast('ทดสอบสำเร็จ! Google Sheets เชื่อมต่อได้', 'success');
-  } else {
-    statusEl.innerHTML = `<span style="color:#ef4444;">❌ เชื่อมต่อไม่ได้ กรุณาตรวจสอบ URL และ Deploy settings</span>`;
-    showToast('เชื่อมต่อไม่ได้ ดูคำแนะนำด้านล่าง', 'error');
-  }
+  statusEl.innerHTML = '⏳ กำลังทดสอบ...';
+  const oldUrl = GAS_URL; GAS_URL = url;
+  const result = await syncFromSheets(); GAS_URL = oldUrl;
+  if (result !== null) { statusEl.innerHTML = `<span style="color:#059669;">✅ สำเร็จ! พบ ${result.length} รายการ</span>`; showToast('เชื่อมต่อ Google Sheets ได้', 'success'); }
+  else { statusEl.innerHTML = `<span style="color:#ef4444;">❌ เชื่อมต่อไม่ได้</span>`; showToast('เชื่อมต่อไม่ได้', 'error'); }
 }
-
 function updateGasStatus() {
-  const statusEl = document.getElementById('gasUrlStatus');
-  if (!statusEl) return;
+  const statusEl = document.getElementById('gasUrlStatus'); if (!statusEl) return;
   const url = localStorage.getItem('gasUrl') || '';
-  if (url) {
-    statusEl.innerHTML = `<span style="color:#059669;">✅ เชื่อมต่ออยู่:</span> <span style="font-size:11px;color:#6b7280;word-break:break-all;">${url.substring(0,60)}...</span>`;
-  } else {
-    statusEl.innerHTML = '<span style="color:#f59e0b;">⚠️ ยังไม่ได้เชื่อมต่อ Google Sheets (ใช้ localStorage เท่านั้น)</span>';
-  }
+  statusEl.innerHTML = url
+    ? `<span style="color:#059669;">✅ เชื่อมต่ออยู่:</span> <span style="font-size:11px;color:#6b7280;word-break:break-all;">${url.substring(0,60)}...</span>`
+    : '<span style="color:#f59e0b;">⚠️ ยังไม่ได้เชื่อมต่อ Google Sheets</span>';
 }
 
 // ══════════════════════════════════════════
 // ADMIN AUTH
 // ══════════════════════════════════════════
-const DEFAULT_ADMIN_PWD = 'admin1234'; // รหัสผ่านเริ่มต้น
-
-function getAdminPwd() {
-  return localStorage.getItem('adminPwd') || DEFAULT_ADMIN_PWD;
-}
-
-function isAdminLoggedIn() {
-  return sessionStorage.getItem('adminAuth') === 'true';
-}
+const DEFAULT_ADMIN_PWD = 'admin1234';
+function getAdminPwd() { return localStorage.getItem('adminPwd') || DEFAULT_ADMIN_PWD; }
+function isAdminLoggedIn() { return sessionStorage.getItem('adminAuth') === 'true'; }
 
 function markTabActive(name) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  const tabMap = { form:0, result:1, admin:2, settings:3 };
-  const tabs = document.querySelectorAll('.nav-tab');
+  const tabMap = { form:0, result:1, admin:2, batch:3, settings:4 };
+  const tabs   = document.querySelectorAll('.nav-tab');
   if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
 }
 
 function openAdminLogin() {
   if (isAdminLoggedIn()) {
-    // ล็อกอินอยู่แล้ว เข้าหน้าตั้งค่าได้เลย
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-settings').classList.add('active');
-    markTabActive('settings');
-    initSettingsPage();
-    return;
+    markTabActive('settings'); initSettingsPage(); return;
   }
   document.getElementById('adminPwdInput').value = '';
   document.getElementById('adminPwdError').textContent = '';
   document.getElementById('adminLoginOverlay').classList.add('show');
   setTimeout(() => document.getElementById('adminPwdInput').focus(), 300);
 }
-
-function closeAdminLogin() {
-  document.getElementById('adminLoginOverlay').classList.remove('show');
-}
-
+function closeAdminLogin() { document.getElementById('adminLoginOverlay').classList.remove('show'); }
 function togglePwdVisibility() {
-  const inp = document.getElementById('adminPwdInput');
-  const btn = document.getElementById('togglePwdBtn');
-  if (inp.type === 'password') {
-    inp.type = 'text'; btn.textContent = '🙈';
-  } else {
-    inp.type = 'password'; btn.textContent = '👁️';
-  }
+  const inp = document.getElementById('adminPwdInput'), btn = document.getElementById('togglePwdBtn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
 }
-
 function verifyAdminPwd() {
   const input = document.getElementById('adminPwdInput').value;
   const errEl = document.getElementById('adminPwdError');
-
   if (!input) { errEl.textContent = 'กรุณาใส่รหัสผ่าน'; return; }
-
   if (input === getAdminPwd()) {
-    sessionStorage.setItem('adminAuth', 'true');
-    closeAdminLogin();
-    // เข้าหน้าตั้งค่า
+    sessionStorage.setItem('adminAuth', 'true'); closeAdminLogin();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-settings').classList.add('active');
-    markTabActive('settings');
-    initSettingsPage();
-    showToast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ Admin', 'success');
+    markTabActive('settings'); initSettingsPage();
+    showToast('เข้าสู่ระบบสำเร็จ', 'success');
   } else {
-    errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่';
+    errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง';
     document.getElementById('adminPwdInput').value = '';
     document.getElementById('adminPwdInput').focus();
-    // shake animation
     const popup = document.querySelector('#adminLoginOverlay .popup');
     popup.style.animation = 'shake 0.4s ease';
     setTimeout(() => popup.style.animation = '', 400);
   }
 }
-
-function logoutAdmin() {
-  sessionStorage.removeItem('adminAuth');
-  showPage('form');
-  showToast('ออกจากระบบแล้ว', 'success');
-}
-
+function logoutAdmin() { sessionStorage.removeItem('adminAuth'); showPage('form'); showToast('ออกจากระบบแล้ว', 'success'); }
 function openChangePwd() {
-  document.getElementById('oldPwdInput').value = '';
-  document.getElementById('newPwdInput').value = '';
-  document.getElementById('confirmPwdInput').value = '';
+  ['oldPwdInput','newPwdInput','confirmPwdInput'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('changePwdError').textContent = '';
   document.getElementById('changePwdOverlay').classList.add('show');
 }
-
-function closeChangePwd() {
-  document.getElementById('changePwdOverlay').classList.remove('show');
-}
-
+function closeChangePwd() { document.getElementById('changePwdOverlay').classList.remove('show'); }
 function doChangePwd() {
   const oldPwd = document.getElementById('oldPwdInput').value;
   const newPwd = document.getElementById('newPwdInput').value;
-  const confirmPwd = document.getElementById('confirmPwdInput').value;
-  const errEl = document.getElementById('changePwdError');
-
-  if (oldPwd !== getAdminPwd()) {
-    errEl.textContent = '❌ รหัสผ่านปัจจุบันไม่ถูกต้อง'; return;
-  }
-  if (newPwd.length < 4) {
-    errEl.textContent = '❌ รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร'; return;
-  }
-  if (newPwd !== confirmPwd) {
-    errEl.textContent = '❌ รหัสผ่านใหม่ไม่ตรงกัน'; return;
-  }
-  localStorage.setItem('adminPwd', newPwd);
-  closeChangePwd();
-  showToast('เปลี่ยนรหัสผ่านสำเร็จ', 'success');
+  const cfm    = document.getElementById('confirmPwdInput').value;
+  const errEl  = document.getElementById('changePwdError');
+  if (oldPwd !== getAdminPwd()) { errEl.textContent = '❌ รหัสผ่านปัจจุบันไม่ถูกต้อง'; return; }
+  if (newPwd.length < 4)        { errEl.textContent = '❌ รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร'; return; }
+  if (newPwd !== cfm)           { errEl.textContent = '❌ รหัสผ่านใหม่ไม่ตรงกัน'; return; }
+  localStorage.setItem('adminPwd', newPwd); closeChangePwd(); showToast('เปลี่ยนรหัสผ่านสำเร็จ', 'success');
 }
 
 // ══════════════════════════════════════════
 // SETTINGS PAGE
 // ══════════════════════════════════════════
 function initSettingsPage() {
-  const yearSel = document.getElementById('cfg-year');
-  if (!yearSel) return;
+  const yearSel = document.getElementById('cfg-year'); if (!yearSel) return;
   const thisYear = getThaiBE();
   yearSel.innerHTML = '';
-  for (let y = thisYear; y >= thisYear - 3; y--) {
+  for (let y = thisYear; y >= thisYear-3; y--) {
     const opt = document.createElement('option');
     opt.value = y; opt.textContent = `พ.ศ. ${y}`;
     if (y === thisYear) opt.selected = true;
     yearSel.appendChild(opt);
   }
-  renderStartNumGrid(thisYear);
-  renderPreviewNextNums(thisYear);
-  renderAllConfigTable();
-  initGasUrlInput();
+  renderStartNumGrid(thisYear); renderPreviewNextNums(thisYear); renderAllConfigTable(); initGasUrlInput();
 }
-
+function loadStartConfig() {
+  const year = parseInt(document.getElementById('cfg-year')?.value || getThaiBE());
+  renderStartNumGrid(year); renderPreviewNextNums(year); renderAllConfigTable();
+}
 function renderStartNumGrid(year) {
-  // year ที่รับมาคือ พ.ศ. แล้ว
-  const grid = document.getElementById('startNumGrid');
-  if (!grid) return;
-  const depts = Object.entries(DEPT_CONFIG);
-  grid.innerHTML = depts.map(([dept, cfg]) => {
-    const cur = getStartConfig(dept, year); // year = พ.ศ.
-    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  const grid = document.getElementById('startNumGrid'); if (!grid) return;
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  grid.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
+    const cur = getStartConfig(dept, year);
     const col = colors[cfg.prefix] || '#6b7280';
-    const nextNum = String(cur + 1).padStart(3,'0');
     return `<div style="background:white;border:1.5px solid ${col}30;border-radius:12px;padding:16px;border-top:3px solid ${col};">
       <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${dept}</div>
       <div style="font-size:18px;font-weight:800;color:${col};font-family:'Kanit',sans-serif;margin-bottom:10px;">${cfg.prefix}___/${year}</div>
       <label class="form-label">เลขเริ่มต้น (ก่อนเลขถัดไป)</label>
-      <input class="form-input" id="start-${cfg.prefix}" type="number" min="0" max="9999"
-        value="${cur}" placeholder="0"
-        oninput="renderPreviewNextNums(${year})"
-        style="margin-top:4px;">
-      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${nextNum}/${year}</b></div>
+      <input class="form-input" id="start-${cfg.prefix}" type="number" min="0" max="9999" value="${cur}" oninput="renderPreviewNextNums(${year})" style="margin-top:4px;">
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${String(cur+1).padStart(3,'0')}/${year}</b></div>
     </div>`;
   }).join('');
 }
-
 function renderPreviewNextNums(year) {
-  const preview = document.getElementById('previewNextNums');
-  if (!preview) return;
+  const preview = document.getElementById('previewNextNums'); if (!preview) return;
   const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
   preview.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
     const inputEl = document.getElementById('start-' + cfg.prefix);
-    const val = inputEl ? (parseInt(inputEl.value) || 0) : getStartConfig(dept, year);
-    const nextNum = String(val + 1).padStart(3, '0');
+    const val = inputEl ? (parseInt(inputEl.value)||0) : getStartConfig(dept, year);
+    const nextNum = String(val+1).padStart(3,'0');
     const col = colors[cfg.prefix] || '#6b7280';
-    // Update inline preview too
     const inlineEl = document.getElementById('next-preview-' + cfg.prefix);
     if (inlineEl) inlineEl.textContent = `${cfg.prefix}${nextNum}/${year}`;
     return `<div style="background:white;border:1.5px solid ${col}40;border-radius:10px;padding:10px 16px;text-align:center;">
@@ -2534,46 +1891,30 @@ function renderPreviewNextNums(year) {
     </div>`;
   }).join('');
 }
-
 function saveStartConfig() {
   const year = parseInt(document.getElementById('cfg-year').value);
   Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
     const el = document.getElementById('start-' + cfg.prefix);
-    if (el) {
-      const val = Math.max(0, parseInt(el.value) || 0);
-      setStartConfig(dept, year, val);
-    }
+    if (el) setStartConfig(dept, year, Math.max(0, parseInt(el.value)||0));
   });
-  renderAllConfigTable();
-  renderPreviewNextNums(year);
-  // ── sync ไป Google Sheets ทันที ──
-  saveStartConfigToSheets();
+  renderAllConfigTable(); renderPreviewNextNums(year); saveStartConfigToSheets();
   showToast('บันทึกการตั้งค่าเรียบร้อย ✓', 'success');
 }
-
 function resetStartConfig() {
-  if (!confirm('รีเซ็ตเลขเริ่มต้นทุกฝ่ายเป็น 0 ใช่หรือไม่?')) return;
+  if (!confirm('รีเซ็ตเลขเริ่มต้นทุกฝ่ายเป็น 0?')) return;
   const year = parseInt(document.getElementById('cfg-year').value);
   Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
     setStartConfig(dept, year, 0);
-    const el = document.getElementById('start-' + cfg.prefix);
-    if (el) el.value = 0;
+    const el = document.getElementById('start-' + cfg.prefix); if (el) el.value = 0;
   });
-  renderPreviewNextNums(year);
-  renderAllConfigTable();
-  showToast('รีเซ็ตเลขเริ่มต้นแล้ว', 'success');
+  renderPreviewNextNums(year); renderAllConfigTable(); showToast('รีเซ็ตแล้ว', 'success');
 }
-
 function renderAllConfigTable() {
-  const el = document.getElementById('allConfigTable');
-  if (!el) return;
+  const el = document.getElementById('allConfigTable'); if (!el) return;
   try {
-    const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    const all  = JSON.parse(localStorage.getItem('startConfig') || '{}');
     const keys = Object.keys(all).filter(k => all[k] > 0);
-    if (!keys.length) {
-      el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:20px;font-size:13px;">ยังไม่มีการตั้งค่าเลขเริ่มต้น (ค่าเริ่มต้นคือ 0 ทุกฝ่าย)</div>';
-      return;
-    }
+    if (!keys.length) { el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:20px;font-size:13px;">ยังไม่มีการตั้งค่า (ค่าเริ่มต้นคือ 0)</div>'; return; }
     const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
     el.innerHTML = `<div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -2585,36 +1926,28 @@ function renderAllConfigTable() {
           <th style="padding:10px 14px;text-align:center;color:white;">จัดการ</th>
         </tr></thead>
         <tbody>${keys.map((k,i) => {
-          // key format: "ฝ่ายวิชาการ_2569" — split ที่ _ ตัวสุดท้าย
-          const lastUnderscore = k.lastIndexOf('_');
-          const dept = k.substring(0, lastUnderscore);
-          const year = k.substring(lastUnderscore + 1);
+          const lastU = k.lastIndexOf('_'), dept = k.substring(0,lastU), year = k.substring(lastU+1);
           const cfg = DEPT_CONFIG[dept] || {};
-          const val = all[k];
           const col = colors[cfg.prefix] || '#6b7280';
-          const next = `${cfg.prefix}${String(val+1).padStart(3,'0')}/${year}`;
+          const next = `${cfg.prefix}${String(all[k]+1).padStart(3,'0')}/${year}`;
           return `<tr style="background:${i%2===0?'#f9f9ff':'white'};">
             <td style="padding:10px 14px;font-weight:600;">${dept}</td>
             <td style="padding:10px 14px;text-align:center;color:#6b7280;">พ.ศ. ${year}</td>
-            <td style="padding:10px 14px;text-align:center;">${val}</td>
+            <td style="padding:10px 14px;text-align:center;">${all[k]}</td>
             <td style="padding:10px 14px;text-align:center;font-weight:800;color:${col};font-family:'Kanit',sans-serif;">${next}</td>
             <td style="padding:10px 14px;text-align:center;">
-              <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;"
-                onclick="clearOneDeptConfig('${dept}','${year}')">ลบ</button>
+              <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="clearOneDeptConfig('${dept}','${year}')">ลบ</button>
             </td>
           </tr>`;
         }).join('')}</tbody>
       </table></div>`;
   } catch {}
 }
-
 function clearOneDeptConfig(dept, year) {
   const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
-  const key = dept + '_' + year;
-  delete all[key];
+  delete all[dept + '_' + year];
   localStorage.setItem('startConfig', JSON.stringify(all));
-  renderAllConfigTable();
-  showToast(`ลบการตั้งค่า ${dept} ปี ${year} แล้ว`, 'success');
+  renderAllConfigTable(); showToast(`ลบการตั้งค่า ${dept} ปี ${year} แล้ว`, 'success');
 }
 
 // ══════════════════════════════════════════
@@ -2622,200 +1955,59 @@ function clearOneDeptConfig(dept, year) {
 // ══════════════════════════════════════════
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  // Match tab
-  const tabs = document.querySelectorAll('.nav-tab');
-  const tabMap = { form: 0, result: 1, admin: 2, settings: 3 };
-  if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
+  markTabActive(name);
   if (name === 'admin') {
     if (GAS_URL) syncFromSheets().then(d => { if(d) updateAdminStats(); });
     else updateAdminStats();
   }
-  if (name === 'settings') { initSettingsPage(); markTabActive('settings'); }
+  if (name === 'settings') initSettingsPage();
+  if (name === 'batch') {
+    const bd = document.getElementById('b-date');
+    if (bd && !bd.value) bd.value = new Date().toISOString().split('T')[0];
+  }
 }
 
 // ══════════════════════════════════════════
-// LOADING / TOAST
+// LOADING / TOAST / SYNC INDICATOR
 // ══════════════════════════════════════════
 function showSyncIndicator(show) {
   let el = document.getElementById('syncIndicator');
   if (!el) {
     el = document.createElement('div');
     el.id = 'syncIndicator';
-    el.style.cssText = `
-      position:fixed; bottom:70px; right:16px; z-index:90;
-      background:white; border:1.5px solid var(--pink-200);
-      border-radius:999px; padding:6px 14px;
-      display:flex; align-items:center; gap:8px;
-      font-size:12px; font-weight:600; color:var(--pink-600);
-      box-shadow:var(--shadow-md);
-      transition: opacity 0.3s, transform 0.3s;
-    `;
+    el.style.cssText = 'position:fixed;bottom:70px;right:16px;z-index:90;background:white;border:1.5px solid var(--pink-200);border-radius:999px;padding:6px 14px;display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--pink-600);box-shadow:var(--shadow-md);transition:opacity 0.3s;';
     el.innerHTML = `<div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--pink-200);border-top-color:var(--pink-500);animation:spin 0.8s linear infinite;"></div> กำลัง sync...`;
     document.body.appendChild(el);
   }
   el.style.opacity = show ? '1' : '0';
-  el.style.pointerEvents = show ? 'none' : 'none';
-  if (!show) setTimeout(() => { if (el) el.remove(); }, 400);
+  if (!show) setTimeout(() => { if(el) el.remove(); }, 400);
 }
-
-function showLoading(msg = 'กำลังประมวลผล...') {
-  document.getElementById('loadingText').textContent = msg;
-  document.getElementById('loadingOverlay').classList.add('show');
-}
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.remove('show');
-}
-function showToast(msg, type = 'info') {
+function showLoading(msg='กำลังประมวลผล...') { document.getElementById('loadingText').textContent = msg; document.getElementById('loadingOverlay').classList.add('show'); }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('show'); }
+function showToast(msg, type='info') {
   const area = document.getElementById('toastArea');
-  const t = document.createElement('div');
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const t    = document.createElement('div');
+  const icons = { success:'✅', error:'❌', info:'ℹ️' };
   t.className = `toast ${type}`;
   t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span class="toast-msg">${msg}</span>`;
   area.appendChild(t);
-  requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
   setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
 }
 </script>
 
-<!-- Google Apps Script Integration Guide (collapsed) -->
+<!-- GAS Guide -->
 <details style="position:fixed;bottom:16px;right:16px;z-index:50;max-width:360px;">
-  <summary style="background:white;border:1.5px solid var(--pink-200);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--pink-600);box-shadow:var(--shadow-md);">
-    ⚙️ เชื่อมต่อ Google Sheets
-  </summary>
+  <summary style="background:white;border:1.5px solid var(--pink-200);border-radius:10px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--pink-600);box-shadow:var(--shadow-md);">⚙️ เชื่อมต่อ Google Sheets</summary>
   <div style="background:white;border:1.5px solid var(--gray-200);border-radius:10px;padding:16px;margin-top:6px;font-size:11px;color:var(--gray-700);box-shadow:var(--shadow-lg);max-height:400px;overflow-y:auto;">
     <b>วิธีเชื่อมต่อ Google Sheets:</b><br><br>
     1. สร้าง Google Sheet ใหม่ ตั้งชื่อ sheet แรกว่า <b>Memos</b><br>
-    2. Extensions → Apps Script → วางโค้ดนี้:<br><br>
-    <code style="background:var(--gray-100);padding:8px;border-radius:6px;display:block;font-size:10px;overflow-x:auto;white-space:pre;line-height:1.6;">
-const SHEET_NAME = 'Memos';
-
-function doGet(e) {
-  if (e.parameter.action === 'getAll') {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_NAME);
-    if (!sheet || sheet.getLastRow() <= 1)
-      return outputWithCallback({ status:'ok', data:[] }, e.parameter.callback);
-    const rows = sheet.getDataRange().getValues();
-    const headers = rows[0];
-    const data = rows.slice(1).map(r => {
-      const obj = {};
-      headers.forEach((h, i) => {
-        let val = r[i];
-        if (h === 'date') {
-          if (val instanceof Date) {
-            const y = val.getFullYear();
-            const m = String(val.getMonth()+1).padStart(2,'0');
-            const d = String(val.getDate()).padStart(2,'0');
-            val = y+'-'+m+'-'+d;
-          } else {
-            val = String(val).replace(/^'+/, '').trim();
-          }
-        }
-        if (h === 'id') val = String(val);
-        obj[h] = val;
-      });
-      return obj;
-    }).reverse();
-    // โหลด startConfig จาก sheet มาส่งกลับด้วย
-    const startConfig = loadStartConfigSheet();
-    return outputWithCallback({ status:'ok', data, startConfig }, e.parameter.callback);
-  }
-  return outputWithCallback({ status:'error' }, e.parameter.callback);
-}
-
-function loadStartConfigSheet() {
-  try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName('StartConfig');
-    if (!sheet || sheet.getLastRow() <= 1) return {};
-    const rows = sheet.getDataRange().getValues().slice(1);
-    const cfg = {};
-    rows.forEach(r => { if (r[0]) cfg[r[0]] = parseInt(r[1]) || 0; });
-    return cfg;
-  } catch(e) { return {}; }
-}
-
-function doPost(e) {
-  const body = JSON.parse(e.postData.contents);
-
-  if (body.action === 'add') {
-    const r = body.record;
-    const sheet = getOrCreateSheet();
-    if (sheet.getLastRow() === 0)
-      sheet.appendRow(['id','memoNum','name','position',
-                       'dept','subject','date','desc','timestamp']);
-    sheet.appendRow([String(r.id), r.memoNum, r.name,
-      r.position, r.dept, r.subject,
-      "'" + r.date, r.desc||'', r.timestamp]);
-    if (body.startConfig) saveStartConfigSheet(body.startConfig);
-    return output({ status:'ok' });
-  }
-
-  if (body.action === 'delete') {
-    const sheet = getOrCreateSheet();
-    const rows = sheet.getDataRange().getValues();
-    for (let i = rows.length - 1; i >= 1; i--) {
-      if (String(rows[i][0]) === String(body.id)) {
-        sheet.deleteRow(i + 1);
-        break;
-      }
-    }
-    return output({ status:'ok' });
-  }
-
-  if (body.action === 'clearAll') {
-    const sheet = getOrCreateSheet();
-    if (sheet.getLastRow() > 1) {
-      sheet.deleteRows(2, sheet.getLastRow() - 1);
-    }
-    return output({ status:'ok' });
-  }
-
-  if (body.action === 'saveStartConfig') {
-    saveStartConfigSheet(body.startConfig);
-    return output({ status:'ok' });
-  }
-
-  return output({ status:'error' });
-}
-
-function saveStartConfigSheet(cfg) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sheet = ss.getSheetByName('StartConfig');
-  if (!sheet) sheet = ss.insertSheet('StartConfig');
-  sheet.clearContents();
-  sheet.appendRow(['key', 'value']);
-  Object.keys(cfg).forEach(k => sheet.appendRow([k, cfg[k]]));
-}
-
-function getOrCreateSheet() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  return ss.getSheetByName(SHEET_NAME)
-    || ss.insertSheet(SHEET_NAME);
-}
-
-function output(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
-}
-
-function outputWithCallback(obj, callback) {
-  if (callback) {
-    // JSONP response
-    return ContentService
-      .createTextOutput(callback + '(' + JSON.stringify(obj) + ')')
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
-  }
-  return output(obj);
-}
-    </code><br>
+    2. Extensions → Apps Script → วางโค้ด GAS<br>
     3. Deploy → New deployment → Web app<br>
     &nbsp;&nbsp;&nbsp;Execute as: <b>Me</b> | Access: <b>Anyone</b><br>
-    4. คัดลอก URL → วางใน <code>GAS_URL</code> ในโค้ด<br><br>
-    <b style="color:#ef4444;">⚠️ หมายเหตุ:</b> ถ้าแก้โค้ด GAS ต้อง <b>Deploy ใหม่</b> (New deployment) ทุกครั้ง ไม่ใช่แค่ Save
+    4. คัดลอก URL → วางใน ⚙️ ตั้งค่า → GAS URL<br><br>
+    <b style="color:#ef4444;">⚠️</b> ถ้าแก้โค้ด GAS ต้อง <b>Deploy ใหม่</b> ทุกครั้ง
   </div>
 </details>
 
