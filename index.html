@@ -1572,13 +1572,17 @@ function getReportData() {
   let data = loadData();
   if (depts.length < 4) data = data.filter(r => depts.includes(r.dept));
   if (period === 'daily') {
-    const d = (document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0]).trim();
-    data = data.filter(r => (r.date||'').trim() === d);
+    const raw = document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0];
+    const d = normalizeDateField(raw.trim());
+    data = data.filter(r => normalizeDateField((r.date||'').trim()) === d);
     return { period, label:`ประจำวันที่ ${formatThaiDate(d)}`, data, from:d, to:d };
   } else if (period === 'weekly') {
     const from = document.getElementById('rp-from')?.value, to = document.getElementById('rp-to')?.value;
     if (!from||!to) return { period, label:'', data:[], from, to };
-    data = data.filter(r => (r.date||'').trim() >= from && (r.date||'').trim() <= to);
+    data = data.filter(r => {
+    const rd = normalizeDateField((r.date||'').trim());
+    return rd >= from && rd <= to;
+});
     return { period, label:`ประจำสัปดาห์ ${formatThaiDate(from)} – ${formatThaiDate(to)}`, data, from, to };
   } else if (period === 'monthly') {
     const month = parseInt(document.getElementById('rp-month')?.value||new Date().getMonth()+1);
