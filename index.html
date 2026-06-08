@@ -162,9 +162,7 @@ async function submitOrderForm() {
   const data = loadOrderData(); data.unshift(record); saveOrderData(data);
   // sync to sheets
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentOrderResult = record;
   hideLoading();
@@ -385,9 +383,7 @@ async function submitBookForm() {
   const record    = { id: Date.now(), bookNum, name, destination, dept, subject, desc, date: dateVal.trim(), timestamp };
   const data = loadBookData(); data.unshift(record); saveBookData(data);
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentBookResult = record;
   hideLoading();
@@ -809,9 +805,7 @@ async function submitOrderForm() {
   const data = loadOrderData(); data.unshift(record); saveOrderData(data);
   // sync to sheets
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentOrderResult = record;
   hideLoading();
@@ -1032,9 +1026,7 @@ async function submitBookForm() {
   const record    = { id: Date.now(), bookNum, name, destination, dept, subject, desc, date: dateVal.trim(), timestamp };
   const data = loadBookData(); data.unshift(record); saveBookData(data);
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentBookResult = record;
   hideLoading();
@@ -1456,9 +1448,7 @@ async function submitOrderForm() {
   const data = loadOrderData(); data.unshift(record); saveOrderData(data);
   // sync to sheets
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentOrderResult = record;
   hideLoading();
@@ -1679,9 +1669,7 @@ async function submitBookForm() {
   const record    = { id: Date.now(), bookNum, name, destination, dept, subject, desc, date: dateVal.trim(), timestamp };
   const data = loadBookData(); data.unshift(record); saveBookData(data);
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentBookResult = record;
   hideLoading();
@@ -2944,19 +2932,19 @@ async function pushBatchToSheets(records) {
 
 async function deleteFromSheets(id) {
   if (!GAS_URL) return;
-  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'delete', id: String(id) }), headers:{'Content-Type':'text/plain'} }); } catch {}
+  try { fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'delete', id: String(id) }), headers:{'Content-Type':'text/plain'} }); } catch {}
 }
 
 async function clearAllFromSheets() {
   if (!GAS_URL) return;
-  try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'clearAll' }), headers:{'Content-Type':'text/plain'} }); } catch {}
+  try { fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'clearAll' }), headers:{'Content-Type':'text/plain'} }); } catch {}
 }
 
 async function saveStartConfigToSheets() {
   if (!GAS_URL) return;
   try {
     const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'saveStartConfig', startConfig }), headers:{'Content-Type':'text/plain'} });
+    fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'saveStartConfig', startConfig }), headers:{'Content-Type':'text/plain'} });
   } catch {}
 }
 
@@ -2966,7 +2954,7 @@ async function flushPendingSync() {
     const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
     if (!q.length) return;
     for (const record of q) {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'add', record }), headers:{'Content-Type':'text/plain'} });
+      fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'add', record }), headers:{'Content-Type':'text/plain'} });
     }
     localStorage.removeItem('pendingSync');
     showToast(`ส่งข้อมูลที่ค้างอยู่ ${q.length} รายการสำเร็จ`, 'success');
@@ -3542,7 +3530,8 @@ function resetBatchPage() {
 // ══════════════════════════════════════════
 // REPORT MODAL
 // ══════════════════════════════════════════
-function openReportModal() { onPeriodChange(); updateReportPreview(); document.getElementById('reportOverlay').classList.add('show'); }
+window.currentReportSystem = 'memo';
+function openReportModal(sys = 'memo') { window.currentReportSystem = sys; onPeriodChange(); updateReportPreview(); document.getElementById('reportOverlay').classList.add('show'); }
 function closeReportModal() { document.getElementById('reportOverlay').classList.remove('show'); }
 
 function onPeriodChange() {
@@ -3611,7 +3600,10 @@ function getSelectedDepts() {
 function getReportData() {
   const period = document.querySelector('input[name="period"]:checked').value;
   const depts  = getSelectedDepts();
-  let data = loadData();
+  let data = [];
+  if (window.currentReportSystem === 'order') data = loadOrderData();
+  else if (window.currentReportSystem === 'book') data = loadBookData();
+  else data = loadData();
   if (depts.length < 4) data = data.filter(r => depts.includes(r.dept));
   if (period === 'daily') {
     const raw = document.getElementById('rp-date')?.value || new Date().toISOString().split('T')[0];
@@ -3659,11 +3651,18 @@ async function buildSummaryPDF(report) {
     'ฝ่ายวิชาการ':     { prefix:'วช', color:'#2563eb', bg:'#eff6ff', border:'#93c5fd' },
     'ฝ่ายบุคคล':       { prefix:'บค', color:'#db2777', bg:'#fdf2f8', border:'#f9a8d4' },
     'ฝ่ายงบประมาณ':    { prefix:'งบ', color:'#d97706', bg:'#fffbeb', border:'#fcd34d' },
-    'ฝ่ายบริหารทั่วไป':{ prefix:'บท', color:'#059669', bg:'#ecfdf5', border:'#6ee7b7' }
+    'ฝ่ายบริหารทั่วไป':{ prefix:'บท', color:'#059669', bg:'#ecfdf5', border:'#6ee7b7' },
+    'อื่นๆ':           { prefix:'อื่น', color:'#6b7280', bg:'#f3f4f6', border:'#9ca3af' }
   };
   const selectedDepts = getSelectedDepts();
   const total = report.data.length;
-  const deptStats = Object.keys(DEPT_CFG).map(d => ({ dept:d, ...DEPT_CFG[d], count: report.data.filter(r=>r.dept===d).length }));
+  const mainDepts = ['ฝ่ายวิชาการ','ฝ่ายบุคคล','ฝ่ายงบประมาณ','ฝ่ายบริหารทั่วไป'];
+  const deptStats = Object.keys(DEPT_CFG).map(d => {
+    let count = 0;
+    if (d === 'อื่นๆ') count = report.data.filter(r => !mainDepts.includes(r.dept)).length;
+    else count = report.data.filter(r => r.dept === d).length;
+    return { dept:d, ...DEPT_CFG[d], count };
+  });
   const maxCount  = Math.max(...deptStats.map(d=>d.count), 1);
 
   function pageShell(content) {
@@ -3677,7 +3676,7 @@ async function buildSummaryPDF(report) {
       <div style="margin:0 28px;border-top:1.5px solid #fce7f3;"></div>
       <div style="padding:14px 28px 60px;">${content}</div>
       <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:6px 20px;display:flex;justify-content:space-between;">
-        <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME}</div>
+        <div style="color:white;font-size:10px;">${window.currentReportSystem === 'order' ? 'ระบบขอเลขที่คำสั่งโรงเรียน' : window.currentReportSystem === 'book' ? 'ระบบขอเลขที่หนังสือออก' : 'ระบบขอเลขที่บันทึกข้อความ'} ${SCHOOL_NAME}</div>
         <div style="color:white;font-size:10px;">พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}</div>
       </div>
     </div>`;
@@ -3745,42 +3744,96 @@ async function buildSummaryPDF(report) {
     doc.addImage(canvas.toDataURL('image/jpeg',0.95), 'JPEG', 0, 0, 210, 297);
   }
 
-  await renderPage(pageShell(page1), true);
-
-  for (const dept of selectedDepts) {
-    const deptData = report.data.filter(r => r.dept === dept);
-    if (!deptData.length) continue;
-    const cfg = DEPT_CFG[dept];
+  if (window.currentReportSystem === 'order' || window.currentReportSystem === 'book') {
+    const isOrder = window.currentReportSystem === 'order';
     const ROWS = 22;
-    for (let start = 0; start < deptData.length; start += ROWS) {
-      const chunk = deptData.slice(start, start+ROWS);
-      const rows  = chunk.map((r,i)=>`<tr style="background:${i%2===0?'#f9f9ff':'white'};">
-        <td style="padding:6px 8px;color:#9ca3af;font-size:11px;">${start+i+1}</td>
-        <td style="padding:6px 8px;font-weight:700;color:${cfg.color};font-family:'Kanit',sans-serif;">${r.memoNum}</td>
-        <td style="padding:6px 8px;">${r.name}</td>
-        <td style="padding:6px 8px;color:#6b7280;font-size:12px;">${r.position}</td>
-        <td style="padding:6px 8px;font-size:12px;">${r.subject.substring(0,34)}${r.subject.length>34?'…':''}</td>
-        <td style="padding:6px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
-      </tr>`).join('');
+    for (let start = 0; start < report.data.length; start += ROWS) {
+      const chunk = report.data.slice(start, start+ROWS);
+      const rows = chunk.map((r,i) => {
+        let tdHTML = `
+          <td style="padding:6px 8px;color:#9ca3af;font-size:11px;">${start+i+1}</td>
+          <td style="padding:6px 8px;font-weight:700;color:#059669;font-family:'Kanit',sans-serif;">${isOrder ? r.orderNum : r.bookNum}</td>
+          <td style="padding:6px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
+          <td style="padding:6px 8px;">${r.name}</td>`;
+        if (isOrder) {
+          tdHTML += `<td style="padding:6px 8px;color:#6b7280;font-size:11px;word-break:break-word;">${r.subject||'-'}</td>`;
+        } else {
+          tdHTML += `<td style="padding:6px 8px;color:#6b7280;font-size:11px;">${r.fromDept||'-'}</td>
+                     <td style="padding:6px 8px;color:#6b7280;font-size:11px;">${r.destination||'-'}</td>
+                     <td style="padding:6px 8px;color:#6b7280;font-size:11px;word-break:break-word;">${r.subject||'-'}</td>`;
+        }
+        tdHTML += `<td style="padding:6px 8px;color:#6b7280;font-size:11px;">${r.dept||'-'}</td>`;
+        return `<tr style="background:${i%2===0?'#f9f9ff':'white'};">${tdHTML}</tr>`;
+      }).join('');
+      
+      let thHTML = `
+        <th style="padding:8px;text-align:left;color:white;">#</th>
+        <th style="padding:8px;text-align:left;color:white;">เลขที่</th>
+        <th style="padding:8px;text-align:left;color:white;">วันที่</th>
+        <th style="padding:8px;text-align:left;color:white;">ผู้ขอ</th>`;
+      if (isOrder) {
+        thHTML += `<th style="padding:8px;text-align:left;color:white;">เรื่อง</th>`;
+      } else {
+        thHTML += `<th style="padding:8px;text-align:left;color:white;">จาก</th>
+                   <th style="padding:8px;text-align:left;color:white;">ถึง</th>
+                   <th style="padding:8px;text-align:left;color:white;">เรื่อง</th>`;
+      }
+      thHTML += `<th style="padding:8px;text-align:left;color:white;">ฝ่าย</th>`;
+
       const content = `
-        <div style="background:${cfg.color};border-radius:10px;padding:12px 18px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div><div style="font-size:20px;font-weight:900;font-family:'Kanit',sans-serif;">${cfg.prefix} — ${dept}</div></div>
-          <div style="text-align:right;"><div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;">${deptData.length}</div><div style="font-size:11px;opacity:0.85;">ฉบับ</div></div>
+        <div style="background:linear-gradient(135deg,#10b981,#3b82f6);border-radius:10px;padding:12px 18px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div><div style="font-size:20px;font-weight:900;font-family:'Kanit',sans-serif;">รายการทั้งหมด</div></div>
+          <div style="text-align:right;"><div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;">${report.data.length}</div><div style="font-size:11px;opacity:0.85;">ฉบับ</div></div>
         </div>
-        <div style="border-radius:10px;overflow:hidden;border:1px solid ${cfg.border};">
+        <div style="border-radius:10px;overflow:hidden;border:1px solid #93c5fd;">
           <table style="width:100%;border-collapse:collapse;font-size:12px;">
-            <thead><tr style="background:${cfg.color};">
-              <th style="padding:8px;text-align:left;color:white;">#</th>
-              <th style="padding:8px;text-align:left;color:white;">เลขที่</th>
-              <th style="padding:8px;text-align:left;color:white;">ชื่อ-สกุล</th>
-              <th style="padding:8px;text-align:left;color:white;">ตำแหน่ง</th>
-              <th style="padding:8px;text-align:left;color:white;">เรื่อง</th>
-              <th style="padding:8px;text-align:left;color:white;">วันที่</th>
+            <thead><tr style="background:linear-gradient(135deg,#10b981,#3b82f6);">
+              ${thHTML}
             </tr></thead>
             <tbody>${rows}</tbody>
           </table>
-        </div>`;
-      await renderPage(pageShell(content), false);
+        </div>
+      `;
+      await renderPage(pageShell(content), start === 0);
+    }
+  } else {
+    await renderPage(pageShell(page1), true);
+
+    for (const dept of selectedDepts) {
+      const deptData = report.data.filter(r => r.dept === dept);
+      if (!deptData.length) continue;
+      const cfg = DEPT_CFG[dept];
+      const ROWS = 22;
+      for (let start = 0; start < deptData.length; start += ROWS) {
+        const chunk = deptData.slice(start, start+ROWS);
+        const rows  = chunk.map((r,i)=>`<tr style="background:${i%2===0?'#f9f9ff':'white'};">
+          <td style="padding:6px 8px;color:#9ca3af;font-size:11px;">${start+i+1}</td>
+          <td style="padding:6px 8px;font-weight:700;color:${cfg.color};font-family:'Kanit',sans-serif;">${r.memoNum}</td>
+          <td style="padding:6px 8px;">${r.name}</td>
+          <td style="padding:6px 8px;color:#6b7280;font-size:12px;">${r.position}</td>
+          <td style="padding:6px 8px;font-size:12px;word-break:break-word;">${r.subject||'-'}</td>
+          <td style="padding:6px 8px;font-size:11px;color:#6b7280;white-space:nowrap;">${formatThaiDate(r.date)}</td>
+        </tr>`).join('');
+        const content = `
+          <div style="background:${cfg.color};border-radius:10px;padding:12px 18px;color:white;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div><div style="font-size:20px;font-weight:900;font-family:'Kanit',sans-serif;">${cfg.prefix} — ${dept}</div></div>
+            <div style="text-align:right;"><div style="font-size:32px;font-weight:900;font-family:'Kanit',sans-serif;">${deptData.length}</div><div style="font-size:11px;opacity:0.85;">ฉบับ</div></div>
+          </div>
+          <div style="border-radius:10px;overflow:hidden;border:1px solid ${cfg.border};">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+              <thead><tr style="background:${cfg.color};">
+                <th style="padding:8px;text-align:left;color:white;">#</th>
+                <th style="padding:8px;text-align:left;color:white;">เลขที่</th>
+                <th style="padding:8px;text-align:left;color:white;">ชื่อ-สกุล</th>
+                <th style="padding:8px;text-align:left;color:white;">ตำแหน่ง</th>
+                <th style="padding:8px;text-align:left;color:white;">เรื่อง</th>
+                <th style="padding:8px;text-align:left;color:white;">วันที่</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
+        await renderPage(pageShell(content), false);
+      }
     }
   }
 
@@ -4185,7 +4238,8 @@ function generateOrderNum(dateStr) {
 async function submitOrderForm() {
   const name     = document.getElementById('o-name').value.trim();
   const position = document.getElementById('o-position').value.trim();
-  const dept     = document.getElementById('o-dept').value;
+  const deptRaw   = document.getElementById('o-dept').value;
+  const dept     = (deptRaw === 'งานอื่นๆ') ? (document.getElementById('o-dept-custom').value.trim() || 'งานอื่นๆ') : deptRaw;
   const dateVal  = document.getElementById('o-date').value;
   const subject  = document.getElementById('o-subject').value.trim();
   const desc     = document.getElementById('o-desc').value.trim();
@@ -4197,9 +4251,7 @@ async function submitOrderForm() {
   const data = loadOrderData(); data.unshift(record); saveOrderData(data);
   // sync to sheets
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addOrder', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentOrderResult = record;
   hideLoading();
@@ -4212,7 +4264,12 @@ async function submitOrderForm() {
 function goToOrderResult() { closeOrderPopup(); populateOrderResult(currentOrderResult); showSubPage('result'); }
 function closeOrderPopup() { document.getElementById('orderSuccessOverlay').classList.remove('show'); }
 function resetOrderForm() {
-  ['o-name','o-position','o-subject','o-desc'].forEach(id => document.getElementById(id).value = ''); document.getElementById('o-dept').value = '';
+  ['o-name','o-position','o-subject','o-desc'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('o-dept').value = '';
+  var cw = document.getElementById('o-dept-custom-wrap');
+  var ci = document.getElementById('o-dept-custom');
+  if (ci) { ci.value = ''; }
+  if (cw) { cw.style.display = 'none'; }
   document.getElementById('o-date').value = new Date().toISOString().split('T')[0];
   showToast('ล้างข้อมูลแล้ว', 'success');
 }
@@ -4310,8 +4367,8 @@ function clearAllOrderData() {
 function exportOrderExcel() {
   const data = loadOrderData();
   if (!data.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
-  const rows = [['เลขที่คำสั่ง','ชื่อ-สกุล','ตำแหน่ง','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
-  data.forEach(r => rows.push([r.orderNum, r.name, r.position, r.subject, formatThaiDate(r.date), r.desc||'', r.timestamp]));
+  const rows = [['เลขที่คำสั่ง','ชื่อ-สกุล','ตำแหน่ง','ฝ่าย/กลุ่มสาระ/งาน','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
+  data.forEach(r => rows.push([r.orderNum, r.name, r.position, r.dept||'', r.subject, formatThaiDate(r.date), r.desc||'', r.timestamp]));
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'คำสั่งโรงเรียน');
   XLSX.writeFile(wb, `รายงานคำสั่งโรงเรียน_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.xlsx`);
@@ -4408,21 +4465,21 @@ function generateBookNum(dateStr) {
 
 async function submitBookForm() {
   const name        = document.getElementById('bk-name').value.trim();
+  const fromDept    = document.getElementById('bk-from').value.trim();
   const destination = document.getElementById('bk-destination').value.trim();
-  const dept        = document.getElementById('bk-dept').value;
+  const deptRaw     = document.getElementById('bk-dept').value;
+  const dept        = (deptRaw === 'งานอื่นๆ') ? (document.getElementById('bk-dept-custom').value.trim() || 'งานอื่นๆ') : deptRaw;
   const dateVal     = document.getElementById('bk-date').value;
   const subject     = document.getElementById('bk-subject').value.trim();
   const desc        = document.getElementById('bk-desc').value.trim();
-  if (!name || !destination || !dateVal || !subject) { showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error'); return; }
+  if (!name || !fromDept || !destination || !dateVal || !subject) { showToast('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน', 'error'); return; }
   showLoading('กำลังออกเลขที่หนังสือออก...');
   const bookNum   = generateBookNum(dateVal);
   const timestamp = new Date().toLocaleString('th-TH');
-  const record    = { id: Date.now(), bookNum, name, destination, dept, subject, desc, date: dateVal.trim(), timestamp };
+  const record    = { id: Date.now(), bookNum, name, fromDept, destination, dept, subject, desc, date: dateVal.trim(), timestamp };
   const data = loadBookData(); data.unshift(record); saveBookData(data);
   if (GAS_URL) {
-    try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} });
-    } catch {}
+    try { await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBook', record }), headers:{'Content-Type':'text/plain'} }); } catch {}
   }
   currentBookResult = record;
   hideLoading();
@@ -4435,7 +4492,12 @@ async function submitBookForm() {
 function goToBookResult() { closeBookPopup(); populateBookResult(currentBookResult); showSubPage('result'); }
 function closeBookPopup() { document.getElementById('bookSuccessOverlay').classList.remove('show'); }
 function resetBookForm() {
-  ['bk-name','bk-destination','bk-subject','bk-desc'].forEach(id => document.getElementById(id).value = ''); document.getElementById('bk-dept').value = '';
+  ['bk-name','bk-from','bk-destination','bk-subject','bk-desc'].forEach(function(id){ const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('bk-dept').value = '';
+  const cw = document.getElementById('bk-dept-custom-wrap');
+  const ci = document.getElementById('bk-dept-custom');
+  if (ci) ci.value = '';
+  if (cw) cw.style.display = 'none';
   document.getElementById('bk-date').value = new Date().toISOString().split('T')[0];
   showToast('ล้างข้อมูลแล้ว', 'success');
 }
@@ -4443,6 +4505,7 @@ function populateBookResult(r) {
   if (!r) return;
   document.getElementById('br-bookNum').textContent = r.bookNum;
   document.getElementById('br-name').textContent = r.name;
+  if(document.getElementById('br-from')) document.getElementById('br-from').textContent = r.fromDept || '-';
   document.getElementById('br-destination').textContent = r.destination;
   document.getElementById('br-subject').textContent = r.subject;
   document.getElementById('br-date').textContent = formatThaiDate(r.date);
@@ -4472,11 +4535,12 @@ function renderBookTable(data) {
   tbody.innerHTML = data.map((r, i) => `<tr>
     <td style="color:var(--gray-400);font-size:12px;">${i+1}</td>
     <td><span class="memo-num" style="color:#059669;">${r.bookNum}</span></td>
-    <td>${r.name}</td>
-    <td style="color:var(--gray-500);font-size:13px;">${r.destination}</td>
-    <td><span style="background:#d1fae5;color:#059669;padding:3px 8px;border-radius:999px;font-size:12px;">${r.dept||'—'}</span></td>
-    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.subject}">${r.subject}</td>
     <td style="font-size:13px;color:var(--gray-500);">${formatThaiDate(r.date)}</td>
+    <td>${r.name}</td>
+    <td style="font-size:13px;">${r.fromDept || '—'}</td>
+    <td style="color:var(--gray-500);font-size:13px;">${r.destination}</td>
+    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.subject}">${r.subject}</td>
+    <td><span style="background:#d1fae5;color:#059669;padding:3px 8px;border-radius:999px;font-size:12px;">${r.dept||'—'}</span></td>
     <td>
       <button class="btn btn-secondary btn-sm" onclick="viewBookRecord('${r.id}')">👁️</button>
       <button class="btn btn-sm" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;" onclick="downloadBookRecordPDF('${r.id}')">📄</button>
@@ -4533,8 +4597,8 @@ function clearAllBookData() {
 function exportBookExcel() {
   const data = loadBookData();
   if (!data.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
-  const rows = [['เลขหนังสือออก','ผู้ส่ง','ส่งถึง','เรื่อง','วันที่','รายละเอียด','เวลาบันทึก']];
-  data.forEach(r => rows.push([r.bookNum, r.name, r.destination, r.subject, formatThaiDate(r.date), r.desc||'', r.timestamp]));
+  const rows = [['เลขที่หนังสือ','วันที่','ผู้ขอ','จาก','ถึง','เรื่อง','ฝ่าย/กลุ่มสาระ/งาน','รายละเอียด','เวลาบันทึก']];
+  data.forEach(r => rows.push([r.bookNum, formatThaiDate(r.date), r.name, r.fromDept||'', r.destination, r.subject, r.dept||'', r.desc||'', r.timestamp]));
   const ws = XLSX.utils.aoa_to_sheet(rows);
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'หนังสือออก');
   XLSX.writeFile(wb, `รายงานหนังสือออก_${new Date().toLocaleDateString('th-TH').replace(/\//g,'-')}.xlsx`);
@@ -4870,7 +4934,7 @@ function toggleOrderDeptCustom() {
         <div class="result-hero" style="background:linear-gradient(135deg,#f5f3ff,#eff6ff);">
           <div style="font-size:48px;margin-bottom:8px;">📑</div>
           <div class="result-label">เลขที่คำสั่ง</div>
-          <div class="result-num" id="or-orderNum" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);">—</div>
+          <div class="result-num" id="or-orderNum" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:white;-webkit-text-fill-color:white;border-radius:16px;padding:12px 24px;">—</div>
           <div style="margin-top:10px;color:var(--gray-400);font-size:13px;">ออกเลขเมื่อ: <span id="or-timestamp">—</span></div>
         </div>
         <div class="info-grid">
@@ -4899,6 +4963,7 @@ function toggleOrderDeptCustom() {
       <div class="section-title">📊 แดชบอร์ด - คำสั่งโรงเรียน</div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-success btn-sm" onclick="exportOrderExcel()">📊 Excel</button>
+        <button class="btn btn-info btn-sm" onclick="openReportModal('order')">📄 สรุปรายงาน PDF</button>
       </div>
     </div>
     <div class="stats-row">
@@ -4938,16 +5003,12 @@ function toggleOrderDeptCustom() {
         <div class="card-title"><span>📤</span> แบบฟอร์มขอเลขที่หนังสือออก</div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">ผู้ส่ง / ชื่อ-สกุล <span class="req">*</span></label>
-            <input class="form-input" id="bk-name" type="text" placeholder="ชื่อผู้ส่งหนังสือ">
-          </div>
-          <div class="form-group">
-            <label class="form-label">ส่งถึง / หน่วยงาน <span class="req">*</span></label>
-            <input class="form-input" id="bk-destination" type="text" placeholder="เช่น สพม.น่าน, อบจ.น่าน">
+            <label class="form-label">ผู้ขอเลขหนังสือออก / ชื่อ-สกุล <span class="req">*</span></label>
+            <input class="form-input" id="bk-name" type="text" placeholder="ชื่อผู้ขอเลข">
           </div>
           <div class="form-group">
             <label class="form-label">ฝ่าย/กลุ่มสาระ</label>
-            <select class="form-select" id="bk-dept">
+            <select class="form-select" id="bk-dept" onchange="const cw=document.getElementById('bk-dept-custom-wrap'); if(this.value==='งานอื่นๆ'){cw.style.display='block';}else{cw.style.display='none';document.getElementById('bk-dept-custom').value='';}">
               <option value="">-- เลือกฝ่าย/กลุ่มสาระ --</option>
               <optgroup label="ฝ่ายบริหาร">
                 <option value="ฝ่ายวิชาการ">ฝ่ายวิชาการ</option>
@@ -4972,6 +5033,17 @@ function toggleOrderDeptCustom() {
                 <option value="งานอื่นๆ">งานอื่นๆ</option>
               </optgroup>
             </select>
+            <div id="bk-dept-custom-wrap" style="display:none;margin-top:8px;">
+              <input class="form-input" id="bk-dept-custom" type="text" placeholder="ระบุงานที่ต้องการ เช่น งานพัสดุ, งานเทคโน">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">จาก <span class="req">*</span></label>
+            <input class="form-input" id="bk-from" type="text" placeholder="จากหน่วยงาน/บุคคล">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ถึง <span class="req">*</span></label>
+            <input class="form-input" id="bk-destination" type="text" placeholder="ส่งถึงหน่วยงาน/บุคคล">
           </div>
           <div class="form-group">
             <label class="form-label">วันที่ <span class="req">*</span></label>
@@ -5003,13 +5075,14 @@ function toggleOrderDeptCustom() {
         <div class="result-hero" style="background:linear-gradient(135deg,#ecfdf5,#eff6ff);">
           <div style="font-size:48px;margin-bottom:8px;">📤</div>
           <div class="result-label">เลขที่หนังสือออก</div>
-          <div class="result-num" id="br-bookNum" style="background:linear-gradient(135deg,#10b981,#3b82f6);">—</div>
+          <div class="result-num" id="br-bookNum" style="background:linear-gradient(135deg,#10b981,#3b82f6);color:white;-webkit-text-fill-color:white;border-radius:16px;padding:12px 24px;">—</div>
           <div style="margin-top:10px;color:var(--gray-400);font-size:13px;">ออกเลขเมื่อ: <span id="br-timestamp">—</span></div>
         </div>
         <div class="info-grid">
-          <div class="info-row"><div class="info-row-label">👤 ผู้ส่ง</div><div class="info-row-val" id="br-name">—</div></div>
-          <div class="info-row"><div class="info-row-label">🏢 ส่งถึง</div><div class="info-row-val" id="br-destination">—</div></div>
+          <div class="info-row"><div class="info-row-label">👤 ผู้ขอเลข / ชื่อ-สกุล</div><div class="info-row-val" id="br-name">—</div></div>
           <div class="info-row" id="br-dept-row"><div class="info-row-label">📂 ฝ่าย/กลุ่มสาระ</div><div class="info-row-val" id="br-dept">—</div></div>
+          <div class="info-row"><div class="info-row-label">🏢 จาก</div><div class="info-row-val" id="br-from">—</div></div>
+          <div class="info-row"><div class="info-row-label">🏢 ถึง</div><div class="info-row-val" id="br-destination">—</div></div>
           <div class="info-row" style="grid-column:1/-1"><div class="info-row-label">📌 เรื่อง</div><div class="info-row-val" id="br-subject">—</div></div>
           <div class="info-row"><div class="info-row-label">📅 วันที่</div><div class="info-row-val" id="br-date">—</div></div>
           <div class="info-row" style="grid-column:1/-1" id="br-desc-row">
@@ -5032,6 +5105,7 @@ function toggleOrderDeptCustom() {
       <div class="section-title">📊 แดชบอร์ด - หนังสือออก</div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-success btn-sm" onclick="exportBookExcel()">📊 Excel</button>
+        <button class="btn btn-info btn-sm" onclick="openReportModal('book')">📄 สรุปรายงาน PDF</button>
       </div>
     </div>
     <div class="stats-row">
@@ -5048,7 +5122,7 @@ function toggleOrderDeptCustom() {
       </div>
       <div class="table-wrap">
         <table id="bookTable">
-          <thead><tr><th>#</th><th>เลขหนังสือออก</th><th>ผู้ส่ง</th><th>ส่งถึง</th><th>ฝ่าย/กลุ่มสาระ</th><th>เรื่อง</th><th>วันที่</th><th>จัดการ</th></tr></thead>
+          <thead><tr><th>#</th><th>เลขที่หนังสือ</th><th>วันที่</th><th>ผู้ขอ</th><th>จาก</th><th>ถึง</th><th>เรื่อง</th><th>ฝ่าย/กลุ่มสาระ/งาน</th><th>จัดการ</th></tr></thead>
           <tbody id="bookTableBody"></tbody>
         </table>
         <div class="empty-state" id="bookEmptyState"><div class="empty-icon">📭</div><p>ยังไม่มีข้อมูล กรุณาส่งคำขอครั้งแรก</p></div>
@@ -5063,7 +5137,7 @@ function toggleOrderDeptCustom() {
   <div class="popup" style="max-width:460px;width:92%;text-align:center;padding:40px 32px;">
     <div style="font-size:60px;margin-bottom:12px;">🎉</div>
     <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:#1e1e3c;margin-bottom:4px;">ออกเลขที่คำสั่งสำเร็จ!</div>
-    <div class="popup-memo" id="popupOrderNum" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);">001/2569</div>
+    <div style="font-family:'Kanit',sans-serif;font-size:32px;font-weight:800;color:white;background:linear-gradient(135deg,#8b5cf6,#3b82f6);border-radius:16px;padding:16px 24px;margin:14px auto;letter-spacing:2px;text-align:center;" id="popupOrderNum">001/2569</div>
     <div class="popup-sub" id="popupOrderSubject">กรุณาบันทึกเลขนี้ไว้เพื่อการอ้างอิง</div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="goToOrderResult()" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);">📄 ดูผลลัพธ์</button>
@@ -5077,7 +5151,7 @@ function toggleOrderDeptCustom() {
   <div class="popup" style="max-width:460px;width:92%;text-align:center;padding:40px 32px;">
     <div style="font-size:60px;margin-bottom:12px;">🎉</div>
     <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:#1e1e3c;margin-bottom:4px;">ออกเลขที่หนังสือออกสำเร็จ!</div>
-    <div class="popup-memo" id="popupBookNum" style="background:linear-gradient(135deg,#10b981,#3b82f6);">ศธ 04311.07/001</div>
+    <div style="font-family:'Kanit',sans-serif;font-size:26px;font-weight:800;color:white;background:linear-gradient(135deg,#10b981,#3b82f6);border-radius:16px;padding:16px 24px;margin:14px auto;letter-spacing:1px;text-align:center;" id="popupBookNum">ศธ 04311.07/001</div>
     <div class="popup-sub" id="popupBookSubject">กรุณาบันทึกเลขนี้ไว้เพื่อการอ้างอิง</div>
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
       <button class="btn btn-primary" onclick="goToBookResult()" style="background:linear-gradient(135deg,#10b981,#3b82f6);">📄 ดูผลลัพธ์</button>
