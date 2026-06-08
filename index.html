@@ -3104,7 +3104,12 @@ function populateResult(r) {
   if (r.desc) { document.getElementById('r-desc').textContent = r.desc; document.getElementById('r-desc-row').style.display = ''; }
   else { document.getElementById('r-desc-row').style.display = 'none'; }
   const cfg = DEPT_CONFIG[r.dept];
-  if (cfg) document.getElementById('r-memoNum').style.background = `linear-gradient(135deg, ${cfg.color}, #3b82f6)`;
+  if (cfg) {
+    const el = document.getElementById('r-memoNum');
+    el.style.background = `linear-gradient(135deg, ${cfg.color}, #3b82f6)`;
+    el.style.webkitBackgroundClip = 'text';
+    el.style.webkitTextFillColor = 'transparent';
+  }
 }
 
 // ══════════════════════════════════════════
