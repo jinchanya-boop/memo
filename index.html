@@ -2178,7 +2178,15 @@ document.addEventListener('DOMContentLoaded', () => {
   #batchDropZone.drag-over { border-color: var(--pink-500) !important; background: var(--pink-50) !important; transform: scale(1.01); }
 
   /* ─── RESPONSIVE ─── */
+  .home-grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 900px; margin: 0 auto 40px; }
+  .responsive-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .responsive-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; max-width: 450px; margin-left: auto; margin-right: auto; }
+  .responsive-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .responsive-grid-auto { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
   @media (max-width: 1023px) {
+    .home-grid-container { grid-template-columns: repeat(2, 1fr); }
+    .responsive-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .responsive-grid-3 { grid-template-columns: repeat(2, 1fr); }
     .stats-row { grid-template-columns: 1fr 1fr; gap: 12px; }
     .dept-counter { grid-template-columns: repeat(2, 1fr); }
     .container { padding: 20px 16px; }
@@ -2186,6 +2194,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .nav-sub { display: none; }
   }
   @media (max-width: 767px) {
+    .home-grid-container { grid-template-columns: 1fr; }
+    .responsive-grid-2 { grid-template-columns: 1fr; }
+    .responsive-grid-3 { grid-template-columns: 1fr; }
+    .responsive-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    .responsive-grid-auto { grid-template-columns: 1fr; }
     .nav-inner { height: auto; padding: 10px 0; flex-direction: column; gap: 10px; align-items: flex-start; }
     .nav-tabs { width: 100%; display: flex; overflow-x: auto; gap: 4px; padding-bottom: 2px; }
     .nav-tab { flex-shrink: 0; padding: 8px 14px; font-size: 13px; }
@@ -2336,7 +2349,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <h1 class="hero-title">ระบบสารบรรณอิเล็กทรอนิกส์</h1>
       <p class="hero-sub">เลือกระบบที่ต้องการใช้งาน</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:900px;margin:0 auto 40px;">
+    <div class="home-grid-container">
       <div class="card" style="text-align:center;cursor:pointer;transition:all 0.25s;" onclick="showSystem('memo')"
            onmouseover="this.style.transform='translateY(-6px)'" onmouseout="this.style.transform='none'">
         <div style="font-size:56px;margin-bottom:12px;">📋</div>
@@ -2421,7 +2434,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
       <div class="card" style="margin-top:20px;background:linear-gradient(135deg,rgba(236,72,153,0.04),rgba(59,130,246,0.04));">
         <div class="card-title"><span>ℹ️</span> ข้อมูลรูปแบบเลขที่บันทึกข้อความ</div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+        <div class="responsive-grid-2">
           <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--blue-100);">
             <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายวิชาการ</div>
             <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--blue-600);">วช001/2569</div>
@@ -2605,7 +2618,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <!-- เพิ่มแถวเอง -->
         <div style="margin-top:14px;padding:12px 14px;background:var(--gray-50);border-radius:10px;border:1.5px dashed var(--gray-200);">
           <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;">➕ เพิ่มรายการด้วยตัวเอง</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;">
+          <div class="responsive-grid-auto">
             <div class="form-group" style="margin:0;">
               <label class="form-label" style="font-size:11px;">ชื่อ-สกุล</label>
               <input class="form-input" id="b-addName" type="text" placeholder="ชื่อ-สกุล" style="padding:8px 12px;font-size:13px;">
@@ -2808,7 +2821,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     <div style="margin-bottom:18px;">
       <div class="form-label" style="margin-bottom:8px;">ประเภทรายงาน</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+      <div class="responsive-grid-4">
         <label class="period-btn" id="pBtn-daily"><input type="radio" name="period" value="daily" checked onchange="onPeriodChange()"><span class="period-icon">📅</span><span class="period-label">รายวัน</span></label>
         <label class="period-btn" id="pBtn-weekly"><input type="radio" name="period" value="weekly" onchange="onPeriodChange()"><span class="period-icon">🗓️</span><span class="period-label">รายสัปดาห์</span></label>
         <label class="period-btn" id="pBtn-monthly"><input type="radio" name="period" value="monthly" onchange="onPeriodChange()"><span class="period-icon">📋</span><span class="period-label">รายเดือน</span></label>
@@ -3151,7 +3164,7 @@ async function generateMemosPDF(records) {
           ${r.desc ? `<tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
         </table>
         <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
-        <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+        <div class="responsive-grid-3" style="max-width:none;">
           ${['ผู้ขอ','ผู้ตรวจสอบ','ผู้อนุมัติ'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
         </div>
       </div>
@@ -4412,7 +4425,7 @@ async function generateOrderPDF(records) {
           ${r.desc ? `<tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
         </table>
         <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
-        <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:450px;margin-left:auto;margin-right:auto;">
+        <div class="responsive-grid-2" style="margin-top:32px;max-width:450px;margin-left:auto;margin-right:auto;gap:16px;">
           ${['ผู้ร่าง/เลขาฯ','ผู้อำนวยการโรงเรียน'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
         </div>
       </div>
@@ -4642,7 +4655,7 @@ async function generateBookPDF(records) {
           ${r.desc ? `<tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
         </table>
         <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
-        <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:450px;margin-left:auto;margin-right:auto;">
+        <div class="responsive-grid-2" style="margin-top:32px;max-width:450px;margin-left:auto;margin-right:auto;gap:16px;">
           ${['ผู้รับผิดชอบ','ผู้อำนวยการโรงเรียน'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
         </div>
       </div>
