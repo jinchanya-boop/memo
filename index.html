@@ -618,7 +618,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (GAS_URL) {
     // Sync orders
     const cbOrder = 'gasOrderCb_' + Date.now();
+    const tOrder = setTimeout(() => { delete window[cbOrder]; const el = document.getElementById('gas-order-jsonp'); if(el) el.remove(); }, 20000);
     window[cbOrder] = function(json) {
+      clearTimeout(tOrder);
       delete window[cbOrder];
       const el = document.getElementById('gas-order-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -633,7 +635,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sync books
     const cbBook = 'gasBookCb_' + Date.now();
+    const tBook = setTimeout(() => { delete window[cbBook]; const el = document.getElementById('gas-book-jsonp'); if(el) el.remove(); }, 20000);
     window[cbBook] = function(json) {
+      clearTimeout(tBook);
       delete window[cbBook];
       const el = document.getElementById('gas-book-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -1261,7 +1265,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (GAS_URL) {
     // Sync orders
     const cbOrder = 'gasOrderCb_' + Date.now();
+    const tOrder = setTimeout(() => { delete window[cbOrder]; const el = document.getElementById('gas-order-jsonp'); if(el) el.remove(); }, 20000);
     window[cbOrder] = function(json) {
+      clearTimeout(tOrder);
       delete window[cbOrder];
       const el = document.getElementById('gas-order-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -1276,7 +1282,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sync books
     const cbBook = 'gasBookCb_' + Date.now();
+    const tBook = setTimeout(() => { delete window[cbBook]; const el = document.getElementById('gas-book-jsonp'); if(el) el.remove(); }, 20000);
     window[cbBook] = function(json) {
+      clearTimeout(tBook);
       delete window[cbBook];
       const el = document.getElementById('gas-book-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -1904,7 +1912,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (GAS_URL) {
     // Sync orders
     const cbOrder = 'gasOrderCb_' + Date.now();
+    const tOrder = setTimeout(() => { delete window[cbOrder]; const el = document.getElementById('gas-order-jsonp'); if(el) el.remove(); }, 20000);
     window[cbOrder] = function(json) {
+      clearTimeout(tOrder);
       delete window[cbOrder];
       const el = document.getElementById('gas-order-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -1919,7 +1929,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sync books
     const cbBook = 'gasBookCb_' + Date.now();
+    const tBook = setTimeout(() => { delete window[cbBook]; const el = document.getElementById('gas-book-jsonp'); if(el) el.remove(); }, 20000);
     window[cbBook] = function(json) {
+      clearTimeout(tBook);
       delete window[cbBook];
       const el = document.getElementById('gas-book-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -2891,7 +2903,7 @@ async function syncFromSheets() {
       const el = document.getElementById('gas-jsonp-script');
       if (el) el.remove();
       resolve(null);
-    }, 10000);
+    }, 20000);
     window[cbName] = function(json) {
       clearTimeout(timeout);
       delete window[cbName];
@@ -4739,7 +4751,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (GAS_URL) {
     // Sync orders
     const cbOrder = 'gasOrderCb_' + Date.now();
+    const tOrder = setTimeout(() => { delete window[cbOrder]; const el = document.getElementById('gas-order-jsonp'); if(el) el.remove(); }, 20000);
     window[cbOrder] = function(json) {
+      clearTimeout(tOrder);
       delete window[cbOrder];
       const el = document.getElementById('gas-order-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
@@ -4754,7 +4768,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Sync books
     const cbBook = 'gasBookCb_' + Date.now();
+    const tBook = setTimeout(() => { delete window[cbBook]; const el = document.getElementById('gas-book-jsonp'); if(el) el.remove(); }, 20000);
     window[cbBook] = function(json) {
+      clearTimeout(tBook);
       delete window[cbBook];
       const el = document.getElementById('gas-book-jsonp'); if (el) el.remove();
       if (json.status === 'ok' && Array.isArray(json.data)) {
