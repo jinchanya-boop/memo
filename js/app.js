@@ -138,14 +138,12 @@ appContext.memo = {
             }
         });
         
-        const nextNum = maxNum + 1;
-        const memoNum = `${prefix}${String(nextNum).padStart(3,'0')}/${year}`;
-        const record = { id: Date.now(), memoNum, name, position, dept, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        let record = { id: Date.now(), memoNum: '', name, position, dept, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('add', record) || record;
         
         appContext.data.memo.unshift(record);
         localStorage.setItem('memoData', JSON.stringify(appContext.data.memo));
-        
-                await pushToSheets('add', record);
         
         hideLoading();
         showResult(record, 'memo');
@@ -182,14 +180,12 @@ appContext.order = {
             }
         });
         
-        const nextNum = maxNum + 1;
-        const orderNum = `คำสั่งโรงเรียนสา ที่ ${String(nextNum).padStart(3,'0')}/${year}`;
-        const record = { id: Date.now(), orderNum, name, position, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        let record = { id: Date.now(), orderNum: '', name, position, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('addOrder', record) || record;
         
         appContext.data.order.unshift(record);
         localStorage.setItem('orderData', JSON.stringify(appContext.data.order));
-        
-                await pushToSheets('addOrder', record);
         
         hideLoading();
         showResult(record, 'order');
@@ -227,14 +223,12 @@ appContext.book = {
             }
         });
         
-        const nextNum = maxNum + 1;
-        const bookNum = `ศธ 04269.31/${String(nextNum).padStart(3,'0')}`;
-        const record = { id: Date.now(), bookNum, name, position, destination, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        let record = { id: Date.now(), bookNum: '', name, position, destination, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('addBook', record) || record;
         
         appContext.data.book.unshift(record);
         localStorage.setItem('bookData', JSON.stringify(appContext.data.book));
-        
-                await pushToSheets('addBook', record);
         
         hideLoading();
         showResult(record, 'book');

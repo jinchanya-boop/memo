@@ -1,4 +1,6 @@
-let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbye4PrDSh7fuUyDc6aHQMxF9kHa6zNnvuHOMHwB9k-pwBF0DJ6P42OUd_rh39AhMnzX/exec';
+let GAS_URL = localStorage.getItem('gasUrl') || 'https://script.google.com/macros/s/AKfycbw-UaYyMHfZlklHhctqLInRSnEYCO_btfyQyMe0WYqaCT1XpjYoyZMKlthkFTF61PxS/exec';
+const SECRET_TOKEN = 'SaaSchool_Secret_2026!';
+
 
 function normalizeDateField(val) {
   if (!val) return '';
@@ -21,7 +23,7 @@ async function syncFromSheets(actionStr, lsKey) {
       const el = document.getElementById('gas-jsonp-' + cbName);
       if (el) el.remove();
       resolve(null);
-    }, 10000);
+    }, 20000);
     
     window[cbName] = function(json) {
       clearTimeout(timeout);
@@ -39,7 +41,7 @@ async function syncFromSheets(actionStr, lsKey) {
     };
     const script = document.createElement('script');
     script.id = 'gas-jsonp-' + cbName;
-    script.src = GAS_URL + '?action=' + actionStr + '&callback=' + cbName;
+    script.src = GAS_URL + '?action=' + actionStr + '&callback=' + cbName + '&token=' + SECRET_TOKEN;
     script.onerror = () => { clearTimeout(timeout); resolve(null); };
     document.head.appendChild(script);
   });
@@ -56,13 +58,16 @@ async function syncAllModules() {
 
 // Push to sheet generic
 async function pushToSheets(actionStr, record) {
-  if (!GAS_URL) return;
+  if (!GAS_URL) return record;
   try {
     const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
-    await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action: actionStr, record, startConfig }), headers:{'Content-Type':'text/plain'} });
+    const res = await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action: actionStr, record, startConfig, token: SECRET_TOKEN }), headers:{'Content-Type':'text/plain'} });
+    const json = await res.json();
+    if(json.status === 'ok' && json.record) return json.record;
   } catch(e) {
     console.warn("Failed to push to sheets", e);
   }
+  return record;
 }
 
 function showLoading(msg='กำลังประมวลผล...') {
