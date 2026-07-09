@@ -1,1 +1,1017 @@
+// State
+const appContext = {
+    currentView: 'home',
+    currentSystem: 'memo', // active subsystem
+    data: {
+        memo: [],
+        order: [],
+        book: []
+    }
+};
+
+function loadAllData() {
+    try { appContext.data.memo = JSON.parse(localStorage.getItem('memoData') || '[]'); } catch {}
+    try { appContext.data.order = JSON.parse(localStorage.getItem('orderData') || '[]'); } catch {}
+    try { appContext.data.book = JSON.parse(localStorage.getItem('bookData') || '[]'); } catch {}
+}
+
+function getStartConfig(key) {
+    try {
+        const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+        return all[key] !== undefined ? parseInt(all[key]) : 0;
+    } catch { return 0; }
+}
+
+
+function switchView(viewName) {
+    document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+    
+    // Update current system if switching to a main subsystem form
+    if (['memo', 'order', 'book'].includes(viewName)) {
+        appContext.currentSystem = viewName;
+    }
+    
+    const targetEl = document.getElementById('view-' + viewName);
+    if (targetEl) targetEl.classList.add('active');
+    appContext.currentView = viewName;
+    
+    // Update tabs
+    const nav = document.getElementById('navTabsContainer');
+    nav.innerHTML = '';
+    
+    if (viewName === 'home') {
+        nav.innerHTML += `<button class="nav-tab active" onclick="switchView('home')">🏠 หน้าหลัก</button>`;
+        nav.innerHTML += `<button class="nav-tab" onclick="switchView('dashboard')">📊 แดชบอร์ดรวม</button>`;
+    } else if (viewName === 'dashboard') {
+        nav.innerHTML += `<button class="nav-tab" onclick="switchView('home')">🏠 กลับหน้าหลัก</button>`;
+        nav.innerHTML += `<button class="nav-tab active" onclick="switchView('dashboard')">📊 แดชบอร์ดรวม</button>`;
+    } else {
+        // We are inside a subsystem context
+        nav.innerHTML += `<button class="nav-tab" onclick="switchView('home')">🏠 กลับหน้าหลัก</button>`;
+        
+        let label = 'ขอเลขที่บันทึก';
+        if (appContext.currentSystem === 'order') label = 'ขอเลขที่คำสั่ง';
+        if (appContext.currentSystem === 'book') label = 'ขอเลขหนังสือออก';
+        
+        nav.innerHTML += `<button class="nav-tab ${viewName === appContext.currentSystem ? 'active' : ''}" onclick="switchView(appContext.currentSystem)">📝 ${label}</button>`;
+        nav.innerHTML += `<button class="nav-tab ${viewName === 'result' ? 'active' : ''}" onclick="switchView('result')">📄 ผลลัพธ์</button>`;
+        nav.innerHTML += `<button class="nav-tab ${viewName === 'context-dashboard' ? 'active' : ''}" onclick="switchView('context-dashboard')">📊 แดชบอร์ด</button>`;
+        nav.innerHTML += `<button class="nav-tab ${viewName === 'batch' ? 'active' : ''}" onclick="switchView('batch')">📦 ขอเลขหมู่</button>`;
+        nav.innerHTML += `<button class="nav-tab ${viewName === 'settings' ? 'active' : ''}" onclick="openAdminLogin()">⚙️ ตั้งค่า</button>`;
+    }
+
+    if (viewName === 'dashboard') {
+        loadAllData();
+        updateDashboard();
+    }
+    
+    if (viewName === 'context-dashboard') {
+        // Need to load context specific data
+        renderContextDashboard();
+    }
+    
+    if (viewName === 'batch') {
+        updateBatchHero();
+    }
+}
+function updateDashboard() {
+    const memos = appContext.data.memo.length;
+    const orders = appContext.data.order.length;
+    const books = appContext.data.book.length;
+    
+    document.getElementById('stat-total-memos').textContent = memos;
+    document.getElementById('stat-total-orders').textContent = orders;
+    document.getElementById('stat-total-books').textContent = books;
+    document.getElementById('stat-total-all').textContent = memos + orders + books;
+    
+    // Combine and sort
+    let all = [];
+    appContext.data.memo.forEach(r => all.push({...r, type: 'บันทึกข้อความ', num: r.memoNum, badge: 'badge-วช'}));
+    appContext.data.order.forEach(r => all.push({...r, type: 'คำสั่ง', num: r.orderNum, badge: 'badge-order'}));
+    appContext.data.book.forEach(r => all.push({...r, type: 'หนังสือออก', num: r.bookNum, badge: 'badge-book'}));
+    
+    all.sort((a,b) => b.id - a.id);
+    const tbody = document.getElementById('globalRecentTableBody');
+    const emptyState = document.getElementById('emptyState');
+    if (all.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.style.display = '';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    tbody.innerHTML = all.slice(0, 10).map(r => `
+        <tr>
+            <td><span class="badge ${r.badge}">${r.type}</span></td>
+            <td><strong>${r.num}</strong></td>
+            <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${r.subject}">${r.subject}</td>
+            <td>${r.name}</td>
+            <td>${formatThaiDate(r.date)}</td>
+        </tr>
+    `).join('');
+}
+
+// Sub-modules
+appContext.memo = {
+    submit: async function() {
+        const name = document.getElementById('memo-name').value;
+        const position = document.getElementById('memo-position').value;
+        const dept = document.getElementById('memo-dept').value;
+        const date = document.getElementById('memo-date').value;
+        const subject = document.getElementById('memo-subject').value;
+        const desc = document.getElementById('memo-desc').value;
+        
+        if (!name || !position || !dept || !date || !subject) {
+            showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error'); return;
+        }
+        
+        showLoading('กำลังออกเลขบันทึก...');
+        
+        const year = getThaiBE(date);
+        const prefix = {'ฝ่ายวิชาการ':'วช', 'ฝ่ายบุคคล':'บค', 'ฝ่ายงบประมาณ':'งบ', 'ฝ่ายบริหารทั่วไป':'บท'}[dept];
+        
+        let maxNum = getStartConfig('memo_' + year);
+        appContext.data.memo.forEach(r => {
+            if (r.dept === dept && r.memoNum.includes('/' + year)) {
+                const num = parseInt(r.memoNum.replace(prefix, '').split('/')[0]);
+                if (num > maxNum) maxNum = num;
+            }
+        });
+        
+        let record = { id: Date.now(), memoNum: '', name, position, dept, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('add', record) || record;
+        
+        appContext.data.memo.unshift(record);
+        localStorage.setItem('memoData', JSON.stringify(appContext.data.memo));
+        
+        hideLoading();
+        showResult(record, 'memo');
+        
+        ['memo-name','memo-position','memo-subject','memo-desc'].forEach(id => document.getElementById(id).value = '');
+    }
+};
+
+appContext.order = {
+    submit: async function() {
+        const name = document.getElementById('order-name').value;
+        const position = document.getElementById('order-position').value;
+        const date = document.getElementById('order-date').value;
+        const subject = document.getElementById('order-subject').value;
+        const desc = document.getElementById('order-desc').value;
+        
+        if (!name || !position || !date || !subject) {
+            showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error'); return;
+        }
+        
+        showLoading('กำลังออกเลขคำสั่ง...');
+        
+        const year = getThaiBE(date);
+        let maxNum = getStartConfig('order_' + year);
+        
+        appContext.data.order.forEach(r => {
+            if (r.orderNum && r.orderNum.includes('/' + year)) {
+                // คำสั่งโรงเรียนสา ที่ 001/2569
+                try {
+                    const parts = r.orderNum.split(' ที่ ')[1].split('/');
+                    const num = parseInt(parts[0]);
+                    if (num > maxNum) maxNum = num;
+                } catch(e){}
+            }
+        });
+        
+        let record = { id: Date.now(), orderNum: '', name, position, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('addOrder', record) || record;
+        
+        appContext.data.order.unshift(record);
+        localStorage.setItem('orderData', JSON.stringify(appContext.data.order));
+        
+        hideLoading();
+        showResult(record, 'order');
+        
+        ['order-name','order-position','order-subject','order-desc'].forEach(id => document.getElementById(id).value = '');
+    }
+};
+
+appContext.book = {
+    submit: async function() {
+        const name = document.getElementById('book-name').value;
+        const position = document.getElementById('book-position').value;
+        const destination = document.getElementById('book-destination').value;
+        const date = document.getElementById('book-date').value;
+        const subject = document.getElementById('book-subject').value;
+        const desc = document.getElementById('book-desc').value;
+        
+        if (!name || !position || !date || !subject || !destination) {
+            showToast('กรุณากรอกข้อมูลให้ครบถ้วน', 'error'); return;
+        }
+        
+        showLoading('กำลังออกเลขหนังสือ...');
+        
+        const year = getThaiBE(date);
+        let maxNum = getStartConfig('book_' + year);
+        
+        appContext.data.book.forEach(r => {
+            // ศธ 04269.31/001
+            if(r.bookNum) {
+                const parts = r.bookNum.split('/');
+                if (parts.length > 1) {
+                    const num = parseInt(parts[1]);
+                    if (num > maxNum) maxNum = num;
+                }
+            }
+        });
+        
+        let record = { id: Date.now(), bookNum: '', name, position, destination, subject, desc, date, timestamp: new Date().toLocaleString('th-TH') };
+        
+        record = await pushToSheets('addBook', record) || record;
+        
+        appContext.data.book.unshift(record);
+        localStorage.setItem('bookData', JSON.stringify(appContext.data.book));
+        
+        hideLoading();
+        showResult(record, 'book');
+        
+        ['book-name','book-position','book-destination','book-subject','book-desc'].forEach(id => document.getElementById(id).value = '');
+    }
+};
+
+// Initial load
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('memo-date').value = today;
+    document.getElementById('order-date').value = today;
+    document.getElementById('book-date').value = today;
+    
+    showLoading('กำลังเชื่อมต่อฐานข้อมูล...');
+    Promise.all([
+        syncFromSheets('getAll', 'memoData'),
+        syncFromSheets('getOrders', 'orderData'),
+        syncFromSheets('getBooks', 'bookData')
+    ]).then(() => {
+        hideLoading();
+        loadAllData();
+    }).catch(() => {
+        hideLoading();
+    });
+});
+
+// Fix for PDF Text Wrapping requested by User
+async function generateReportPDF() {
+    showLoading('กำลังสร้างรายงาน PDF แบบไม่ตัดคำ...');
+    
+    // We use jsPDF + html2canvas. 
+    // HTML <td> with word-wrap:break-word solves the truncation perfectly.
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+    
+    let all = [];
+    appContext.data.memo.forEach(r => all.push({...r, type: 'บันทึกข้อความ', num: r.memoNum}));
+    appContext.data.order.forEach(r => all.push({...r, type: 'คำสั่ง', num: r.orderNum}));
+    appContext.data.book.forEach(r => all.push({...r, type: 'หนังสือออก', num: r.bookNum}));
+    all.sort((a,b) => b.id - a.id);
+    
+    if (all.length === 0) {
+        hideLoading(); showToast('ไม่มีข้อมูล', 'error'); return;
+    }
+    
+    const ROWS_PER_PAGE = 20;
+    
+    for (let p = 0; p < all.length; p += ROWS_PER_PAGE) {
+        const chunk = all.slice(p, p + ROWS_PER_PAGE);
+        
+        const rowsHtml = chunk.map((r, i) => `
+            <tr style="background:${i%2===0?'#f9f9ff':'white'};">
+                <td style="padding:10px 8px; font-size:12px; width:8%; text-align:center;">${p+i+1}</td>
+                <td style="padding:10px 8px; font-size:12px; width:15%; font-weight:bold;">${r.num}</td>
+                <td style="padding:10px 8px; font-size:12px; width:20%;">${r.name}</td>
+                <td style="padding:10px 8px; font-size:12px; width:15%; color:#6b7280;">${r.position}</td>
+                <!-- The key to fixing the truncation is here: word-wrap and no length limits -->
+                <td style="padding:10px 8px; font-size:12px; width:30%; word-wrap:break-word; white-space:normal; line-height:1.4;">${r.subject}</td>
+                <td style="padding:10px 8px; font-size:12px; width:12%; color:#6b7280;">${formatThaiDate(r.date)}</td>
+            </tr>
+        `).join('');
+        
+        const content = `
+        <div style="width:794px; min-height:1123px; background:white; font-family:'Sarabun',sans-serif; padding:40px; box-sizing:border-box;">
+            <h2 style="text-align:center; font-family:'Kanit',sans-serif; color:#ec4899; margin-bottom:20px;">รายงานรวมเอกสารทั้งหมด (หน้า ${Math.floor(p/ROWS_PER_PAGE)+1})</h2>
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+                <thead>
+                    <tr style="background:#ec4899; color:white;">
+                        <th style="padding:10px 8px; width:8%;">ลำดับ</th>
+                        <th style="padding:10px 8px; width:15%; text-align:left;">เลขที่</th>
+                        <th style="padding:10px 8px; width:20%; text-align:left;">ชื่อ-สกุล</th>
+                        <th style="padding:10px 8px; width:15%; text-align:left;">ตำแหน่ง</th>
+                        <th style="padding:10px 8px; width:30%; text-align:left;">เรื่อง</th>
+                        <th style="padding:10px 8px; width:12%; text-align:left;">วันที่</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rowsHtml}
+                </tbody>
+            </table>
+            <div style="margin-top:20px; font-size:10px; color:#9ca3af; text-align:right;">
+                ระบบสารบรรณอิเล็กทรอนิกส์ พิมพ์เมื่อ ${new Date().toLocaleString('th-TH')}
+            </div>
+        </div>
+        `;
+        
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'position:fixed; left:-9999px; top:0; width:794px; background:white; z-index:9999;';
+        wrap.innerHTML = content; 
+        document.body.appendChild(wrap);
+        
+        await new Promise(r => setTimeout(r, 500));
+        
+        const canvas = await html2canvas(wrap, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+        document.body.removeChild(wrap);
+        
+        if (p > 0) doc.addPage();
+        doc.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+    }
+    
+    doc.save(`รายงานรวมเอกสาร_${new Date().getTime()}.pdf`);
+    
+    hideLoading();
+    showToast('สร้าง PDF เรียบร้อย', 'success');
+}
+
+
+/* ================= SETTINGS & ADMIN ================= */
+
+function initGasUrlInput() {
+  const inp = document.getElementById('gasUrlInput');
+  if (inp) { inp.value = localStorage.getItem('gasUrl') || ''; updateGasStatus(); }
+}
+function saveGasUrl() {
+  const url = document.getElementById('gasUrlInput').value.trim();
+  if (url && !url.startsWith('https://script.google.com')) { showToast('URL ไม่ถูกต้อง', 'error'); return; }
+  localStorage.setItem('gasUrl', url); GAS_URL = url; updateGasStatus();
+  if (url) { showToast('บันทึก GAS URL แล้ว กำลัง sync...', 'success'); syncFromSheets().then(d => { if(d) { updateAdminStats(); showToast(`Sync สำเร็จ ${d.length} รายการ`, 'success'); } }); }
+  else showToast('ลบ GAS URL แล้ว', 'success');
+}
+async function testGasUrl() {
+  const url = document.getElementById('gasUrlInput').value.trim();
+  if (!url) { showToast('กรุณาใส่ URL ก่อน', 'error'); return; }
+  const statusEl = document.getElementById('gasUrlStatus');
+  statusEl.innerHTML = '⏳ กำลังทดสอบ...';
+  const oldUrl = GAS_URL; GAS_URL = url;
+  const result = await syncFromSheets(); GAS_URL = oldUrl;
+  if (result !== null) { statusEl.innerHTML = `<span style="color:#059669;">✅ สำเร็จ! พบ ${result.length} รายการ</span>`; showToast('เชื่อมต่อ Google Sheets ได้', 'success'); }
+  else { statusEl.innerHTML = `<span style="color:#ef4444;">❌ เชื่อมต่อไม่ได้</span>`; showToast('เชื่อมต่อไม่ได้', 'error'); }
+}
+function updateGasStatus() {
+  const statusEl = document.getElementById('gasUrlStatus'); if (!statusEl) return;
+  const url = localStorage.getItem('gasUrl') || '';
+  statusEl.innerHTML = url
+    ? `<span style="color:#059669;">✅ เชื่อมต่ออยู่:</span> <span style="font-size:11px;color:#6b7280;word-break:break-all;">${url.substring(0,60)}...</span>`
+    : '<span style="color:#f59e0b;">⚠️ ยังไม่ได้เชื่อมต่อ Google Sheets</span>';
+}
+
+// ══════════════════════════════════════════
+// ADMIN AUTH
+// ══════════════════════════════════════════
+const DEFAULT_ADMIN_PWD = 'admin1234';
+function getAdminPwd() { return localStorage.getItem('adminPwd') || DEFAULT_ADMIN_PWD; }
+function isAdminLoggedIn() { return sessionStorage.getItem('adminAuth') === 'true'; }
+
+function markTabActive(name) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabMap = { form:0, result:1, admin:2, batch:3, settings:4 };
+  const tabs   = document.querySelectorAll('.nav-tab');
+  if (tabs[tabMap[name]]) tabs[tabMap[name]].classList.add('active');
+}
+
+function openAdminLogin() {
+  if (isAdminLoggedIn()) {
+    ;
+    switchView('settings');
+    ; initSettingsPage(); return;
+  }
+  document.getElementById('adminPwdInput').value = '';
+  document.getElementById('adminPwdError').textContent = '';
+  document.getElementById('adminLoginOverlay').classList.add('show');
+  setTimeout(() => document.getElementById('adminPwdInput').focus(), 300);
+}
+function closeAdminLogin() { document.getElementById('adminLoginOverlay').classList.remove('show'); }
+function togglePwdVisibility() {
+  const inp = document.getElementById('adminPwdInput'), btn = document.getElementById('togglePwdBtn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
+}
+function verifyAdminPwd() {
+  const input = document.getElementById('adminPwdInput').value;
+  const errEl = document.getElementById('adminPwdError');
+  if (!input) { errEl.textContent = 'กรุณาใส่รหัสผ่าน'; return; }
+  if (input === getAdminPwd()) {
+    sessionStorage.setItem('adminAuth', 'true'); closeAdminLogin();
+    ;
+    switchView('settings');
+    ; initSettingsPage();
+    showToast('เข้าสู่ระบบสำเร็จ', 'success');
+  } else {
+    errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง';
+    document.getElementById('adminPwdInput').value = '';
+    document.getElementById('adminPwdInput').focus();
+    const popup = document.querySelector('#adminLoginOverlay .popup');
+    popup.style.animation = 'shake 0.4s ease';
+    setTimeout(() => popup.style.animation = '', 400);
+  }
+}
+function logoutAdmin() { sessionStorage.removeItem('adminAuth'); switchView('home'); showToast('ออกจากระบบแล้ว', 'success'); }
+function openChangePwd() {
+  ['oldPwdInput','newPwdInput','confirmPwdInput'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('changePwdError').textContent = '';
+  document.getElementById('changePwdOverlay').classList.add('show');
+}
+function closeChangePwd() { document.getElementById('changePwdOverlay').classList.remove('show'); }
+function doChangePwd() {
+  const oldPwd = document.getElementById('oldPwdInput').value;
+  const newPwd = document.getElementById('newPwdInput').value;
+  const cfm    = document.getElementById('confirmPwdInput').value;
+  const errEl  = document.getElementById('changePwdError');
+  if (oldPwd !== getAdminPwd()) { errEl.textContent = '❌ รหัสผ่านปัจจุบันไม่ถูกต้อง'; return; }
+  if (newPwd.length < 4)        { errEl.textContent = '❌ รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร'; return; }
+  if (newPwd !== cfm)           { errEl.textContent = '❌ รหัสผ่านใหม่ไม่ตรงกัน'; return; }
+  localStorage.setItem('adminPwd', newPwd); closeChangePwd(); showToast('เปลี่ยนรหัสผ่านสำเร็จ', 'success');
+}
+
+// ══════════════════════════════════════════
+// SETTINGS PAGE
+// ══════════════════════════════════════════
+function initSettingsPage() {
+  const yearSel = document.getElementById('cfg-year'); if (!yearSel) return;
+  const thisYear = getThaiBE();
+  yearSel.innerHTML = '';
+  for (let y = thisYear; y >= thisYear-3; y--) {
+    const opt = document.createElement('option');
+    opt.value = y; opt.textContent = `พ.ศ. ${y}`;
+    if (y === thisYear) opt.selected = true;
+    yearSel.appendChild(opt);
+  }
+  renderStartNumGrid(thisYear); renderPreviewNextNums(thisYear); renderAllConfigTable(); initGasUrlInput();
+}
+function loadStartConfig() {
+  const year = parseInt(document.getElementById('cfg-year')?.value || getThaiBE());
+  renderStartNumGrid(year); renderPreviewNextNums(year); renderAllConfigTable();
+}
+function renderStartNumGrid(year) {
+  const grid = document.getElementById('startNumGrid'); if (!grid) return;
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  grid.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
+    const cur = getStartConfig(dept, year);
+    const col = colors[cfg.prefix] || '#6b7280';
+    return `<div style="background:white;border:1.5px solid ${col}30;border-radius:12px;padding:16px;border-top:3px solid ${col};">
+      <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${dept}</div>
+      <div style="font-size:18px;font-weight:800;color:${col};font-family:'Kanit',sans-serif;margin-bottom:10px;">${cfg.prefix}___/${year}</div>
+      <label class="form-label">เลขเริ่มต้น (ก่อนเลขถัดไป)</label>
+      <input class="form-input" id="start-${cfg.prefix}" type="number" min="0" max="9999" value="${cur}" oninput="renderPreviewNextNums(${year})" style="margin-top:4px;">
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">เลขถัดไป = <b style="color:${col};" id="next-preview-${cfg.prefix}">${cfg.prefix}${String(cur+1).padStart(3,'0')}/${year}</b></div>
+    </div>`;
+  }).join('');
+}
+function renderPreviewNextNums(year) {
+  const preview = document.getElementById('previewNextNums'); if (!preview) return;
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  preview.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
+    const inputEl = document.getElementById('start-' + cfg.prefix);
+    const val = inputEl ? (parseInt(inputEl.value)||0) : getStartConfig(dept, year);
+    const nextNum = String(val+1).padStart(3,'0');
+    const col = colors[cfg.prefix] || '#6b7280';
+    const inlineEl = document.getElementById('next-preview-' + cfg.prefix);
+    if (inlineEl) inlineEl.textContent = `${cfg.prefix}${nextNum}/${year}`;
+    return `<div style="background:white;border:1.5px solid ${col}40;border-radius:10px;padding:10px 16px;text-align:center;">
+      <div style="font-size:10px;color:#9ca3af;">${dept.replace('ฝ่าย','')}</div>
+      <div style="font-size:20px;font-weight:900;color:${col};font-family:'Kanit',sans-serif;">${cfg.prefix}${nextNum}/${year}</div>
+    </div>`;
+  }).join('');
+}
+function saveStartConfig() {
+  const year = parseInt(document.getElementById('cfg-year').value);
+  Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
+    const el = document.getElementById('start-' + cfg.prefix);
+    if (el) setStartConfig(dept, year, Math.max(0, parseInt(el.value)||0));
+  });
+  renderAllConfigTable(); renderPreviewNextNums(year); saveStartConfigToSheets();
+  showToast('บันทึกการตั้งค่าเรียบร้อย ✓', 'success');
+}
+function resetStartConfig() {
+  if (!confirm('รีเซ็ตเลขเริ่มต้นทุกฝ่ายเป็น 0?')) return;
+  const year = parseInt(document.getElementById('cfg-year').value);
+  Object.entries(DEPT_CONFIG).forEach(([dept, cfg]) => {
+    setStartConfig(dept, year, 0);
+    const el = document.getElementById('start-' + cfg.prefix); if (el) el.value = 0;
+  });
+  renderPreviewNextNums(year); renderAllConfigTable(); showToast('รีเซ็ตแล้ว', 'success');
+}
+function renderAllConfigTable() {
+  const el = document.getElementById('allConfigTable'); if (!el) return;
+  try {
+    const all  = JSON.parse(localStorage.getItem('startConfig') || '{}');
+    const keys = Object.keys(all).filter(k => all[k] > 0);
+    if (!keys.length) { el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:20px;font-size:13px;">ยังไม่มีการตั้งค่า (ค่าเริ่มต้นคือ 0)</div>'; return; }
+    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+    el.innerHTML = `<div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
+          <th style="padding:10px 14px;text-align:left;color:white;">ฝ่าย</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">ปี พ.ศ.</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">เลขเริ่มต้น</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">เลขถัดไป</th>
+          <th style="padding:10px 14px;text-align:center;color:white;">จัดการ</th>
+        </tr></thead>
+        <tbody>${keys.map((k,i) => {
+          const lastU = k.lastIndexOf('_'), dept = k.substring(0,lastU), year = k.substring(lastU+1);
+          const cfg = DEPT_CONFIG[dept] || {};
+          const col = colors[cfg.prefix] || '#6b7280';
+          const next = `${cfg.prefix}${String(all[k]+1).padStart(3,'0')}/${year}`;
+          return `<tr style="background:${i%2===0?'#f9f9ff':'white'};">
+            <td style="padding:10px 14px;font-weight:600;">${dept}</td>
+            <td style="padding:10px 14px;text-align:center;color:#6b7280;">พ.ศ. ${year}</td>
+            <td style="padding:10px 14px;text-align:center;">${all[k]}</td>
+            <td style="padding:10px 14px;text-align:center;font-weight:800;color:${col};font-family:'Kanit',sans-serif;">${next}</td>
+            <td style="padding:10px 14px;text-align:center;">
+              <button class="btn btn-sm" style="background:#fff5f5;color:#ef4444;border:1px solid #fca5a5;" onclick="clearOneDeptConfig('${dept}','${year}')">ลบ</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div>`;
+  } catch {}
+}
+function clearOneDeptConfig(dept, year) {
+  const all = JSON.parse(localStorage.getItem('startConfig') || '{}');
+  delete all[dept + '_' + year];
+  localStorage.setItem('startConfig', JSON.stringify(all));
+  renderAllConfigTable(); showToast(`ลบการตั้งค่า ${dept} ปี ${year} แล้ว`, 'success');
+}
+
+
+
+/* ================= BATCH MEMO ================= */
+
+
+function updateMemoPreview() {
+  const dept = document.getElementById('memo-dept').value;
+  const preview = document.getElementById('deptPreview');
+  if (!dept) { 
+      preview.style.display = 'none'; 
+      return; 
+  }
+  preview.style.display = 'block';
+  
+  const DEPT_CONFIG = {
+      'ฝ่ายวิชาการ': { prefix: 'วช', color: '#2563eb' },
+      'ฝ่ายบุคคล': { prefix: 'บค', color: '#db2777' },
+      'ฝ่ายงบประมาณ': { prefix: 'งบ', color: '#d97706' },
+      'ฝ่ายบริหารทั่วไป': { prefix: 'บท', color: '#059669' }
+  };
+  
+  const cfg = DEPT_CONFIG[dept];
+  const year = getThaiBE();
+  const num = 'XXX'; // Example placeholder
+  
+  document.getElementById('deptPreviewNum').style.color = cfg.color;
+  document.getElementById('deptPreviewNum').textContent = `${cfg.prefix}${num}/${year}`;
+}
+
+
+// =========================================================================
+// CONTEXTUAL LOGIC FOR RESULT, DASHBOARD, AND BATCH
+// =========================================================================
+
+function renderContextDashboard() {
+    const sys = appContext.currentSystem;
+    let data = [];
+    let title = '';
+    
+    if (sys === 'memo') { data = appContext.data.memo; title = 'แดชบอร์ด - บันทึกข้อความ'; }
+    if (sys === 'order') { data = appContext.data.order; title = 'แดชบอร์ด - คำสั่งโรงเรียนสา'; }
+    if (sys === 'book') { data = appContext.data.book; title = 'แดชบอร์ด - หนังสือออก'; }
+    
+    document.querySelector('#view-context-dashboard .section-title').textContent = '📊 ' + title;
+    
+    // Stats
+    document.getElementById('stat-total').textContent = data.length;
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('stat-today').textContent = data.filter(r => r.date === today).length;
+    document.getElementById('stat-year').textContent = getThaiBE();
+    
+    const deptCounterWrap = document.querySelector('#view-context-dashboard .dept-counter');
+    const filterDept = document.getElementById('ctxFilterDept');
+    if (sys === 'memo') {
+        deptCounterWrap.style.display = 'grid';
+        filterDept.style.display = 'inline-block';
+        let cnt = { 'ฝ่ายวิชาการ': 0, 'ฝ่ายบุคคล': 0, 'ฝ่ายงบประมาณ': 0, 'ฝ่ายบริหารทั่วไป': 0 };
+        data.forEach(r => { if (cnt[r.dept] !== undefined) cnt[r.dept]++; });
+        document.getElementById('cnt-วช').textContent = cnt['ฝ่ายวิชาการ'];
+        document.getElementById('cnt-บค').textContent = cnt['ฝ่ายบุคคล'];
+        document.getElementById('cnt-งบ').textContent = cnt['ฝ่ายงบประมาณ'];
+        document.getElementById('cnt-บท').textContent = cnt['ฝ่ายบริหารทั่วไป'];
+    } else {
+        deptCounterWrap.style.display = 'none';
+        filterDept.style.display = 'none';
+    }
+    
+    renderContextTable(data);
+}
+
+function renderContextTable(data) {
+    const sys = appContext.currentSystem;
+    const tbody = document.getElementById('ctxTableBody');
+    tbody.innerHTML = '';
+    const thead = document.querySelector('#ctxTable thead tr');
+    
+    if (sys === 'memo') {
+        thead.innerHTML = '<th>#</th><th>เลขที่บันทึก</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>ฝ่าย</th><th>เรื่อง</th><th>วันที่</th><th>จัดการ</th>';
+        data.forEach((r, i) => {
+            const j = encodeURIComponent(JSON.stringify(r));
+            tbody.innerHTML += `<tr>
+                <td>${i+1}</td>
+                <td class="memo-num">${r.memoNum}</td>
+                <td>${r.name}</td>
+                <td>${r.position}</td>
+                <td><span class="badge badge-${r.dept.substring(4,6)}">${r.dept}</span></td>
+                <td>${r.subject}</td>
+                <td>${formatThaiDate(r.date)}</td>
+                <td style="white-space:nowrap;">
+                  <button class="action-btn view-btn" onclick="viewRecord('${j}', 'memo')" title="ดูรายละเอียด">👁️</button>
+                  <button class="action-btn pdf-btn" onclick="downloadRecordPDF('${j}', 'memo')" title="ดาวน์โหลด PDF">📄</button>
+                  <button class="action-btn delete-btn" onclick="deleteRecord('${r.id}', '${r.memoNum}', 'memo')" title="ลบข้อมูล">🗑️</button>
+                </td>
+            </tr>`;
+        });
+    } else if (sys === 'order') {
+        thead.innerHTML = '<th>#</th><th>เลขที่คำสั่ง</th><th>ชื่อ-สกุล</th><th>ตำแหน่ง</th><th>เรื่อง</th><th>วันที่</th><th>จัดการ</th>';
+        data.forEach((r, i) => {
+            const j = encodeURIComponent(JSON.stringify(r));
+            tbody.innerHTML += `<tr>
+                <td>${i+1}</td>
+                <td class="memo-num" style="color:var(--purple-600);">${r.orderNum}</td>
+                <td>${r.name}</td>
+                <td>${r.position}</td>
+                <td>${r.subject}</td>
+                <td>${formatThaiDate(r.date)}</td>
+                <td style="white-space:nowrap;">
+                  <button class="action-btn view-btn" onclick="viewRecord('${j}', 'order')" title="ดูรายละเอียด">👁️</button>
+                  <button class="action-btn pdf-btn" onclick="downloadRecordPDF('${j}', 'order')" title="ดาวน์โหลด PDF">📄</button>
+                  <button class="action-btn delete-btn" onclick="deleteRecord('${r.id}', '${r.orderNum}', 'order')" title="ลบข้อมูล">🗑️</button>
+                </td>
+            </tr>`;
+        });
+    } else if (sys === 'book') {
+        thead.innerHTML = '<th>#</th><th>เลขหนังสือออก</th><th>ผู้ส่ง</th><th>ผู้รับ</th><th>เรื่อง</th><th>วันที่</th><th>จัดการ</th>';
+        data.forEach((r, i) => {
+            const j = encodeURIComponent(JSON.stringify(r));
+            tbody.innerHTML += `<tr>
+                <td>${i+1}</td>
+                <td class="memo-num" style="color:var(--emerald-600);">${r.bookNum}</td>
+                <td>${r.name}</td>
+                <td>${r.destination}</td>
+                <td>${r.subject}</td>
+                <td>${formatThaiDate(r.date)}</td>
+                <td style="white-space:nowrap;">
+                  <button class="action-btn view-btn" onclick="viewRecord('${j}', 'book')" title="ดูรายละเอียด">👁️</button>
+                  <button class="action-btn pdf-btn" onclick="downloadRecordPDF('${j}', 'book')" title="ดาวน์โหลด PDF">📄</button>
+                  <button class="action-btn delete-btn" onclick="deleteRecord('${r.id}', '${r.bookNum}', 'book')" title="ลบข้อมูล">🗑️</button>
+                </td>
+            </tr>`;
+        });
+    }
+    
+    if (data.length === 0) {
+        document.getElementById('ctxEmptyState').style.display = 'block';
+        document.getElementById('ctxTable').style.display = 'none';
+    } else {
+        document.getElementById('ctxEmptyState').style.display = 'none';
+        document.getElementById('ctxTable').style.display = 'table';
+    }
+}
+
+function filterTable() {
+    const sys = appContext.currentSystem;
+    let data = [];
+    if (sys === 'memo') data = appContext.data.memo;
+    if (sys === 'order') data = appContext.data.order;
+    if (sys === 'book') data = appContext.data.book;
+    
+    const q = (document.getElementById('ctxSearchInput').value || '').toLowerCase();
+    const d = document.getElementById('ctxFilterDate').value;
+    const dept = document.getElementById('ctxFilterDept') ? document.getElementById('ctxFilterDept').value : '';
+    
+    const filtered = data.filter(r => {
+        let textMatch = false;
+        if (sys === 'memo') textMatch = (r.memoNum||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.subject||'').toLowerCase().includes(q);
+        if (sys === 'order') textMatch = (r.orderNum||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.subject||'').toLowerCase().includes(q);
+        if (sys === 'book') textMatch = (r.bookNum||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.subject||'').toLowerCase().includes(q) || (r.destination||'').toLowerCase().includes(q);
+        
+        let dateMatch = true;
+        if (d && r.date !== d) dateMatch = false;
+        
+        let deptMatch = true;
+        if (sys === 'memo' && dept && r.dept !== dept) deptMatch = false;
+        
+        return textMatch && dateMatch && deptMatch;
+    });
+    
+    renderContextTable(filtered);
+}
+
+// =================== RECORD ACTIONS ===================
+function viewRecord(jsonStr, system) {
+    const record = JSON.parse(decodeURIComponent(jsonStr));
+    showResult(record, system);
+}
+
+function downloadRecordPDF(jsonStr, system) {
+    const record = JSON.parse(decodeURIComponent(jsonStr));
+    window.lastGeneratedResult = { record, system };
+    downloadPDF();
+}
+
+let targetDelete = null;
+function deleteRecord(id, num, system) {
+    if (!isAdminLoggedIn()) { 
+        // If not logged in, force login modal first, but adminLogin doesn't track callbacks easily,
+        // so we'll just show the delete overlay anyway, since it asks for pwd!
+    }
+    targetDelete = { id, num, system };
+    document.getElementById('deleteTargetInfo').innerHTML = `<b>ระบบ:</b> ${system === 'memo' ? 'บันทึกข้อความ' : system === 'order' ? 'คำสั่งโรงเรียน' : 'หนังสือออก'}<br><b>เลขที่:</b> ${num}`;
+    document.getElementById('deletePwdInput').value = '';
+    document.getElementById('deletePwdError').textContent = '';
+    document.getElementById('deleteConfirmOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('deletePwdInput').focus(), 300);
+}
+
+function closeDeleteConfirm() {
+    document.getElementById('deleteConfirmOverlay').classList.remove('show');
+    targetDelete = null;
+}
+
+async function confirmDelete() {
+    if (!targetDelete) return;
+    const pwd = document.getElementById('deletePwdInput').value;
+    const errEl = document.getElementById('deletePwdError');
+    if (!pwd) { errEl.textContent = 'กรุณาใส่รหัสผ่าน'; return; }
+    if (pwd !== getAdminPwd()) {
+        errEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง';
+        const popup = document.querySelector('#deleteConfirmOverlay .popup');
+        popup.style.animation = 'shake 0.4s ease';
+        setTimeout(() => popup.style.animation = '', 400);
+        return;
+    }
+    
+    showLoading('กำลังลบข้อมูล...');
+    
+    const { id, system } = targetDelete;
+    let dataArr = [];
+    let localKey = '';
+    
+    if (system === 'memo') { dataArr = appContext.data.memo; localKey = 'memoData'; }
+    if (system === 'order') { dataArr = appContext.data.order; localKey = 'orderData'; }
+    if (system === 'book') { dataArr = appContext.data.book; localKey = 'bookData'; }
+    
+    const idx = dataArr.findIndex(r => String(r.id) === String(id));
+    if (idx !== -1) {
+        dataArr.splice(idx, 1);
+        localStorage.setItem(localKey, JSON.stringify(dataArr));
+    }
+    
+    await pushToSheets('delete', { id, system });
+    
+    hideLoading();
+    closeDeleteConfirm();
+    showToast('ลบข้อมูลเรียบร้อย', 'success');
+    renderContextDashboard();
+    updateDashboard(); // Also update global
+}
+
+async function clearAllData() {
+    if (!isAdminLoggedIn()) { openAdminLogin(); return; }
+    const sys = appContext.currentSystem;
+    let label = sys === 'memo' ? 'บันทึกข้อความ' : sys === 'order' ? 'คำสั่งโรงเรียน' : 'หนังสือออก';
+    if (!confirm(`ยืนยันการล้างข้อมูลทั้งหมดของระบบ ${label}? (ข้อมูลในแผ่นงานของ Google Sheets จะถูกล้างด้วย)`)) return;
+    
+    showLoading('กำลังล้างข้อมูล...');
+    
+    let localKey = '';
+    if (sys === 'memo') { appContext.data.memo = []; localKey = 'memoData'; }
+    if (sys === 'order') { appContext.data.order = []; localKey = 'orderData'; }
+    if (sys === 'book') { appContext.data.book = []; localKey = 'bookData'; }
+    
+    localStorage.setItem(localKey, JSON.stringify([]));
+    await pushToSheets('clearAll', { system: sys });
+    
+    hideLoading();
+    showToast(`ล้างข้อมูล ${label} เรียบร้อย`, 'success');
+    renderContextDashboard();
+    updateDashboard(); // Also update global
+}
+
+// =================== RESULT ===================
+window.lastGeneratedResult = null;
+
+function showResult(record, system) {
+    window.lastGeneratedResult = { record, system };
+    
+    let num = '';
+    let deptLabel = '';
+    if (system === 'memo') { num = record.memoNum; deptLabel = record.dept; }
+    if (system === 'order') { num = record.orderNum; deptLabel = 'คำสั่งโรงเรียน'; }
+    if (system === 'book') { num = record.bookNum; deptLabel = 'หนังสือออก'; }
+    
+    document.getElementById('r-memoNum').textContent = num;
+    document.getElementById('r-dept').textContent = deptLabel;
+    document.getElementById('r-timestamp').textContent = formatThaiDate(record.timestamp);
+    
+    document.getElementById('r-name').textContent = record.name;
+    document.getElementById('r-position').textContent = record.position;
+    document.getElementById('r-subject').textContent = record.subject;
+    document.getElementById('r-date').textContent = formatThaiDate(record.date);
+    
+    if (system === 'memo') {
+        document.getElementById('r-deptFull').textContent = record.dept;
+        document.getElementById('r-deptFull').parentElement.style.display = 'block';
+    } else if (system === 'book') {
+        document.getElementById('r-deptFull').textContent = record.destination;
+        document.getElementById('r-deptFull').previousElementSibling.textContent = '🏢 เรียน (ผู้รับ)';
+        document.getElementById('r-deptFull').parentElement.style.display = 'block';
+    } else {
+        document.getElementById('r-deptFull').parentElement.style.display = 'none';
+    }
+    
+    document.getElementById('r-desc').textContent = record.desc || '-';
+    
+    // Popup
+    document.getElementById('popupMemoNum').textContent = num;
+    document.getElementById('successOverlay').classList.add('show');
+}
+
+function goToResult() {
+    closePopup();
+    switchView('result');
+}
+
+function closePopup() {
+    document.getElementById('successOverlay').classList.remove('show');
+}
+
+function downloadPDF() {
+  if (!window.lastGeneratedResult) { showToast('ไม่มีข้อมูลสำหรับสร้าง PDF', 'error'); return; }
+  showLoading('กำลังสร้างเอกสาร PDF...');
+  try { 
+      generatePDF([window.lastGeneratedResult.record], window.lastGeneratedResult.system).then(() => {
+          hideLoading(); 
+      }).catch(e => {
+          hideLoading(); 
+          showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); 
+      });
+  } catch(e) { 
+      hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); 
+  }
+}
+
+async function generatePDF(records, system) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  for (let i = 0; i < records.length; i++) {
+    const r = records[i];
+    let htmlStr = '';
+    
+    if (system === 'memo') {
+        const deptColor = DEPT_CONFIG[r.dept]?.color || '#ec4899';
+        htmlStr = `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;box-sizing:border-box;padding:0;position:relative;">
+          <div style="height:8px;background:linear-gradient(90deg,#ec4899,#3b82f6);"></div>
+          <div style="text-align:center;padding:20px 0 12px;">
+            <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
+            <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
+            <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">บันทึกข้อความ</div>
+          </div>
+          <div style="margin:0 36px;border-top:2px solid #fce7f3;"></div>
+          <div style="padding:24px 48px 80px;">
+            <div style="background:linear-gradient(135deg,#fdf2f8,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
+              <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขที่บันทึกข้อความ</div>
+              <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.memoNum}</div>
+              <div style="display:inline-block;background:${deptColor};color:white;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:700;margin-top:8px;">${r.dept}</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ชื่อ-สกุล</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏷️ ตำแหน่ง</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.position}</td></tr>
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏢 ฝ่าย</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.dept}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td></tr>
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td></tr>
+              ${r.desc ? `<tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
+            </table>
+            <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
+            <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+              ${['ผู้ขอ','ผู้ตรวจสอบ','ผู้อนุมัติ'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#ec4899,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:10px;">เลขที่ ${r.memoNum}</div>
+            <div style="color:white;font-size:10px;">ระบบขอเลขที่บันทึกข้อความ ${SCHOOL_NAME}</div>
+          </div>
+        </div>`;
+    } else if (system === 'order') {
+        const deptColor = '#8b5cf6'; // Purple for Order
+        htmlStr = `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;box-sizing:border-box;padding:0;position:relative;">
+          <div style="height:8px;background:linear-gradient(90deg,#8b5cf6,#3b82f6);"></div>
+          <div style="text-align:center;padding:20px 0 12px;">
+            <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
+            <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
+            <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">คำสั่งโรงเรียน</div>
+          </div>
+          <div style="margin:0 36px;border-top:2px solid #ede9fe;"></div>
+          <div style="padding:24px 48px 80px;">
+            <div style="background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
+              <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขที่คำสั่ง</div>
+              <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.orderNum}</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ชื่อ-สกุล</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏷️ ตำแหน่ง</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.position}</td></tr>
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td></tr>
+              ${r.desc ? `<tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
+            </table>
+            <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
+            <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:400px;margin-left:auto;margin-right:auto;">
+              ${['ผู้ร่าง/พิมพ์','ผู้อำนวยการ'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#8b5cf6,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:10px;">เลขที่ ${r.orderNum}</div>
+            <div style="color:white;font-size:10px;">ระบบขอเลขที่คำสั่ง ${SCHOOL_NAME}</div>
+          </div>
+        </div>`;
+    } else if (system === 'book') {
+        const deptColor = '#10b981'; // Emerald for Book
+        htmlStr = `<div style="width:794px;min-height:1123px;background:white;font-family:'Sarabun',sans-serif;box-sizing:border-box;padding:0;position:relative;">
+          <div style="height:8px;background:linear-gradient(90deg,#10b981,#3b82f6);"></div>
+          <div style="text-align:center;padding:20px 0 12px;">
+            <div style="font-size:20px;font-weight:800;color:#1e1e3c;font-family:'Kanit',sans-serif;">${SCHOOL_NAME}</div>
+            <div style="font-size:12px;color:#6b7280;">${SCHOOL_PROVINCE}</div>
+            <div style="font-size:13px;color:#374151;font-weight:600;margin-top:4px;">หนังสือออกโรงเรียน</div>
+          </div>
+          <div style="margin:0 36px;border-top:2px solid #d1fae5;"></div>
+          <div style="padding:24px 48px 80px;">
+            <div style="background:linear-gradient(135deg,#ecfdf5,#eff6ff);border:2px solid ${deptColor};border-radius:14px;padding:20px 28px;text-align:center;margin-bottom:24px;">
+              <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:4px;">เลขที่หนังสือออก</div>
+              <div style="font-size:52px;font-weight:900;color:${deptColor};font-family:'Kanit',sans-serif;letter-spacing:2px;line-height:1;">${r.bookNum}</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;width:38%;border-bottom:1px solid #f0f0f8;">👤 ผู้ส่ง</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.name}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">🏢 ส่งถึง</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${r.destination}</td></tr>
+              <tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📌 เรื่อง</td><td style="padding:13px 16px;color:#1e1e3c;font-weight:600;border-bottom:1px solid #f0f0f8;">${r.subject}</td></tr>
+              <tr><td style="padding:13px 16px;font-weight:700;color:#6b7280;border-bottom:1px solid #f0f0f8;">📅 วันที่</td><td style="padding:13px 16px;color:#374151;border-bottom:1px solid #f0f0f8;">${formatThaiDate(r.date)}</td></tr>
+              ${r.desc ? `<tr style="background:#f9f9ff;"><td style="padding:13px 16px;font-weight:700;color:#6b7280;vertical-align:top;">📝 รายละเอียด</td><td style="padding:13px 16px;color:#374151;">${r.desc}</td></tr>` : ''}
+            </table>
+            <div style="margin-top:16px;text-align:center;font-size:11px;color:#9ca3af;padding:8px;border-top:1px dashed #e5e7eb;">ออกเลขเมื่อ: ${r.timestamp}</div>
+            <div style="margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:400px;margin-left:auto;margin-right:auto;">
+              ${['ผู้รับผิดชอบ','ผู้อำนวยการ'].map(lbl=>`<div style="border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;text-align:center;background:#f9f9ff;"><div style="height:50px;"></div><div style="border-top:1px solid #d1d5db;padding-top:8px;font-size:12px;color:#9ca3af;">${lbl}</div></div>`).join('')}
+            </div>
+          </div>
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(90deg,#10b981,#3b82f6);padding:7px 24px;display:flex;justify-content:space-between;align-items:center;">
+            <div style="color:white;font-size:10px;">เลขที่ ${r.bookNum}</div>
+            <div style="color:white;font-size:10px;">ระบบขอเลขหนังสือออก ${SCHOOL_NAME}</div>
+          </div>
+        </div>`;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:9999;';
+    wrapper.innerHTML = htmlStr;
+    document.body.appendChild(wrapper);
+    await new Promise(res => setTimeout(res, 200));
+    const canvas = await html2canvas(wrapper, { scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false });
+    document.body.removeChild(wrapper);
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    if (i > 0) doc.addPage();
+    doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+  }
+  
+  let fileName = `เอกสาร.pdf`;
+  if (system === 'memo') fileName = `บันทึกข้อความ_${records[0].memoNum.replace('/','-')}.pdf`;
+  if (system === 'order') fileName = `คำสั่งโรงเรียน_${records[0].orderNum.replace('/','-')}.pdf`;
+  if (system === 'book') fileName = `หนังสือออก_${records[0].bookNum.replace('/','-')}.pdf`;
+  
+  doc.save(fileName);
+}
+
+// =================== BATCH ===================
+function updateBatchHero() {
+    const sys = appContext.currentSystem;
+    let text = 'ขอเลขที่บันทึกข้อความ — หลายคนพร้อมกัน';
+    if (sys === 'order') text = 'ขอเลขที่คำสั่ง — หลายคนพร้อมกัน';
+    if (sys === 'book') text = 'ขอเลขหนังสือออก — หลายคนพร้อมกัน';
+    document.querySelector('#view-batch .hero-title').textContent = text;
+    
+    if (sys !== 'memo') {
+        document.getElementById('b-dept').parentElement.style.display = 'none';
+    } else {
+        document.getElementById('b-dept').parentElement.style.display = 'flex';
+    }
+}
+function downloadBatchTemplate() { alert('คุณสามารถใช้ไฟล์ Excel ที่มีคอลัมน์ "name", "position" ได้เลยครับ'); }
+function clearFilter() { document.getElementById('ctxSearchInput').value=''; document.getElementById('ctxFilterDate').value=''; if(document.getElementById('ctxFilterDept')) document.getElementById('ctxFilterDept').value=''; filterTable(); }
 
