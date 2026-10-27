@@ -252,7 +252,7 @@ function viewOrderRecord(id) {
 async function downloadOrderRecordPDF(id) {
   const r = loadOrderData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteOrderId = null;
 function deleteOrderRecord(id) {
@@ -291,7 +291,7 @@ async function downloadOrderPDF() {
   if (!currentOrderResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateOrderPDF([currentOrderResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateOrderPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -476,7 +476,7 @@ function viewBookRecord(id) {
 async function downloadBookRecordPDF(id) {
   const r = loadBookData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteBookId = null;
 function deleteBookRecord(id) {
@@ -515,7 +515,7 @@ async function downloadBookPDF() {
   if (!currentBookResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateBookPDF([currentBookResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateBookPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -905,7 +905,7 @@ function viewOrderRecord(id) {
 async function downloadOrderRecordPDF(id) {
   const r = loadOrderData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteOrderId = null;
 function deleteOrderRecord(id) {
@@ -944,7 +944,7 @@ async function downloadOrderPDF() {
   if (!currentOrderResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateOrderPDF([currentOrderResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateOrderPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -1129,7 +1129,7 @@ function viewBookRecord(id) {
 async function downloadBookRecordPDF(id) {
   const r = loadBookData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteBookId = null;
 function deleteBookRecord(id) {
@@ -1168,7 +1168,7 @@ async function downloadBookPDF() {
   if (!currentBookResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateBookPDF([currentBookResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateBookPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -1558,7 +1558,7 @@ function viewOrderRecord(id) {
 async function downloadOrderRecordPDF(id) {
   const r = loadOrderData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteOrderId = null;
 function deleteOrderRecord(id) {
@@ -1597,7 +1597,7 @@ async function downloadOrderPDF() {
   if (!currentOrderResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateOrderPDF([currentOrderResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateOrderPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -1782,7 +1782,7 @@ function viewBookRecord(id) {
 async function downloadBookRecordPDF(id) {
   const r = loadBookData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteBookId = null;
 function deleteBookRecord(id) {
@@ -1821,7 +1821,7 @@ async function downloadBookPDF() {
   if (!currentBookResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateBookPDF([currentBookResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateBookPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -2192,7 +2192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
   .section-title { font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 20px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
-  .dept-counter { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+  .dept-counter { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
   .dept-card { background: white; border-radius: 14px; padding: 16px; border: 1.5px solid var(--gray-100); box-shadow: var(--shadow-sm); text-align: center; transition: all 0.2s; }
   .dept-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
   .dept-card-prefix { font-family: 'Kanit', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 2px; }
@@ -2206,6 +2206,8 @@ document.addEventListener('DOMContentLoaded', () => {
   .dept-card.บค .dept-card-num { color: var(--pink-600); }
   .dept-card.งบ .dept-card-num { color: var(--amber-600); }
   .dept-card.บท .dept-card-num { color: var(--emerald-600); }
+  .dept-card.ผง .dept-card-prefix { color: var(--purple-600); }
+  .dept-card.ผง .dept-card-num { color: var(--purple-600); }
 
   /* ─── BATCH ─── */
   #batchDropZone.drag-over { border-color: var(--pink-500) !important; background: var(--pink-50) !important; transform: scale(1.01); }
@@ -2441,6 +2443,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
               <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
               <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+              <option value="งานแผนงาน">งานแผนงาน</option>
             </select>
           </div>
           <div class="form-group">
@@ -2483,6 +2486,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--emerald-100);">
             <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">ฝ่ายบริหารทั่วไป</div>
             <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--emerald-600);">บท001/2569</div>
+          </div>
+          <div style="background:white;border-radius:10px;padding:14px;border:1px solid var(--purple-100);">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:4px;">งานแผนงาน</div>
+            <div style="font-family:'Kanit',sans-serif;font-size:18px;font-weight:700;color:var(--purple-600);">ผง001/2569</div>
           </div>
         </div>
       </div>
@@ -2535,7 +2542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="stats-row">
       <div class="stat-card"><div class="stat-icon pink">📋</div><div><div class="stat-num" id="stat-total">0</div><div class="stat-label">หนังสือทั้งหมด</div></div></div>
       <div class="stat-card"><div class="stat-icon blue">📅</div><div><div class="stat-num" id="stat-today">0</div><div class="stat-label">วันนี้</div></div></div>
-      <div class="stat-card"><div class="stat-icon purple">🏢</div><div><div class="stat-num">4</div><div class="stat-label">ฝ่ายทั้งหมด</div></div></div>
+      <div class="stat-card"><div class="stat-icon purple">🏢</div><div><div class="stat-num">5</div><div class="stat-label">ฝ่ายทั้งหมด</div></div></div>
       <div class="stat-card"><div class="stat-icon emerald">🗓️</div><div><div class="stat-num" id="stat-year">2569</div><div class="stat-label">ปีงบประมาณ</div></div></div>
     </div>
     <div class="dept-counter">
@@ -2543,6 +2550,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="dept-card บค"><div class="dept-card-prefix">บค</div><div class="dept-card-name">ฝ่ายบุคคล</div><div class="dept-card-num" id="cnt-บค">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
       <div class="dept-card งบ"><div class="dept-card-prefix">งบ</div><div class="dept-card-name">ฝ่ายงบประมาณ</div><div class="dept-card-num" id="cnt-งบ">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
       <div class="dept-card บท"><div class="dept-card-prefix">บท</div><div class="dept-card-name">ฝ่ายบริหารทั่วไป</div><div class="dept-card-num" id="cnt-บท">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
+      <div class="dept-card ผง"><div class="dept-card-prefix">ผง</div><div class="dept-card-name">งานแผนงาน</div><div class="dept-card-num" id="cnt-ผง">0</div><div style="font-size:11px;color:var(--gray-400);">ฉบับ</div></div>
     </div>
     <div class="card">
       <div class="filter-row">
@@ -2553,6 +2561,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
           <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
           <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+          <option value="งานแผนงาน">งานแผนงาน</option>
         </select>
         <input class="form-input" id="filterDate" type="date" onchange="filterTable()" style="max-width:170px;">
         <button class="btn btn-secondary btn-sm" onclick="clearFilter()">✕ ล้างตัวกรอง</button>
@@ -2592,6 +2601,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <option value="ฝ่ายบุคคล">ฝ่ายบุคคล</option>
               <option value="ฝ่ายงบประมาณ">ฝ่ายงบประมาณ</option>
               <option value="ฝ่ายบริหารทั่วไป">ฝ่ายบริหารทั่วไป</option>
+              <option value="งานแผนงาน">งานแผนงาน</option>
             </select>
           </div>
           <div class="form-group">
@@ -2871,6 +2881,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <label class="dept-check-btn" data-dept="ฝ่ายบุคคล"><input type="checkbox" value="ฝ่ายบุคคล" checked>ฝ่ายบุคคล</label>
         <label class="dept-check-btn" data-dept="ฝ่ายงบประมาณ"><input type="checkbox" value="ฝ่ายงบประมาณ" checked>ฝ่ายงบประมาณ</label>
         <label class="dept-check-btn" data-dept="ฝ่ายบริหารทั่วไป"><input type="checkbox" value="ฝ่ายบริหารทั่วไป" checked>ฝ่ายบริหารทั่วไป</label>
+        <label class="dept-check-btn" data-dept="งานแผนงาน"><input type="checkbox" value="งานแผนงาน" checked>งานแผนงาน</label>
       </div>
     </div>
     <div id="reportPreviewBox" style="background:linear-gradient(135deg,var(--pink-50),var(--blue-50));border:1.5px solid var(--pink-200);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--gray-600);">กำลังคำนวณข้อมูลรายงาน...</div>
@@ -2892,7 +2903,8 @@ const DEPT_CONFIG = {
   'ฝ่ายวิชาการ':    { prefix: 'วช', color: '#2563eb' },
   'ฝ่ายบุคคล':      { prefix: 'บค', color: '#db2777' },
   'ฝ่ายงบประมาณ':   { prefix: 'งบ', color: '#d97706' },
-  'ฝ่ายบริหารทั่วไป': { prefix: 'บท', color: '#059669' }
+  'ฝ่ายบริหารทั่วไป': { prefix: 'บท', color: '#059669' },
+  'งานแผนงาน':      { prefix: 'ผง', color: '#7c3aed' }
 };
 
 // ══════════════════════════════════════════
@@ -2938,7 +2950,7 @@ async function syncFromSheets() {
           if (json.startConfig) localStorage.setItem('startConfig', JSON.stringify(json.startConfig));
           resolve(normalized);
         } else { resolve(null); }
-      } catch(e) { resolve(null); }
+      } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); resolve(null); }
     };
     const script = document.createElement('script');
     script.id = 'gas-jsonp-script';
@@ -2955,7 +2967,7 @@ async function pushToSheets(record) {
     const res = await fetch(GAS_URL, { method:'POST', body: JSON.stringify({ action:'add', record, startConfig , token: SECRET_TOKEN}), headers:{'Content-Type':'text/plain'} });
     const json = await res.json();
     if(json.status === 'ok' && json.record) return json.record;
-  } catch(e) {
+  } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e);
     try {
       const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
       q.push(record);
@@ -2971,7 +2983,7 @@ async function pushBatchToSheets(records) {
     const startConfig = JSON.parse(localStorage.getItem('startConfig') || '{}');
     await fetch(GAS_URL, { method:'POST', mode:'no-cors', body: JSON.stringify({ action:'addBatch', records, startConfig , token: SECRET_TOKEN}), headers:{'Content-Type':'text/plain'} });
     console.log(`[pushBatchToSheets] ส่ง ${records.length} รายการ`);
-  } catch(e) {
+  } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e);
     try {
       const q = JSON.parse(localStorage.getItem('pendingSync') || '[]');
       records.forEach(r => q.push(r));
@@ -3174,7 +3186,7 @@ async function downloadPDF() {
   if (!currentResult) { showToast('ไม่มีข้อมูลสำหรับสร้าง PDF', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateMemosPDF([currentResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 async function generateMemosPDF(records) {
@@ -3302,7 +3314,7 @@ async function downloadRecordPDF(id) {
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
   showLoading('กำลังสร้าง PDF...');
   try { await generateMemosPDF([r]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 let _pendingDeleteId = null;
@@ -3553,14 +3565,14 @@ async function downloadSingleFromBatch(idx) {
   currentResult = r;
   showLoading('กำลังสร้าง PDF...');
   try { await generateMemosPDF([r]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 async function downloadBatchPDF() {
   if (!batchResults.length) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading(`กำลังสร้าง PDF ${batchResults.length} หน้า...`);
   try { await generateMemosPDF(batchResults); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 
 function downloadBatchExcel() {
@@ -3704,7 +3716,7 @@ async function generateReportPDF() {
   if (!report.data.length) { showToast('ไม่มีข้อมูลในช่วงที่เลือก', 'error'); return; }
   closeReportModal(); showLoading('กำลังสร้างรายงาน PDF...');
   try { await buildSummaryPDF(report); hideLoading(); showToast('สร้างรายงาน PDF สำเร็จ', 'success'); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function buildSummaryPDF(report) {
   const DEPT_CFG = {
@@ -3712,11 +3724,12 @@ async function buildSummaryPDF(report) {
     'ฝ่ายบุคคล':       { prefix:'บค', color:'#db2777', bg:'#fdf2f8', border:'#f9a8d4' },
     'ฝ่ายงบประมาณ':    { prefix:'งบ', color:'#d97706', bg:'#fffbeb', border:'#fcd34d' },
     'ฝ่ายบริหารทั่วไป':{ prefix:'บท', color:'#059669', bg:'#ecfdf5', border:'#6ee7b7' },
+    'งานแผนงาน':      { prefix:'ผง', color:'#7c3aed', bg:'#f5f3ff', border:'#c4b5fd' },
     'อื่นๆ':           { prefix:'อื่น', color:'#6b7280', bg:'#f3f4f6', border:'#9ca3af' }
   };
   const selectedDepts = getSelectedDepts();
   const total = report.data.length;
-  const mainDepts = ['ฝ่ายวิชาการ','ฝ่ายบุคคล','ฝ่ายงบประมาณ','ฝ่ายบริหารทั่วไป'];
+  const mainDepts = ['ฝ่ายวิชาการ','ฝ่ายบุคคล','ฝ่ายงบประมาณ','ฝ่ายบริหารทั่วไป','งานแผนงาน'];
   const deptStats = Object.keys(DEPT_CFG).map(d => {
     let count = 0;
     if (d === 'อื่นๆ') count = report.data.filter(r => !mainDepts.includes(r.dept)).length;
@@ -4021,7 +4034,7 @@ function loadStartConfig() {
 }
 function renderStartNumGrid(year) {
   const grid = document.getElementById('startNumGrid'); if (!grid) return;
-  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669', ผง:'#7c3aed' };
   grid.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
     const cur = getStartConfig(dept, year);
     const col = colors[cfg.prefix] || '#6b7280';
@@ -4036,7 +4049,7 @@ function renderStartNumGrid(year) {
 }
 function renderPreviewNextNums(year) {
   const preview = document.getElementById('previewNextNums'); if (!preview) return;
-  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+  const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669', ผง:'#7c3aed' };
   preview.innerHTML = Object.entries(DEPT_CONFIG).map(([dept, cfg]) => {
     const inputEl = document.getElementById('start-' + cfg.prefix);
     const val = inputEl ? (parseInt(inputEl.value)||0) : getStartConfig(dept, year);
@@ -4074,7 +4087,7 @@ function renderAllConfigTable() {
     const all  = JSON.parse(localStorage.getItem('startConfig') || '{}');
     const keys = Object.keys(all).filter(k => all[k] > 0);
     if (!keys.length) { el.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:20px;font-size:13px;">ยังไม่มีการตั้งค่า (ค่าเริ่มต้นคือ 0)</div>'; return; }
-    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669' };
+    const colors = { วช:'#2563eb', บค:'#db2777', งบ:'#d97706', บท:'#059669', ผง:'#7c3aed' };
     el.innerHTML = `<div style="border-radius:10px;overflow:hidden;border:1px solid #fce7f3;">
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <thead><tr style="background:linear-gradient(135deg,#ec4899,#3b82f6);">
@@ -4403,7 +4416,7 @@ function viewOrderRecord(id) {
 async function downloadOrderRecordPDF(id) {
   const r = loadOrderData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateOrderPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteOrderId = null;
 function deleteOrderRecord(id) {
@@ -4442,7 +4455,7 @@ async function downloadOrderPDF() {
   if (!currentOrderResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateOrderPDF([currentOrderResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateOrderPDF(records) {
   const { jsPDF } = window.jspdf;
@@ -4633,7 +4646,7 @@ function viewBookRecord(id) {
 async function downloadBookRecordPDF(id) {
   const r = loadBookData().find(x => String(x.id) === String(id));
   if (!r) { showToast('ไม่พบข้อมูล', 'error'); return; }
-  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  showLoading('กำลังสร้าง PDF...'); try { await generateBookPDF([r]); hideLoading(); } catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 let _pendingDeleteBookId = null;
 function deleteBookRecord(id) {
@@ -4672,7 +4685,7 @@ async function downloadBookPDF() {
   if (!currentBookResult) { showToast('ไม่มีข้อมูล', 'error'); return; }
   showLoading('กำลังสร้างเอกสาร PDF...');
   try { await generateBookPDF([currentBookResult]); hideLoading(); }
-  catch(e) { hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
+  catch(e) { alert("เกิดข้อผิดพลาดในการขอเลขที่ กรุณาตรวจสอบลิงก์ตั้งค่า หรือการเชื่อมต่ออินเทอร์เน็ต: " + e.message); console.error(e); hideLoading(); showToast('เกิดข้อผิดพลาด: ' + e.message, 'error'); }
 }
 async function generateBookPDF(records) {
   const { jsPDF } = window.jspdf;
