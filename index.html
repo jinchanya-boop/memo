@@ -2904,7 +2904,7 @@ const DEPT_CONFIG = {
   'ฝ่ายบุคคล':      { prefix: 'บค', color: '#db2777' },
   'ฝ่ายงบประมาณ':   { prefix: 'งบ', color: '#d97706' },
   'ฝ่ายบริหารทั่วไป': { prefix: 'บท', color: '#059669' },
-  'งานแผนงาน':      { prefix: 'ผง', color: '#7c3aed' }
+  'งานแผนงาน':      { prefix: 'ผง', color: '#7c3aed', fiscalYear: true }
 };
 
 // ══════════════════════════════════════════
@@ -3056,6 +3056,15 @@ function getThaiBE(dateStr) {
   const d = dateStr ? new Date(dateStr) : new Date();
   return d.getFullYear() + 543;
 }
+// ปีงบประมาณ: 1 ต.ค. – 30 ก.ย. (ต.ค.–ธ.ค. นับเป็นปีถัดไป)
+function getFiscalBE(dateStr) {
+  const d = dateStr ? new Date(dateStr) : new Date();
+  return d.getFullYear() + 543 + (d.getMonth() >= 9 ? 1 : 0);
+}
+// ปีที่ใช้ในเลขบันทึก: ฝ่ายที่ตั้ง fiscalYear ใช้ปีงบประมาณ ที่เหลือใช้ปีปฏิทิน
+function getMemoYear(dept, dateStr) {
+  return DEPT_CONFIG[dept]?.fiscalYear ? getFiscalBE(dateStr) : getThaiBE(dateStr);
+}
 function formatThaiDate(dateStr) {
   const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
   const d = new Date(dateStr);
@@ -3070,7 +3079,7 @@ function updateDeptPreview() {
   const preview = document.getElementById('deptPreview');
   if (!dept) { preview.style.display = 'none'; return; }
   const cfg = DEPT_CONFIG[dept];
-  const year = getThaiBE();
+  const year = getMemoYear(dept, document.getElementById('f-date').value);
   const next = getNextNumber(dept, year);
   const num = String(next).padStart(3, '0');
   preview.style.display = 'block';
@@ -3114,7 +3123,7 @@ function getNextNumber(dept, year) {
 }
 function generateMemoNum(dept, dateStr) {
   const cfg = DEPT_CONFIG[dept];
-  const year = getThaiBE(dateStr);
+  const year = getMemoYear(dept, dateStr);
   const seq = getNextNumber(dept, year);
   return `${cfg.prefix}${String(seq).padStart(3,'0')}/${year}`;
 }
@@ -3450,7 +3459,7 @@ function renderBatchPreview() {
   const card    = document.getElementById('batchPreviewCard');
   card.style.display = 'block';
   card.scrollIntoView({ behavior:'smooth', block:'start' });
-  const year    = getThaiBE(dateVal);
+  const year    = getMemoYear(dept, dateVal);
   let   nextNum = dept ? getNextNumber(dept, year) : 1;
   const cfg     = dept ? DEPT_CONFIG[dept] : { prefix:'???', color:'#6b7280' };
   const tbody   = document.getElementById('batchPreviewBody');
@@ -3501,7 +3510,7 @@ async function submitBatch() {
   showLoading('กำลัง sync ข้อมูลล่าสุด...');
   if (GAS_URL) { const synced = await syncFromSheets(); if (synced) console.log(`[batch] sync ${synced.length}`); }
   showLoading(`กำลังออกเลข ${batchRows.length} รายการ...`);
-  const year      = getThaiBE(dateVal);
+  const year      = getMemoYear(dept, dateVal);
   const cfg       = DEPT_CONFIG[dept];
   let   nextNum   = getNextNumber(dept, year);
   const timestamp = new Date().toLocaleString('th-TH');
